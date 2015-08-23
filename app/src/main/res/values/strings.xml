@@ -1,0 +1,41 @@
+<resources>
+    <string name="app_name">CAE UMC</string>
+    <string name="title_activity_main">CAE UMC</string>
+
+    <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_example">Example action</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_nav_drawer">NavDrawerActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+
+    <string-array name="nav_options">
+        <item>Notas</item>
+        <item>Calendário Acadêmico</item>
+        <item>Arquivos</item>
+        <item>CAE UMC</item>
+    </string-array>
+
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    <string name="action_websearch">Web search</string>
+    <string name="app_not_available">Sorry, there\'s no web browser available</string>
+    <string name="selected_count">%1$s selecionado(s)</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="notas_fragment">Fragment NOTAS</string>
+    <string name="calendario_fragment">Fragment Calendário</string>
+    <string name="arquivos_fragment">Fragment ARQUIVOS</string>
+    <string name="home_fragment">Bem vindo ao aplicativo do Centro Acadêmico de Engenharia da UMC - Campus Villa Lobos/Lapa</string>
+    <string name="disciplina">Disciplina</string>
+    <string name="campoobrigatorio">Campo obrigatório</string>
+    <string name="title_activity_dialog">Adicionar</string>
+</resources>

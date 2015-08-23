@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <item name="deeporangea400" type="color">#FF3D00</item>
+    <item name="caeumccolor800" type="color">#221b42</item>
+    <item name="caeumccolor900" type="color">#140f27</item>
+
+    <color name="irregular">#F44336</color>
+    <color name="regular">#2196F3</color>
+    <color name="muitobom">#0D47A1</color>
+
+    <color name="errocolor">#E53935</color>
+
+    <drawable name="listitemcolor">#FF3D00</drawable>
+
+    <integer-array name="androidcolors">
+
+        <item>@color/deeporangea400</item>
+        <item>@color/caeumccolor800</item>
+        <item>@color/caeumccolor900</item>
+    </integer-array>
+</resources>

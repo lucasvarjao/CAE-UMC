@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+
+
+  >
+
+    <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+
+        android:background="@color/caeumccolor800"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark"
+        android:id="@+id/tool_bar_dialog"
+        android:elevation="4dp"
+        android:fitsSystemWindows="true"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+
+        android:minHeight="?attr/actionBarSize" />
+
+
+
+
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:id="@+id/editText"
+        android:hint="@string/disciplina"
+        android:textSize="22sp"
+        android:typeface="sans"
+        android:ems="10"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="56dp"
+        android:layout_marginRight="16dp"
+        android:singleLine="true"
+        android:maxLength="35"
+        android:inputType="textCapSentences"
+        android:paddingBottom="0dp"
+        android:imeOptions="actionNext">
+
+        <requestFocus />
+    </EditText>
+
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Campo obrigatório"
+            android:id="@+id/lblCampoObrigatorio"
+            android:textColor="@color/error_color"
+            android:typeface="sans"
+            android:textSize="12sp"
+            android:layout_gravity="left"
+            android:layout_below="@+id/editText"
+            android:layout_alignLeft="@+id/editText"
+            android:layout_alignStart="@+id/editText"
+            android:layout_marginLeft="4dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="0/35"
+            android:id="@+id/lblContador"
+            android:layout_gravity="right"
+            android:textSize="12sp"
+            android:layout_below="@+id/editText"
+            android:layout_alignRight="@+id/editText"
+            android:layout_alignEnd="@+id/editText" />
+
+    <EditText
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:ems="10"
+        android:id="@+id/txtM1"
+        android:layout_marginTop="8dp"
+        android:maxLength="5"
+        android:singleLine="true"
+        android:imeOptions="actionNext"
+        android:hint="M1"
+        android:layout_alignLeft="@+id/lblCampoObrigatorio"
+        android:layout_alignStart="@+id/lblCampoObrigatorio"
+        android:layout_below="@+id/lblCampoObrigatorio" />
+
+    <EditText
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:ems="10"
+        android:id="@+id/txtPI"
+        android:maxLength="5"
+        android:imeOptions="actionNext"
+        android:singleLine="true"
+        android:hint="PI"
+        android:layout_alignBottom="@+id/txtM1"
+        android:layout_toRightOf="@+id/txtM1"
+        android:layout_marginLeft="8dp" />
+
+    <EditText
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:ems="10"
+        android:id="@+id/txtM2"
+        android:maxLength="5"
+        android:imeOptions="actionNext"
+        android:singleLine="true"
+        android:hint="ND"
+        android:layout_alignBottom="@+id/txtPI"
+        android:layout_marginLeft="8dp"
+        android:layout_toRightOf="@+id/txtPI" />
+
+    <EditText
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:ems="10"
+        android:id="@+id/txtEX"
+        android:maxLength="5"
+        android:singleLine="true"
+        android:hint="EX"
+        android:imeOptions="actionDone"
+        android:layout_alignTop="@+id/txtM2"
+        android:layout_toRightOf="@+id/txtM2"
+        android:layout_toEndOf="@+id/txtM2"
+        android:layout_marginLeft="8dp"
+        android:layout_marginBottom="16dp"/>
+
+
+</RelativeLayout>

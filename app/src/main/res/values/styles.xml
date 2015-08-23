@@ -1,0 +1,40 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/caeumccolor800</item>
+        <item name="colorPrimaryDark">@color/caeumccolor900</item>
+        <item name="colorAccent">@color/deeporangea400</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeStyle">@style/Widget.ActionMode</item>
+        <item name="android:actionModeStyle">@style/Widget.ActionMode</item>
+
+
+
+    </style>
+    
+    <style name="Widget.ActionMode" parent="Widget.AppCompat.ActionMode">
+        <item name="android:background">@color/caeumccolor800</item>
+        <item name="background">@color/caeumccolor800</item>
+    </style>
+
+    <style name="AppDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="colorPrimary">@color/caeumccolor800</item>
+        <item name="colorPrimaryDark">@color/caeumccolor900</item>
+        <item name="colorAccent">@color/deeporangea400</item>
+
+
+
+        <item name="android:windowBackground">@android:color/background_light</item>
+
+
+    </style>
+
+
+
+</resources>
