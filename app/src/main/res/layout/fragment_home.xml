@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -18,12 +22,24 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/home_fragment"
             android:id="@+id/textView"
-            android:textSize="22sp"
+            android:textSize="16sp"
             android:padding="16dp"
             />
 
 
-
     </LinearLayout>
 
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnFacebook"
+        android:src="@drawable/facebook_box"
+        android:elevation="4dp"
+        android:clickable="true"
+        android:layout_gravity="center"
+        android:adjustViewBounds="false"
+        android:scaleType="fitXY" />
+
 </LinearLayout>
+
+</ScrollView>

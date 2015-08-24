@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -19,6 +20,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -30,18 +33,27 @@ public class DialogActivity extends AppCompatActivity {
     private Toolbar toolbar;
 
     private EditText txtDisciplinas;
-    private TextView lblCampObrigatorio;
+
     private TextView lblContador;
     private EditText txtM1;
     private EditText txtPI;
     private EditText txtM2;
     private EditText txtEX;
+    private CheckBox chbDP;
+
+    private TextInputLayout txtInputDisciplina;
+    private TextInputLayout txtInputM1;
+    private TextInputLayout txtInputPI;
+    private TextInputLayout txtInputM2;
+    private TextInputLayout txtInputEX;
+
     private String disciplina2;
     private double M1;
     private double M2;
     private double PI;
     private double EX;
     private double NF;
+    private boolean DP;
 
     private String nDisciplina2;
     private double nM1;
@@ -49,6 +61,7 @@ public class DialogActivity extends AppCompatActivity {
     private double nPI;
     private double nEX;
     private double nNF;
+    private boolean nDP;
 
     String idDisciplina;
     String editarDisciplina = "0";
@@ -64,7 +77,7 @@ public class DialogActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.fulldialogtoolbar);
-
+      //  getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 
         this.setFinishOnTouchOutside(false);
@@ -79,13 +92,27 @@ public class DialogActivity extends AppCompatActivity {
         getSupportActionBar().setHomeAsUpIndicator(android.R.drawable.ic_menu_close_clear_cancel);
 
         txtDisciplinas = (EditText) findViewById(R.id.editText);
-        lblCampObrigatorio = (TextView) findViewById(R.id.lblCampoObrigatorio);
+
         lblContador = (TextView) findViewById(R.id.lblContador);
         txtM1 = (EditText) findViewById(R.id.txtM1);
         txtPI = (EditText) findViewById(R.id.txtPI);
         txtM2 = (EditText) findViewById(R.id.txtM2);
         txtEX = (EditText) findViewById(R.id.txtEX);
-        lblCampObrigatorio.setVisibility(View.INVISIBLE);
+        chbDP = (CheckBox) findViewById(R.id.chbDP);
+
+        txtInputDisciplina = (TextInputLayout) findViewById(R.id.txtInputDisciplina);
+       txtInputM1 = (TextInputLayout) findViewById(R.id.txtInputM1);
+        txtInputPI = (TextInputLayout) findViewById(R.id.txtInputPI);
+         txtInputM2 = (TextInputLayout) findViewById(R.id.txtInputM2);
+         txtInputEX = (TextInputLayout) findViewById(R.id.txtInputEX);
+
+        txtInputDisciplina.setHint("Disciplina");
+        txtInputM1.setHint("M1");
+        txtInputPI.setHint("PI");
+        txtInputM2.setHint("ND");
+        txtInputEX.setHint("EX");
+
+
         lblContador.setTextColor(Color.GRAY);
 
 
@@ -95,6 +122,43 @@ public class DialogActivity extends AppCompatActivity {
         eDisciplina = Integer.valueOf(editarDisciplina);
 
         if (eDisciplina == 1) {
+
+            txtM1.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (hasFocus) {
+                        txtM1.setText("");
+                    }
+                }
+            });
+
+            txtM2.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (hasFocus) {
+                        txtM2.setText("");
+                    }
+                }
+            });
+
+            txtPI.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (hasFocus) {
+                        txtPI.setText("");
+                    }
+                }
+            });
+
+            txtEX.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (hasFocus) {
+                        txtEX.setText("");
+                    }
+                }
+            });
+
             getSupportActionBar().setTitle("Alterar");
             Log.e("Teste","ENTROU NA CONDICAO");
             Long i = Long.valueOf(idDisciplina);
@@ -106,8 +170,18 @@ public class DialogActivity extends AppCompatActivity {
             nPI = materiaListModel.getPI();
             nEX = materiaListModel.getEX();
             nNF = materiaListModel.getNF();
+            nDP = materiaListModel.getDP();
             txtDisciplinas.setText(materiaListModel.getNomeMateria());
+            txtDisciplinas.setSelection(txtDisciplinas.getText().length());
             lblContador.setText(String.valueOf(txtDisciplinas.getText().length()) + "/35");
+
+            if (nNF < 5 && nNF >= 0) {
+                txtEX.setEnabled(true);
+            } else {
+                txtEX.setEnabled(false);
+
+            }
+
             if (materiaListModel.getM1() == -1) {
                 txtM1.setText("");
 
@@ -139,6 +213,7 @@ public class DialogActivity extends AppCompatActivity {
                 txtPI.setText(materiaListModel.getPI().toString());
 
             }
+            chbDP.setChecked(nDP);
 
         }
 
@@ -165,7 +240,8 @@ public class DialogActivity extends AppCompatActivity {
                 } else {
                     lblContador.setTextColor(Color.GRAY);
                 }
-                lblCampObrigatorio.setVisibility(View.INVISIBLE);
+                txtInputDisciplina.setErrorEnabled(false);
+
 
             }
         };
@@ -201,9 +277,9 @@ public class DialogActivity extends AppCompatActivity {
         Log.e("Arredondamento", String.valueOf(dM2));
         double ddM2 = dM2.doubleValue();
         Log.e("Arredondamento", String.valueOf(ddM2));
-        if (ddM2 < 0.46) {
+        if (ddM2 < 0.26) {
             nota = iM2;
-        } else if (ddM2 >= 0.56) {
+        } else if (ddM2 >= 0.76) {
             nota = iM2 + 1;
         } else {
             nota = iM2 + 0.5;
@@ -226,15 +302,17 @@ public class DialogActivity extends AppCompatActivity {
             if (eDisciplina == 1) {
 
                 txtDisciplinas = (EditText) findViewById(R.id.editText);
-                lblCampObrigatorio = (TextView) findViewById(R.id.lblCampoObrigatorio);
+
                 lblContador = (TextView) findViewById(R.id.lblContador);
                 txtM1 = (EditText) findViewById(R.id.txtM1);
                 txtPI = (EditText) findViewById(R.id.txtPI);
                 txtM2 = (EditText) findViewById(R.id.txtM2);
                 txtEX = (EditText) findViewById(R.id.txtEX);
+                chbDP = (CheckBox) findViewById(R.id.chbDP);
 
                 if (txtDisciplinas.getText().toString().trim().length() == 0) {
-                    lblCampObrigatorio.setVisibility(View.VISIBLE);
+                    txtInputDisciplina.setError("Nome da disciplina obrigatório");
+                    txtInputDisciplina.setErrorEnabled(true);
                 } else {
                     NF = -1.0;
                     disciplina2 = txtDisciplinas.getText().toString().trim();
@@ -259,44 +337,68 @@ public class DialogActivity extends AppCompatActivity {
                         EX = -1.0;
                     }
 
-                    if (M1 != -1 && PI != -1 && M2 == -1) {
-                        M2 = ((3 * 5) - M1 - (0.6*PI)) / 1.4;
-                        M2 = Arredondar(M2);
+                    DP = chbDP.isChecked();
+                    if (M1 != -1 && PI != -1 && M2 != -1 && NF != -1) {
+                        if (NF < 5) {
+                            if (M1 != -1 && PI != -1 && M2 != -1 && NF != -1 && EX != -1) {
 
-                   //     M2 = M2 * 2;
-                  //      M2 = Math.round(M2);
-                    //    M2 = M2 * 0.5;
-                        NF = (M1 + ((PI*0.3 + M2*0.7)*2))/3;
-                        NF = Arredondar(NF);
-                     //   NF = NF * 2;
-                     //   NF = Math.round(NF);
-                      //  NF = NF * 0.5;
+                                NF = NF + (EX - 5);
+                            } else {
+                                EX = 5 + (5 - NF);
+                            }
+
+
+                        }
+
+                        else {
+                            NF = (M1 + ((PI*0.3 + M2*0.7)*2))/3;
+                            NF = Arredondar(NF);
+                        }
+
                     } else if (M1 != -1 && PI == -1 && M2 == -1) {
-                        PI =0;
-                        M2 = ((3 * 5) - M1 - (0.6*PI)) / 1.4;
+                        PI = -1;
+                        M2 = ((3 * 5) - M1 - (0.6*0)) / 1.4;
                         M2 = Arredondar(M2);
-                        NF = (M1 + ((PI*0.3 + M2*0.7)*2))/3;
+                        NF = (M1 + ((0*0.3 + M2*0.7)*2))/3;
+                        NF = Arredondar(NF);
+
+                    } else if (M1 != -1 && PI == -1 && M2 != -1) {
+                        PI = -1;
+                        M2 = Arredondar(M2);
+                        NF = (M1 + ((0*0.3 + M2*0.7)*2))/3;
                         NF = Arredondar(NF);
 
                     }   else if (M1 != -1 && PI != -1 && M2 != -1) {
                         NF = (M1 + ((PI*0.3 + M2*0.7)*2))/3;
-                       NF = Arredondar(NF);
-                        //NF = NF * 2;
-                       // NF = Math.round(NF);
-                       // NF = NF * 0.5;
+                        NF = Arredondar(NF);
 
-                    } else if (M1 != -1 && PI != -1 && M2 != -1 && NF != -1) {
                         if (NF < 5) {
+                            if (M1 != -1 && PI != -1 && M2 != -1 && NF != -1 && EX != -1) {
+
+                                NF = NF + (EX - 5);
+                            } else {
+                                EX = 5 + (5 - NF);
+                            }
+
 
                         }
+
+
+                    } else if (M1 != -1 && PI != -1 && M2 == -1) {
+                        M2 = ((3 * 5) - M1 - (0.6*PI)) / 1.4;
+                        M2 = Arredondar(M2);
+
+                        NF = (M1 + ((PI*0.3 + M2*0.7)*2))/3;
+                        NF = Arredondar(NF);
                     }
+
                     Long i = Long.valueOf(idDisciplina);
 
                     MateriaListModel materiaListModel = MateriaListModel.findById(MateriaListModel.class, i);
 
                     Log.e("Teste", String.valueOf(nNF) + "=" + String.valueOf(NF) + "   " + String.valueOf(nPI) + "=" + String.valueOf(PI));
 
-                    if ((nDisciplina2.equals(disciplina2)) && (nM1 == M1) && (nPI == PI) && (nM2 == M2) && (nEX == EX) && (nNF == NF)) {
+                    if ((nDisciplina2.equals(disciplina2)) && (nM1 == M1) && (nPI == PI) && (nM2 == M2) && (nEX == EX) && (nNF == NF) && (DP == nDP)) {
 
                         Log.e("ALteracoes", "Entrou nas alterações");
 
@@ -308,6 +410,7 @@ public class DialogActivity extends AppCompatActivity {
                         materiaListModel.setM2(M2);
                         materiaListModel.setEX(EX);
                         materiaListModel.setNF(NF);
+                        materiaListModel.setDP(DP);
                         materiaListModel.save();
                         NavDrawerActivity.notifyUpdate = 1;
 
@@ -321,15 +424,17 @@ public class DialogActivity extends AppCompatActivity {
             } else {
 
                 txtDisciplinas = (EditText) findViewById(R.id.editText);
-                lblCampObrigatorio = (TextView) findViewById(R.id.lblCampoObrigatorio);
+
                 lblContador = (TextView) findViewById(R.id.lblContador);
                 txtM1 = (EditText) findViewById(R.id.txtM1);
                 txtPI = (EditText) findViewById(R.id.txtPI);
                 txtM2 = (EditText) findViewById(R.id.txtM2);
                 txtEX = (EditText) findViewById(R.id.txtEX);
+                chbDP = (CheckBox) findViewById(R.id.chbDP);
 
                 if (txtDisciplinas.getText().toString().trim().length() == 0) {
-                    lblCampObrigatorio.setVisibility(View.VISIBLE);
+                    txtInputDisciplina.setError("Nome da disciplina obrigatório");
+                    txtInputDisciplina.setErrorEnabled(true);
                 } else {
                     NF = -1.0;
                     disciplina2 = txtDisciplinas.getText().toString().trim();
@@ -354,28 +459,46 @@ public class DialogActivity extends AppCompatActivity {
                         EX = -1.0;
                     }
 
+                    DP = chbDP.isChecked();
+
                     if (M1 != -1 && PI != -1 && M2 == -1) {
                         M2 = ((3 * 5) - M1 - (0.6*PI)) / 1.4;
                         M2 = Arredondar(M2);
-                        Log.e("Arredondamento", String.valueOf(M2));
-                        //     M2 = M2 * 2;
-                        //      M2 = Math.round(M2);
-                        //    M2 = M2 * 0.5;
-                        NF = (M1 + ((PI*0.3 + M2*0.7)*2))/3;
-                        NF = Arredondar(NF);
-                        //   NF = NF * 2;
-                        //   NF = Math.round(NF);
-                        //  NF = NF * 0.5;
-                    } else if (M1 != -1 && PI != -1 && M2 != -1) {
-                        NF = (M1 + ((PI*0.3 + M2*0.7)*2))/3;
-                        NF = Arredondar(NF);
-                        //NF = NF * 2;
-                        // NF = Math.round(NF);
-                        // NF = NF * 0.5;
 
+                        NF = (M1 + ((PI*0.3 + M2*0.7)*2))/3;
+                        NF = Arredondar(NF);
+
+                    } else if (M1 != -1 && PI == -1 && M2 == -1) {
+                        PI =0;
+                        M2 = ((3 * 5) - M1 - (0.6*PI)) / 1.4;
+                        M2 = Arredondar(M2);
+                        NF = (M1 + ((PI*0.3 + M2*0.7)*2))/3;
+                        NF = Arredondar(NF);
+
+                    } else if (M1 != -1 && PI == -1 && M2 != -1) {
+                        PI =0;
+                        M2 = Arredondar(M2);
+                        NF = (M1 + ((PI*0.3 + M2*0.7)*2))/3;
+                        NF = Arredondar(NF);
+
+                    }   else if (M1 != -1 && PI != -1 && M2 != -1) {
+                        NF = (M1 + ((PI*0.3 + M2*0.7)*2))/3;
+                        NF = Arredondar(NF);
+
+
+                    } else if (M1 != -1 && PI != -1 && M2 != -1 && NF != -1) {
+                        if (NF < 5) {
+                            if (M1 != -1 && PI != -1 && M2 != -1 && NF != -1 && EX != -1) {
+
+                                NF = NF + (EX - 5);
+                            } else {
+                                EX = 5 + (5 - NF);
+                            }
+
+                        }
                     }
 
-                    MateriaListModel materia = new MateriaListModel(disciplina2, M1, M2, PI, EX, NF);
+                    MateriaListModel materia = new MateriaListModel(disciplina2, M1, M2, PI, EX, NF, DP);
                     materia.save();
 
 
@@ -396,6 +519,7 @@ public class DialogActivity extends AppCompatActivity {
                 txtPI = (EditText) findViewById(R.id.txtPI);
                 txtM2 = (EditText) findViewById(R.id.txtM2);
                 txtEX = (EditText) findViewById(R.id.txtEX);
+                chbDP = (CheckBox) findViewById(R.id.chbDP);
 
                 if (eDisciplina == 1) {
 
@@ -423,28 +547,46 @@ public class DialogActivity extends AppCompatActivity {
                         EX = -1.0;
                     }
 
+                    DP = chbDP.isChecked();
+
                     if (M1 != -1 && PI != -1 && M2 == -1) {
                         M2 = ((3 * 5) - M1 - (0.6*PI)) / 1.4;
                         M2 = Arredondar(M2);
-                        Log.e("Arredondamento", String.valueOf(M2));
-                        //     M2 = M2 * 2;
-                        //      M2 = Math.round(M2);
-                        //    M2 = M2 * 0.5;
-                        NF = (M1 + ((PI*0.3 + M2*0.7)*2))/3;
-                        NF = Arredondar(NF);
-                        //   NF = NF * 2;
-                        //   NF = Math.round(NF);
-                        //  NF = NF * 0.5;
-                    } else if (M1 != -1 && PI != -1 && M2 != -1) {
-                        NF = (M1 + ((PI*0.3 + M2*0.7)*2))/3;
-                        NF = Arredondar(NF);
-                        //NF = NF * 2;
-                        // NF = Math.round(NF);
-                        // NF = NF * 0.5;
 
+                        NF = (M1 + ((PI*0.3 + M2*0.7)*2))/3;
+                        NF = Arredondar(NF);
+
+                    } else if (M1 != -1 && PI == -1 && M2 == -1) {
+                        PI =0;
+                        M2 = ((3 * 5) - M1 - (0.6*PI)) / 1.4;
+                        M2 = Arredondar(M2);
+                        NF = (M1 + ((PI*0.3 + M2*0.7)*2))/3;
+                        NF = Arredondar(NF);
+
+                    } else if (M1 != -1 && PI == -1 && M2 != -1) {
+                        PI =0;
+                        M2 = Arredondar(M2);
+                        NF = (M1 + ((PI*0.3 + M2*0.7)*2))/3;
+                        NF = Arredondar(NF);
+
+                    }   else if (M1 != -1 && PI != -1 && M2 != -1) {
+                        NF = (M1 + ((PI*0.3 + M2*0.7)*2))/3;
+                        NF = Arredondar(NF);
+
+
+                    } else if (M1 != -1 && PI != -1 && M2 != -1 && NF != -1) {
+                        if (NF < 5) {
+                            if (M1 != -1 && PI != -1 && M2 != -1 && NF != -1 && EX != -1) {
+
+                                NF = NF + (EX - 5);
+                            } else {
+                                EX = 5 + (5 - NF);
+                            }
+
+                        }
                     }
 
-                    if ((nDisciplina2.equals(disciplina2)) && (nM1 == M1) && (nPI == PI) && (nM2 == M2) && (nEX == EX) && (nNF == NF)) {
+                    if ((nDisciplina2.equals(disciplina2)) && (nM1 == M1) && (nPI == PI) && (nM2 == M2) && (nEX == EX) && (nNF == NF) && (nDP == DP)) {
 
                         this.finish();
                     } else {

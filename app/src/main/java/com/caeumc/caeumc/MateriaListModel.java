@@ -13,18 +13,20 @@ public class MateriaListModel extends SugarRecord<MateriaListModel> {
     private Double PI;
     private Double EX;
     private Double NF;
+    private Boolean DP;
 
     public MateriaListModel() {
 
     }
 
-    public MateriaListModel(String NomeMateria, Double M1, Double M2, Double PI, Double EX, Double NF) {
+    public MateriaListModel(String NomeMateria, Double M1, Double M2, Double PI, Double EX, Double NF, Boolean DP) {
         this.NomeMateria = NomeMateria;
         this.M1 = M1;
         this.M2 = M2;
         this.PI = PI;
         this.EX = EX;
         this.NF = NF;
+        this.DP = DP;
 
     }
 
@@ -52,6 +54,8 @@ public class MateriaListModel extends SugarRecord<MateriaListModel> {
         this.NF = NF;
     }
 
+    public void setDP (Boolean DP) {this.DP = DP;}
+
     public String getNomeMateria() {
         return this.NomeMateria;
     }
@@ -75,6 +79,8 @@ public class MateriaListModel extends SugarRecord<MateriaListModel> {
     public Double getNF() {
         return this.NF;
     }
+
+    public Boolean getDP() {return this.DP;}
 
 
 }

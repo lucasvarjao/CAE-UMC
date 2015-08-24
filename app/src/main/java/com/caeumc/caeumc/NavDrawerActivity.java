@@ -17,6 +17,7 @@ import android.graphics.Color;
 
 import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -45,6 +46,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -99,12 +102,14 @@ public class NavDrawerActivity extends AppCompatActivity{
     private static TextView tt4= null;
     private static TextView tt5= null;
     private static TextView tt6= null;
+    private static CheckBox chbDP = null;
 
     private static TextView tv1 = null;
     private static TextView tv2= null;
     private static TextView tv3= null;
     private static TextView tv4= null;
     private static TextView tv5= null;
+    private static CheckBox chbDP2 = null;
 
     static String[] n = null;
     private static MateriaListModel mDisciplinas;
@@ -140,22 +145,22 @@ public class NavDrawerActivity extends AppCompatActivity{
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
         MateriaListModel.deleteAll(MateriaListModel.class);
 
-        MateriaListModel materia = new MateriaListModel("Resistência dos Materiais III", -1.0, -1.0, -1.0, -1.0, -1.0);
+        MateriaListModel materia = new MateriaListModel("Resistência dos Materiais III", -1.0, -1.0, -1.0, -1.0, -1.0, false);
         materia.save();
 
-        MateriaListModel materia1 = new MateriaListModel("Estruturas de Concreto I", -1.0, -1.0, -1.0, -1.0, -1.0);
+        MateriaListModel materia1 = new MateriaListModel("Estruturas de Concreto I", -1.0, -1.0, -1.0, -1.0, -1.0, false);
         materia1.save();
 
-        MateriaListModel materia2 = new MateriaListModel("Teoria das Estruturas II", -1.0, -1.0, -1.0, -1.0, -1.0);
+        MateriaListModel materia2 = new MateriaListModel("Teoria das Estruturas II", -1.0, -1.0, -1.0, -1.0, -1.0, false);
         materia2.save();
 
-        MateriaListModel materia3 = new MateriaListModel("Hidrologia", -1.0, -1.0, -1.0, -1.0, -1.0);
+        MateriaListModel materia3 = new MateriaListModel("Hidrologia", -1.0, -1.0, -1.0, -1.0, -1.0, false);
         materia3.save();
 
-        MateriaListModel materia4 = new MateriaListModel("Patologia", -1.0, -1.0, -1.0, -1.0, -1.0);
+        MateriaListModel materia4 = new MateriaListModel("Patologia", -1.0, -1.0, -1.0, -1.0, -1.0, false);
         materia4.save();
 
-        MateriaListModel materia5 = new MateriaListModel("Tecnologia do Concreto", -1.0, -1.0, -1.0, -1.0, -1.0);
+        MateriaListModel materia5 = new MateriaListModel("Tecnologia do Concreto", -1.0, -1.0, -1.0, -1.0, -1.0, false);
         materia5.save();
 
         context = getApplicationContext();
@@ -217,12 +222,12 @@ public class NavDrawerActivity extends AppCompatActivity{
 
     }
 
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main, menu);
         return super.onCreateOptionsMenu(menu);
-    }
+    }*/
 
   //* Called whenever we call invalidateOptionsMenu() *//*
     @Override
@@ -230,7 +235,7 @@ public class NavDrawerActivity extends AppCompatActivity{
         // If the nav drawer is open, hide action items related to the content view
       //  boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
         boolean drawerOpen = mDrawerLayout.isDrawerOpen(mNavigationView);
-       menu.findItem(R.id.action_websearch).setVisible(!drawerOpen);
+//       menu.findItem(R.id.action_websearch).setVisible(!drawerOpen);
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -490,6 +495,14 @@ public class NavDrawerActivity extends AppCompatActivity{
                     rootView = inflater.inflate(R.layout.fragment_home, container, false);
                     FloatingActionButton fab2 = (FloatingActionButton) appView.findViewById(R.id.fab);
                     fab2.setVisibility(View.INVISIBLE);
+                    ImageButton btnFacebook = (ImageButton) rootView.findViewById(R.id.btnFacebook);
+                    btnFacebook.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent facebookIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.facebook.com/"));
+                            startActivity(facebookIntent);
+                        }
+                    });
                     break;
                 default:
                     rootView = inflater.inflate(R.layout.fragment_home, container, false);
@@ -531,7 +544,6 @@ public class NavDrawerActivity extends AppCompatActivity{
             tt4 = (TextView) itemView.findViewById(R.id.lblMateria);
             tt5 = (TextView) itemView.findViewById(R.id.lblNotaFinal);
             tt6 = (TextView) itemView.findViewById(R.id.lblPI);
-            swipeableContent = (LinearLayout) itemView.findViewById(R.id.swipeable_content);
             tv1 = (TextView) itemView.findViewById(R.id.textView3);
             tv2 = (TextView) itemView.findViewById(R.id.textView5);
             tv3 = (TextView) itemView.findViewById(R.id.textView7);
@@ -632,17 +644,24 @@ public class NavDrawerActivity extends AppCompatActivity{
 
             if (tt1 != null) {
 
+
                 if (materialistmodel.getEX() == -1.0)
                     tt1.setText("-");
                 else
                     tt1.setText(materialistmodel.getEX().toString());
 
-                if (materialistmodel.getEX() < 5) {
-                    tt1.setTextColor(Color.parseColor("#F44336"));
-                } else if (materialistmodel.getEX() <= 7) {
+                if (materialistmodel.getEX() >= 9) {
+                    tt1.setTextColor(Color.parseColor("#0D47A1"));
+                } else if (materialistmodel.getEX() >= 7) {
+                    tt1.setTextColor(Color.parseColor("#1976D2"));
+                } else if (materialistmodel.getEX() >= 5) {
                     tt1.setTextColor(Color.parseColor("#2196F3"));
-                } else {
-                    tt1.setTextColor(Color.parseColor("#1565C0"));
+                } else if (materialistmodel.getEX() >= 3) {
+                    tt1.setTextColor(Color.parseColor("#F44336"));
+                } else if (materialistmodel.getEX() >= 0) {
+                    tt1.setTextColor(Color.parseColor("#D32F2F"));
+                } else  {
+                    tt1.setTextColor(0);
                 }
             }
 
@@ -652,12 +671,18 @@ public class NavDrawerActivity extends AppCompatActivity{
                 else
                     tt2.setText(materialistmodel.getM1().toString());
 
-                if (materialistmodel.getM1() < 5) {
-                    tt2.setTextColor(Color.parseColor("#F44336"));
-                } else if (materialistmodel.getM1() <= 7) {
+                if (materialistmodel.getM1() >= 9) {
+                    tt2.setTextColor(Color.parseColor("#0D47A1"));
+                } else if (materialistmodel.getM1() >= 7) {
+                    tt2.setTextColor(Color.parseColor("#1976D2"));
+                } else if (materialistmodel.getM1() >= 5) {
                     tt2.setTextColor(Color.parseColor("#2196F3"));
-                } else {
-                    tt2.setTextColor(Color.parseColor("#1565C0"));
+                } else if (materialistmodel.getM1() >= 3) {
+                    tt2.setTextColor(Color.parseColor("#F44336"));
+                } else if (materialistmodel.getM1() >= 0) {
+                    tt2.setTextColor(Color.parseColor("#D32F2F"));
+                } else  {
+                    tt2.setTextColor(0);
                 }
             }
 
@@ -667,17 +692,29 @@ public class NavDrawerActivity extends AppCompatActivity{
                 else
                     tt3.setText(materialistmodel.getM2().toString());
 
-                if (materialistmodel.getM2() < 5) {
-                    tt3.setTextColor(Color.parseColor("#F44336"));
-                } else if (materialistmodel.getM2() <= 7) {
+                if (materialistmodel.getM2() >= 9) {
+                    tt3.setTextColor(Color.parseColor("#0D47A1"));
+                } else if (materialistmodel.getM2() >= 7) {
+                    tt3.setTextColor(Color.parseColor("#1976D2"));
+                } else if (materialistmodel.getM2() >= 5) {
                     tt3.setTextColor(Color.parseColor("#2196F3"));
-                } else {
-                    tt3.setTextColor(Color.parseColor("#1565C0"));
+                } else if (materialistmodel.getM2() >= 3) {
+                    tt3.setTextColor(Color.parseColor("#F44336"));
+                } else if (materialistmodel.getM2() >= 0) {
+                    tt3.setTextColor(Color.parseColor("#D32F2F"));
+                } else  {
+                    tt3.setTextColor(0);
                 }
             }
 
             if (tt4 != null) {
-                tt4.setText(materialistmodel.getNomeMateria());
+
+                if (materialistmodel.getDP() == true) {
+                    tt4.setText("DP - "+materialistmodel.getNomeMateria());
+
+                } else {
+                    tt4.setText(materialistmodel.getNomeMateria());
+                }
 
 
 
@@ -689,12 +726,18 @@ public class NavDrawerActivity extends AppCompatActivity{
                 else
                     tt5.setText(materialistmodel.getNF().toString());
 
-                if (materialistmodel.getNF() < 5) {
-                    tt5.setTextColor(Color.parseColor("#F44336"));
-                } else if (materialistmodel.getNF() <= 7) {
+                if (materialistmodel.getNF() >= 9) {
+                    tt5.setTextColor(Color.parseColor("#0D47A1"));
+                } else if (materialistmodel.getNF() >= 7) {
+                    tt5.setTextColor(Color.parseColor("#1976D2"));
+                } else if (materialistmodel.getNF() >= 5) {
                     tt5.setTextColor(Color.parseColor("#2196F3"));
-                } else {
-                    tt5.setTextColor(Color.parseColor("#1565C0"));
+                } else if (materialistmodel.getNF() >= 3) {
+                    tt5.setTextColor(Color.parseColor("#F44336"));
+                } else if (materialistmodel.getNF() >= 0) {
+                    tt5.setTextColor(Color.parseColor("#D32F2F"));
+                } else  {
+                    tt5.setTextColor(0);
                 }
             }
 
@@ -704,12 +747,18 @@ public class NavDrawerActivity extends AppCompatActivity{
                 else
                     tt6.setText(materialistmodel.getPI().toString());
 
-                if (materialistmodel.getPI() < 5) {
-                    tt6.setTextColor(Color.parseColor("#F44336"));
-                } else if (materialistmodel.getPI() <= 7) {
+                if (materialistmodel.getPI() >= 9) {
+                    tt6.setTextColor(Color.parseColor("#0D47A1"));
+                } else if (materialistmodel.getPI() >= 7) {
+                    tt6.setTextColor(Color.parseColor("#1976D2"));
+                } else if (materialistmodel.getPI() >= 5) {
                     tt6.setTextColor(Color.parseColor("#2196F3"));
-                } else {
-                    tt6.setTextColor(Color.parseColor("#1565C0"));
+                } else if (materialistmodel.getPI() >= 3) {
+                    tt6.setTextColor(Color.parseColor("#F44336"));
+                } else if (materialistmodel.getPI() >= 0) {
+                    tt6.setTextColor(Color.parseColor("#D32F2F"));
+                } else  {
+                    tt6.setTextColor(0);
                 }
             }
 
@@ -757,74 +806,6 @@ public class NavDrawerActivity extends AppCompatActivity{
 
 
     }
-
-
-    static ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
-
-        @Override
-        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-
-            return false;
-        }
-
-        @Override
-        public void onSelectedChanged(RecyclerView.ViewHolder viewHolder,
-                                      int actionState) {
-            // We only want the active item
-            if (actionState != ItemTouchHelper.ACTION_STATE_IDLE) {
-                viewHolder.itemView.setBackgroundColor(Color.LTGRAY);
-            }
-
-            super.onSelectedChanged(viewHolder, actionState);
-        }
-        @Override
-        public void clearView(RecyclerView recyclerView,
-                              RecyclerView.ViewHolder viewHolder) {
-            super.clearView(recyclerView, viewHolder);
-
-            viewHolder.itemView.setBackgroundColor(0);
-        }
-
-        @Override
-        public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
-            //Remove swiped item from list and notify the RecyclerView
-
-            String id = teste.get(viewHolder.getAdapterPosition());
-            MateriaListModel materiaListModel = MateriaListModel.findById(MateriaListModel.class, Long.valueOf(id));
-            materiaListModel.delete();
-            teste.clear();
-            lstMaterias.setAdapter(new DisciplinaAdapter());
-
-
-        }
-        @Override
-        public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
-            if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
-                // Get RecyclerView item from the ViewHolder
-                View itemView = viewHolder.itemView;
-
-                Paint p = new Paint();
-                if (dX > 0) {
-            /* Set your color for positive displacement */
-                    p.setColor(Color.parseColor("#E53935"));
-                    // Draw Rect with varying right side, equal to displacement dX
-                    c.drawRect((float) itemView.getLeft(), (float) itemView.getTop(), dX,
-                            (float) itemView.getBottom(), p);
-                } else {
-            /* Set your color for negative displacement */
-                    p.setColor(Color.parseColor("#E53935"));
-                    // Draw Rect with varying left side, equal to the item's right side plus negative displacement dX
-                    c.drawRect((float) itemView.getRight() + dX, (float) itemView.getTop(),
-                            (float) itemView.getRight(), (float) itemView.getBottom(), p);
-                }
-
-                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
-            }
-        }
-    };
-
-
-
 
 
 
