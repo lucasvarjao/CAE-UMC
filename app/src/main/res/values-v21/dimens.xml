@@ -9,6 +9,7 @@
     <dimen name="toolbarElevation">4dp</dimen>
     <dimen name="appBarTopMargin">0dp</dimen>
     <dimen name="statusBarHeight">0dp</dimen>
+    <dimen name="topMargin">0dp</dimen>
 
     <dimen name="fab_compat_margin">16dp</dimen>
 </resources>

@@ -1,33 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="72dp"
-    android:paddingLeft="16dp"
-    android:paddingBottom="8dp"
-    android:paddingTop="8dp"
-    android:paddingRight="16dp"
+    android:layout_height="80dp"
+    android:padding="8dp"
     android:background="?android:attr/selectableItemBackground"
     android:clickable="true"
-    android:focusable="true">
+    android:focusable="true"
+    android:gravity="center_vertical">
 
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.AppCompat"
+
         android:text="Resistência dos Materiais III"
         android:id="@+id/lblMateria"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="8dp"
+
         android:textSize="16sp"
         android:textStyle="bold" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.AppCompat"
+
         android:text="M1:"
         android:id="@+id/textView3"
         android:layout_below="@+id/lblMateria"
@@ -40,7 +38,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.AppCompat"
+
         android:text="-"
         android:id="@+id/lblM1"
         android:layout_below="@+id/lblMateria"
@@ -54,7 +52,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="14sp"
-        android:textAppearance="@style/TextAppearance.AppCompat"
+
         android:text="PI:"
         android:id="@+id/textView5"
         android:layout_alignBottom="@+id/lblM1"
@@ -67,7 +65,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="14sp"
-        android:textAppearance="@style/TextAppearance.AppCompat"
+
         android:text="-"
         android:id="@+id/lblPI"
         android:layout_alignTop="@+id/textView5"
@@ -78,7 +76,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.AppCompat"
+
         android:textSize="14sp"
         android:text="ND:"
         android:id="@+id/textView7"
@@ -92,7 +90,7 @@
         android:layout_height="wrap_content"
         android:textSize="14sp"
         android:text="-"
-        android:textAppearance="@style/TextAppearance.AppCompat"
+
         android:id="@+id/lblM2"
         android:layout_alignTop="@+id/textView7"
         android:layout_toRightOf="@+id/textView7"
@@ -104,7 +102,7 @@
         android:layout_height="wrap_content"
         android:textSize="14sp"
         android:text="EX:"
-        android:textAppearance="@style/TextAppearance.AppCompat"
+
         android:id="@+id/textView9"
         android:layout_alignBottom="@+id/lblM2"
         android:layout_toRightOf="@+id/lblM2"
@@ -118,7 +116,7 @@
         android:textSize="14sp"
         android:text="-"
         android:id="@+id/lblExame"
-        android:textAppearance="@style/TextAppearance.AppCompat"
+
         android:layout_alignBottom="@+id/textView9"
         android:layout_toRightOf="@+id/textView9"
         android:layout_toEndOf="@+id/textView9"
@@ -131,7 +129,7 @@
         android:textSize="14sp"
         android:text="NF:"
         android:id="@+id/textView11"
-        android:textAppearance="@style/TextAppearance.AppCompat"
+
         android:layout_alignBottom="@+id/lblExame"
         android:layout_toRightOf="@+id/lblExame"
         android:layout_toEndOf="@+id/lblExame"
@@ -142,7 +140,7 @@
         android:layout_height="wrap_content"
         android:textSize="14sp"
         android:text="-"
-        android:textAppearance="@style/TextAppearance.AppCompat"
+
         android:id="@+id/lblNotaFinal"
         android:layout_alignParentRight="false"
         android:layout_alignParentEnd="false"

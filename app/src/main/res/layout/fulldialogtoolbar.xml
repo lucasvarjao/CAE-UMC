@@ -13,7 +13,7 @@
 
     <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
 
-        android:background="@color/caeumccolor800"
+        android:background="@color/primary"
         android:theme="@style/ThemeOverlay.AppCompat.Dark"
         android:id="@+id/tool_bar_dialog"
         android:elevation="4dp"

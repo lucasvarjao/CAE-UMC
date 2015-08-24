@@ -22,6 +22,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -29,6 +30,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -370,7 +373,7 @@ public class NavDrawerActivity extends AppCompatActivity{
         }
 
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+        public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                                  Bundle savedInstanceState) {
             int i = getArguments().getInt(ARG_PLANET_NUMBER);
             final View rootView;
@@ -442,7 +445,13 @@ public class NavDrawerActivity extends AppCompatActivity{
 
                     rootView = inflater.inflate(R.layout.fragment_notas, container, false);
                     lstMaterias = (RecyclerView) rootView.findViewById(R.id.lstMaterias);
-                    lstMaterias.setLayoutManager(new LinearLayoutManager(getActivity()));
+                    LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+                    layoutManager.supportsPredictiveItemAnimations();
+                    lstMaterias.setLayoutManager(layoutManager);
+                    lstMaterias.setItemAnimator(new DefaultItemAnimator());
+                    lstMaterias.setHasFixedSize(true);
+                    lstMaterias.addItemDecoration(new DividerItemDecoration(getActivity(), null));
+
 
                     activityDisciplina = getActivity();
 
@@ -467,7 +476,6 @@ public class NavDrawerActivity extends AppCompatActivity{
                             Bundle args = new Bundle();
                             args.putString("DISCIPLINA_ID", "");
                             args.putString("EDITAR_DISCIPLINA", "0");
-
                             intent.putExtras(args);
                             startActivity(intent);
                         }
@@ -661,7 +669,7 @@ public class NavDrawerActivity extends AppCompatActivity{
                 } else if (materialistmodel.getEX() >= 0) {
                     tt1.setTextColor(Color.parseColor("#D32F2F"));
                 } else  {
-                    tt1.setTextColor(0);
+                    tt1.setTextColor(Color.LTGRAY);
                 }
             }
 
@@ -682,7 +690,7 @@ public class NavDrawerActivity extends AppCompatActivity{
                 } else if (materialistmodel.getM1() >= 0) {
                     tt2.setTextColor(Color.parseColor("#D32F2F"));
                 } else  {
-                    tt2.setTextColor(0);
+                    tt1.setTextColor(Color.LTGRAY);
                 }
             }
 
@@ -703,7 +711,7 @@ public class NavDrawerActivity extends AppCompatActivity{
                 } else if (materialistmodel.getM2() >= 0) {
                     tt3.setTextColor(Color.parseColor("#D32F2F"));
                 } else  {
-                    tt3.setTextColor(0);
+                    tt1.setTextColor(Color.LTGRAY);
                 }
             }
 
@@ -737,7 +745,7 @@ public class NavDrawerActivity extends AppCompatActivity{
                 } else if (materialistmodel.getNF() >= 0) {
                     tt5.setTextColor(Color.parseColor("#D32F2F"));
                 } else  {
-                    tt5.setTextColor(0);
+                    tt1.setTextColor(Color.LTGRAY);
                 }
             }
 
@@ -758,7 +766,7 @@ public class NavDrawerActivity extends AppCompatActivity{
                 } else if (materialistmodel.getPI() >= 0) {
                     tt6.setTextColor(Color.parseColor("#D32F2F"));
                 } else  {
-                    tt6.setTextColor(0);
+                    tt1.setTextColor(Color.LTGRAY);
                 }
             }
 

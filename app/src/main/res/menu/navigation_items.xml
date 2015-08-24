@@ -4,23 +4,24 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
-            android:icon="@drawable/ic_home_black_18dp"
+            android:icon="@drawable/ic_home_grey600_24dp"
             android:checked="true"
             android:title="Home" />
         <item
             android:id="@+id/nav_notas"
-            android:icon="@drawable/ic_receipt_black_18dp"
+            android:icon="@drawable/ic_note_text_grey600_24dp"
             android:title="Notas" />
         <item
             android:id="@+id/nav_calendario"
-            android:icon="@drawable/ic_event_note_black_18dp"
+            android:icon="@drawable/ic_calendar_grey600_24dp"
             android:title="Calendário Acadêmico"
             android:enabled="false"/>
         <item
             android:id="@+id/nav_arquivos"
-            android:icon="@drawable/ic_library_books_black_18dp"
+            android:icon="@drawable/ic_file_document_grey600_24dp"
             android:title="Arquivos"
-            android:enabled="false"/>
+            android:enabled="false"
+            android:visible="false"/>
     </group>
 
 </menu>
