@@ -1,5 +1,6 @@
 package com.caeumc.caeumc;
 
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -12,6 +13,7 @@ import android.content.Context;
 
 import android.content.Intent;
 
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Canvas;
@@ -19,7 +21,10 @@ import android.graphics.Color;
 
 import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -40,6 +45,7 @@ import android.support.v7.widget.Toolbar;
 import android.os.Bundle;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -51,10 +57,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.ArrayAdapter;
 import android.widget.CalendarView;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -63,16 +71,21 @@ import com.bignerdranch.android.multiselector.MultiSelector;
 import com.bignerdranch.android.multiselector.MultiSelectorBindingHolder;
 import com.bignerdranch.android.multiselector.SingleSelector;
 import com.bignerdranch.android.multiselector.SwappingHolder;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.gson.GsonFactory;
+import com.google.api.client.util.ExponentialBackOff;
+import com.google.api.services.calendar.CalendarScopes;
 
 import java.nio.charset.CoderResult;
 import java.util.ArrayList;
 
+import java.util.Arrays;
 import java.util.List;
-
-import me.everything.providers.android.calendar.Calendar;
-import me.everything.providers.android.calendar.CalendarProvider;
-import me.everything.providers.android.calendar.Event;
-import me.everything.providers.android.calendar.Instance;
 
 
 public class NavDrawerActivity extends AppCompatActivity{
@@ -96,6 +109,9 @@ public class NavDrawerActivity extends AppCompatActivity{
     static View snackView;
     static View appView;
     static Activity activityDisciplina ;
+    static Activity mainActivity;
+    static Activity fragmentActivity;
+    static NavDrawerActivity drawerActivity;
     static List<String> teste = new ArrayList<String>();
     private static MultiSelector mMultiSelector = new MultiSelector();
 
@@ -121,9 +137,19 @@ public class NavDrawerActivity extends AppCompatActivity{
     private static TextView tv4= null;
     private static TextView tv5= null;
     private static CheckBox chbDP2 = null;
-
+private static ListView lstEventos;
     static String[] n = null;
     private static MateriaListModel mDisciplinas;
+
+    static com.google.api.services.calendar.Calendar mService;
+    static GoogleAccountCredential credential;
+    static final HttpTransport transport = AndroidHttp.newCompatibleTransport();
+    static final JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
+    static final int REQUEST_ACCOUNT_PICKER = 1000;
+    static final int REQUEST_AUTHORIZATION = 1001;
+    static final int REQUEST_GOOGLE_PLAY_SERVICES = 1002;
+    private static final String PREF_ACCOUNT_NAME = "accountName";
+    private static final String[] SCOPES = { CalendarScopes.CALENDAR_READONLY };
 
 
     private static void popularListView() {
@@ -143,7 +169,8 @@ public class NavDrawerActivity extends AppCompatActivity{
         appView = this.getWindow().getDecorView().getRootView();
 
 
-
+        mainActivity = this;
+        drawerActivity = this;
 
 
         mTitle = mDrawerTitle = getSupportActionBar().getTitle();
@@ -378,6 +405,15 @@ public class NavDrawerActivity extends AppCompatActivity{
                 }
 
             }
+
+            if (i == 1) {
+                if (isGooglePlayServicesAvailable()) {
+                    refreshResults();
+                } else {
+                    Toast.makeText(contextFragment,"Google Play Services required: " +
+                            "after installing, close and relaunch this app.", Toast.LENGTH_SHORT);
+                }
+            }
         }
 
         @Override
@@ -503,22 +539,19 @@ public class NavDrawerActivity extends AppCompatActivity{
                     break;
                 case 1:
                     rootView = inflater.inflate(R.layout.fragment_calendario, container, false);
-                    iniciarCalendario(rootView);
-                    contextFragment = rootView.getContext();
-                    CalendarProvider calendarProvider = new CalendarProvider(contextFragment);
-                    List<Calendar> calendars = calendarProvider.getCalendars().getList();
-                    List<Event> events = calendarProvider.getEvents(6).getList();
-                    java.util.Calendar beginTime = java.util.Calendar.getInstance();
-                    beginTime.set(2015, 8, 3);
-                    long startMilis = beginTime.getTimeInMillis();
-                    java.util.Calendar endTime = java.util.Calendar.getInstance();
-                    endTime.set(2015, 12, 25);
-                    long endMilis = endTime.getTimeInMillis();
-                    Cursor instances = calendarProvider.getInstances(startMilis, endMilis).getCursor();
-                  //  for (int f=0; f < instances.size(); f++) {
-                   //     eventos.add(calendarProvider.getEvent(instances.subList()));
+                    lstEventos = (ListView) rootView.findViewById(R.id.lstEventos);
 
-                  //  }
+                    contextFragment = rootView.getContext();
+                    SharedPreferences settings = getActivity().getPreferences(Context.MODE_PRIVATE);
+                    credential = GoogleAccountCredential.usingOAuth2(
+                            contextFragment.getApplicationContext(), Arrays.asList(SCOPES))
+                            .setBackOff(new ExponentialBackOff())
+                            .setSelectedAccountName(settings.getString(PREF_ACCOUNT_NAME, null));
+
+                    mService = new com.google.api.services.calendar.Calendar.Builder(
+                            transport, jsonFactory, credential)
+                            .setApplicationName("CAE UMC")
+                            .build();
 
                     break;
                 case 2:
@@ -549,6 +582,7 @@ public class NavDrawerActivity extends AppCompatActivity{
            //         "drawable", getActivity().getPackageName());
            // ((ImageView) rootView.findViewById(R.id.image)).setImageResource(imageId);
             getActivity().setTitle(planet);
+            fragmentActivity = getActivity();
             return rootView;
         }
 
@@ -840,15 +874,137 @@ public class NavDrawerActivity extends AppCompatActivity{
 
     }
 
+    @Override
+    protected void onActivityResult(
+            int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch(requestCode) {
+            case REQUEST_GOOGLE_PLAY_SERVICES:
+                if (resultCode != RESULT_OK) {
+                    isGooglePlayServicesAvailable();
+                }
+                break;
+            case REQUEST_ACCOUNT_PICKER:
+                if (resultCode == RESULT_OK && data != null &&
+                        data.getExtras() != null) {
+                    String accountName =
+                            data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+                    if (accountName != null) {
+                        credential.setSelectedAccountName(accountName);
+                        SharedPreferences settings =
+                                getPreferences(Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = settings.edit();
+                        editor.putString(PREF_ACCOUNT_NAME, accountName);
+                        editor.commit();
+                    }
+                } else if (resultCode == RESULT_CANCELED) {
+                    Toast.makeText(contextFragment,"Account unspecified.",Toast.LENGTH_SHORT);
+                }
+                break;
+            case REQUEST_AUTHORIZATION:
+                if (resultCode != RESULT_OK) {
+                    chooseAccount();
+                }
+                break;
+        }
 
-    public static void iniciarCalendario(View rootView) {
-        calendarView = (CalendarView) rootView.findViewById(R.id.calendar);
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 
-        calendarView.setShowWeekNumber(false);
+    private static void refreshResults() {
+        if (credential.getSelectedAccountName() == null) {
+            chooseAccount();
+        } else {
+            if (isDeviceOnline()) {
+                new ApiAsyncTask(drawerActivity).execute();
+            } else {
+                Toast.makeText(contextFragment,"No network connection available.", Toast.LENGTH_SHORT);
+            }
+        }
+    }
 
-        calendarView.setFirstDayOfWeek(1);
+    public void clearResultsText() {
+        mainActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
 
-}
+
+            }
+        });
+    }
+
+    public void updateResultsText(final List<String> dataStrings) {
+        fragmentActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (dataStrings == null) {
+                    Toast.makeText(contextFragment, "Error retrieving data!", Toast.LENGTH_SHORT);
+                } else if (dataStrings.size() == 0) {
+                    Toast.makeText(contextFragment, "No data found.", Toast.LENGTH_SHORT);
+                } else {
+
+                    final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(contextFragment, android.R.layout.simple_list_item_1, dataStrings);
+                    lstEventos.setAdapter(arrayAdapter);
+
+                    Toast.makeText(contextFragment, "Data retrieved using" +
+                            " the Google Calendar API:", Toast.LENGTH_SHORT);
+
+                }
+            }
+        });
+    }
+
+    public void updateStatus(final String message) {
+       mainActivity.runOnUiThread(new Runnable() {
+           @Override
+           public void run() {
+               Toast.makeText(contextFragment, message, Toast.LENGTH_SHORT);
+           }
+       });
+    }
+
+    private static void chooseAccount() {
+        NavDrawerActivity navDrawerActivity = new NavDrawerActivity();
+        mainActivity.startActivityForResult(
+                credential.newChooseAccountIntent(), REQUEST_ACCOUNT_PICKER);
+    }
+
+    private static boolean isDeviceOnline() {
+        NavDrawerActivity navDrawerActivity = new NavDrawerActivity();
+        ConnectivityManager connMgr =
+                (ConnectivityManager) contextFragment.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        return (networkInfo != null && networkInfo.isConnected());
+    }
+
+    private static boolean isGooglePlayServicesAvailable() {
+        //NavDrawerActivity navDrawerActivity = new NavDrawerActivity();
+        final int connectionStatusCode =
+                GooglePlayServicesUtil.isGooglePlayServicesAvailable(contextFragment);
+        if (GooglePlayServicesUtil.isUserRecoverableError(connectionStatusCode)) {
+            showGooglePlayServicesAvailabilityErrorDialog(connectionStatusCode);
+            return false;
+        } else if (connectionStatusCode != ConnectionResult.SUCCESS ) {
+            return false;
+        }
+        return true;
+    }
+
+    static void showGooglePlayServicesAvailabilityErrorDialog(
+
+            final int connectionStatusCode) {
+        final NavDrawerActivity navDrawerActivity = new NavDrawerActivity();
+        mainActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Dialog dialog = GooglePlayServicesUtil.getErrorDialog(
+                        connectionStatusCode,
+                        mainActivity,
+                        REQUEST_GOOGLE_PLAY_SERVICES);
+                dialog.show();
+            }
+        });
+    }
 
 
 }
