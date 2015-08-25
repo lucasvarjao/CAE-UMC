@@ -7,11 +7,13 @@ import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.app.Fragment;
 import android.app.SearchManager;
+import android.app.usage.UsageEvents;
 import android.content.Context;
 
 import android.content.Intent;
 
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.graphics.Canvas;
 import android.graphics.Color;
 
@@ -49,6 +51,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.CalendarView;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -66,10 +69,15 @@ import java.util.ArrayList;
 
 import java.util.List;
 
+import me.everything.providers.android.calendar.Calendar;
+import me.everything.providers.android.calendar.CalendarProvider;
+import me.everything.providers.android.calendar.Event;
+import me.everything.providers.android.calendar.Instance;
 
 
 public class NavDrawerActivity extends AppCompatActivity{
 
+    private static CalendarView calendarView;
     private DrawerLayout mDrawerLayout;
     public static int notifyUpdate = 0;
     public static int disciplinaPosition=-99;
@@ -495,6 +503,23 @@ public class NavDrawerActivity extends AppCompatActivity{
                     break;
                 case 1:
                     rootView = inflater.inflate(R.layout.fragment_calendario, container, false);
+                    iniciarCalendario(rootView);
+                    contextFragment = rootView.getContext();
+                    CalendarProvider calendarProvider = new CalendarProvider(contextFragment);
+                    List<Calendar> calendars = calendarProvider.getCalendars().getList();
+                    List<Event> events = calendarProvider.getEvents(6).getList();
+                    java.util.Calendar beginTime = java.util.Calendar.getInstance();
+                    beginTime.set(2015, 8, 3);
+                    long startMilis = beginTime.getTimeInMillis();
+                    java.util.Calendar endTime = java.util.Calendar.getInstance();
+                    endTime.set(2015, 12, 25);
+                    long endMilis = endTime.getTimeInMillis();
+                    Cursor instances = calendarProvider.getInstances(startMilis, endMilis).getCursor();
+                  //  for (int f=0; f < instances.size(); f++) {
+                   //     eventos.add(calendarProvider.getEvent(instances.subList()));
+
+                  //  }
+
                     break;
                 case 2:
                     rootView = inflater.inflate(R.layout.fragment_arquivos, container, false);
@@ -815,6 +840,15 @@ public class NavDrawerActivity extends AppCompatActivity{
 
     }
 
+
+    public static void iniciarCalendario(View rootView) {
+        calendarView = (CalendarView) rootView.findViewById(R.id.calendar);
+
+        calendarView.setShowWeekNumber(false);
+
+        calendarView.setFirstDayOfWeek(1);
+
+}
 
 
 }

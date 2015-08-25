@@ -15,7 +15,7 @@
             android:id="@+id/nav_calendario"
             android:icon="@drawable/ic_calendar_grey600_24dp"
             android:title="Calendário Acadêmico"
-            android:enabled="false"/>
+            android:enabled="true"/>
         <item
             android:id="@+id/nav_arquivos"
             android:icon="@drawable/ic_file_document_grey600_24dp"
