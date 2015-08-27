@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Setembro de 2015"
+        android:id="@+id/lblMesAno"
+        android:layout_alignParentTop="false"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentBottom="false"
+        android:layout_alignParentRight="false"
+        android:layout_alignWithParentIfMissing="false"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="23"
+        android:id="@+id/lblDiaMes"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="23dp"
+        android:layout_alignParentTop="false"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/lblMesAno" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="qua"
+        android:id="@+id/lblDiaSemana"
+        android:layout_alignLeft="@+id/lblDiaMes"
+        android:layout_below="@+id/lblDiaMes" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/lblDiaMes"
+        android:layout_alignTop="@+id/lblDiaMes"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:background="@color/primary"
+        android:padding="8dp"
+        android:id="@+id/eventoLayout">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="M1 - RESMAT III"
+            android:id="@+id/lblDescricaoEvento"
+            android:layout_alignTop="@+id/lblDiaMes"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/primary_text_default_material_dark"
+            android:layout_toRightOf="@+id/lblDiaMes"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="19:00-22:00 em UMC"
+            android:id="@+id/lblHoraLocal"
+            android:textColor="@color/primary_text_default_material_dark"
+            android:textSize="12sp" />
+    </LinearLayout>
+</RelativeLayout>

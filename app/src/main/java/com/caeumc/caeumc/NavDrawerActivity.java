@@ -102,6 +102,7 @@ public class NavDrawerActivity extends AppCompatActivity{
     private NavigationView mNavigationView;
     private Toolbar toolbar;
    private static RecyclerView lstMaterias;
+    private static RecyclerView lstEventos;
     private static ListAdapter adapter;
     private static String ALTERACAO2 = "0";
     static Context context;
@@ -137,7 +138,6 @@ public class NavDrawerActivity extends AppCompatActivity{
     private static TextView tv4= null;
     private static TextView tv5= null;
     private static CheckBox chbDP2 = null;
-private static ListView lstEventos;
     static String[] n = null;
     private static MateriaListModel mDisciplinas;
 
@@ -411,7 +411,7 @@ private static ListView lstEventos;
                     refreshResults();
                 } else {
                     Toast.makeText(contextFragment,"Google Play Services required: " +
-                            "after installing, close and relaunch this app.", Toast.LENGTH_SHORT);
+                            "after installing, close and relaunch this app.", Toast.LENGTH_LONG).show();
                 }
             }
         }
@@ -539,7 +539,7 @@ private static ListView lstEventos;
                     break;
                 case 1:
                     rootView = inflater.inflate(R.layout.fragment_calendario, container, false);
-                    lstEventos = (ListView) rootView.findViewById(R.id.lstEventos);
+                    lstEventos = (RecyclerView) rootView.findViewById(R.id.lstEventos);
 
                     contextFragment = rootView.getContext();
                     SharedPreferences settings = getActivity().getPreferences(Context.MODE_PRIVATE);
@@ -898,7 +898,7 @@ private static ListView lstEventos;
                         editor.commit();
                     }
                 } else if (resultCode == RESULT_CANCELED) {
-                    Toast.makeText(contextFragment,"Account unspecified.",Toast.LENGTH_SHORT);
+                    Toast.makeText(contextFragment,"Account unspecified.",Toast.LENGTH_LONG).show();
                 }
                 break;
             case REQUEST_AUTHORIZATION:
@@ -918,7 +918,7 @@ private static ListView lstEventos;
             if (isDeviceOnline()) {
                 new ApiAsyncTask(drawerActivity).execute();
             } else {
-                Toast.makeText(contextFragment,"No network connection available.", Toast.LENGTH_SHORT);
+                Toast.makeText(contextFragment,"No network connection available.", Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -938,16 +938,16 @@ private static ListView lstEventos;
             @Override
             public void run() {
                 if (dataStrings == null) {
-                    Toast.makeText(contextFragment, "Error retrieving data!", Toast.LENGTH_SHORT);
+                    Toast.makeText(contextFragment, "Error retrieving data!", Toast.LENGTH_LONG).show();
                 } else if (dataStrings.size() == 0) {
-                    Toast.makeText(contextFragment, "No data found.", Toast.LENGTH_SHORT);
+                    Toast.makeText(contextFragment, "No data found.", Toast.LENGTH_LONG).show();
                 } else {
 
                     final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(contextFragment, android.R.layout.simple_list_item_1, dataStrings);
-                    lstEventos.setAdapter(arrayAdapter);
+
 
                     Toast.makeText(contextFragment, "Data retrieved using" +
-                            " the Google Calendar API:", Toast.LENGTH_SHORT);
+                            " the Google Calendar API:", Toast.LENGTH_LONG).show();
 
                 }
             }
@@ -958,7 +958,7 @@ private static ListView lstEventos;
        mainActivity.runOnUiThread(new Runnable() {
            @Override
            public void run() {
-               Toast.makeText(contextFragment, message, Toast.LENGTH_SHORT);
+               Toast.makeText(contextFragment, message, Toast.LENGTH_LONG).show();
            }
        });
     }

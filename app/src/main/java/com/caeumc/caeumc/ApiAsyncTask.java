@@ -95,7 +95,7 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
                     String.format("%s (%s)", event.getSummary(), start));
         }
 
-      /*  Date dateDiaMinimo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2015-08-03 00:00:00");
+       Date dateDiaMinimo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2015-08-03 00:00:00");
         DateTime diaMinimo = new DateTime(dateDiaMinimo);
 
         Date dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2015-01-01 00:00:00");
@@ -110,11 +110,16 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
         List<Event> items2 = events1.getItems();
 
         for (Event event : items2) {
-            DateTime start = event.getStart().getDate();
+            DateTime start = event.getStart().getDateTime();
+            if (start == null) {
+                // All-day events don't have start times, so just use
+                // the start date.
+                start = event.getStart().getDate();
+            }
             eventStrings.add(
                     String.format("%s (%s)", event.getSummary(), start));
 
-        }*/
+        }
 
         return eventStrings;
     }
