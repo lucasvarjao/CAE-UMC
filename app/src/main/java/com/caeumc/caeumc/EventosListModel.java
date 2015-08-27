@@ -1,11 +1,12 @@
 package com.caeumc.caeumc;
 
 
+import com.orm.SugarRecord;
 
 /**
  * Created by Lucas Varjao on 25/08/2015.
  */
-public class EventosListModel {
+public class EventosListModel extends SugarRecord<EventosListModel> {
 
     private String Descricao;
     private Integer Data;

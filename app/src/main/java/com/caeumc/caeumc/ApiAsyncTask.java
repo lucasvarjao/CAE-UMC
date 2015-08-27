@@ -73,16 +73,16 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
                 .setSingleEvents(true)
                 .execute();
         List<Event> items = events.getItems();
+        EventosListModel.deleteAll(EventosListModel.class);
 
         for (Event event : items) {
 
            String descricao = event.getSummary();
             long data = event.getStart().getDateTime().getValue();
-            String teste = event.getStart().getDateTime().toString();
-            Date testeDate = new Date(data);
-            Log.e("Teste Data", descricao + " - " + String.valueOf(data) + " - " + teste);
-           // EventosListModel eventosListModel = new EventosListModel();
-            //eventosListModel.save();
+            long horaInicio = event.getStart().getDateTime().getValue();
+            long horaFinal = event.getEnd().getDateTime().getValue();
+            String local = event.getLocation();
+
 
 
             DateTime start = event.getStart().getDateTime();
@@ -90,18 +90,23 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
                 // All-day events don't have start times, so just use
                 // the start date.
                 start = event.getStart().getDate();
+                data = event.getStart().getDate().getValue();
+                horaInicio = 0;
+                horaFinal = 0;
             }
             eventStrings.add(
                     String.format("%s (%s)", event.getSummary(), start));
+            EventosListModel eventosListModel = new EventosListModel(descricao, (int)data, (int)horaInicio, (int)horaFinal, local);
+            eventosListModel.save();
         }
 
        Date dateDiaMinimo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2015-08-03 00:00:00");
         DateTime diaMinimo = new DateTime(dateDiaMinimo);
 
-        Date dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2015-01-01 00:00:00");
+        Date dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2016-01-01 00:00:00");
         DateTime diaMaximo = new DateTime(dateDiaMaximo);
 
-        Events events1 = mActivity.mService.events().list("en.brazilian#holiday@group.v.calendar.google.com")
+        Events events1 = mActivity.mService.events().list("pt-br.brazilian#holiday@group.v.calendar.google.com")
                 .setTimeMin(diaMinimo)
                 .setTimeMax(diaMaximo)
                 .setOrderBy("startTime")
@@ -110,14 +115,29 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
         List<Event> items2 = events1.getItems();
 
         for (Event event : items2) {
+            String descricao = event.getSummary();
+           long data;
+            long horaInicio;
+            long horaFinal;
+            String local = event.getLocation();
             DateTime start = event.getStart().getDateTime();
             if (start == null) {
                 // All-day events don't have start times, so just use
                 // the start date.
                 start = event.getStart().getDate();
+                data = event.getStart().getDate().getValue();
+                horaInicio = 0;
+                horaFinal = 0;
+            } else {
+
+                data = event.getStart().getDateTime().getValue();
+                horaInicio = event.getStart().getDateTime().getValue();
+                horaFinal = event.getEnd().getDateTime().getValue();
             }
             eventStrings.add(
                     String.format("%s (%s)", event.getSummary(), start));
+            EventosListModel eventosListModel = new EventosListModel(descricao, (int)data, (int)horaInicio, (int)horaFinal, local);
+            eventosListModel.save();
 
         }
 

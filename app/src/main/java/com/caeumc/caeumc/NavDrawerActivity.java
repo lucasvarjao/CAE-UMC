@@ -121,6 +121,7 @@ public class NavDrawerActivity extends AppCompatActivity{
     static CoordinatorLayout rootLayout;
 
     static List<MateriaListModel> disciplinasList = new ArrayList<>();
+    static List<EventosListModel> eventosList = new ArrayList<>();
     static ActionMode.Callback mDeleteMode;
     static ActionMode mActionDeleteMode;
 
@@ -140,6 +141,7 @@ public class NavDrawerActivity extends AppCompatActivity{
     private static CheckBox chbDP2 = null;
     static String[] n = null;
     private static MateriaListModel mDisciplinas;
+    private static EventosListModel mEventos;
 
     static com.google.api.services.calendar.Calendar mService;
     static GoogleAccountCredential credential;
@@ -539,7 +541,7 @@ public class NavDrawerActivity extends AppCompatActivity{
                     break;
                 case 1:
                     rootView = inflater.inflate(R.layout.fragment_calendario, container, false);
-                    lstEventos = (RecyclerView) rootView.findViewById(R.id.lstEventos);
+                    snackView = rootView;
 
                     contextFragment = rootView.getContext();
                     SharedPreferences settings = getActivity().getPreferences(Context.MODE_PRIVATE);
@@ -943,7 +945,16 @@ public class NavDrawerActivity extends AppCompatActivity{
                     Toast.makeText(contextFragment, "No data found.", Toast.LENGTH_LONG).show();
                 } else {
 
-                    final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(contextFragment, android.R.layout.simple_list_item_1, dataStrings);
+                    lstEventos = (RecyclerView) snackView.findViewById(R.id.lstEventos);
+                    LinearLayoutManager layoutManager = new LinearLayoutManager(fragmentActivity);
+                    layoutManager.supportsPredictiveItemAnimations();
+                    lstEventos.setLayoutManager(layoutManager);
+                    lstEventos.setItemAnimator(new DefaultItemAnimator());
+                    lstEventos.setHasFixedSize(true);
+                    //lstEventos.addItemDecoration(new DividerItemDecoration(fragmentActivity, null));
+                    EventosAdapter eventosAdapter = new EventosAdapter();
+                    eventosAdapter.setHasStableIds(true);
+                    lstEventos.setAdapter(eventosAdapter);
 
 
                     Toast.makeText(contextFragment, "Data retrieved using" +
@@ -1004,6 +1015,188 @@ public class NavDrawerActivity extends AppCompatActivity{
                 dialog.show();
             }
         });
+    }
+
+    private static class EventosHolder extends SwappingHolder {
+
+        private EventosListModel mEventos;
+
+
+        public EventosHolder(View itemView) {
+            super(itemView, mMultiSelector);
+
+            tt1 = (TextView) itemView.findViewById(R.id.lblMesAno);
+            tt2 = (TextView) itemView.findViewById(R.id.lblDiaMes);
+            tt3 = (TextView) itemView.findViewById(R.id.lblDiaSemana);
+            tt4 = (TextView) itemView.findViewById(R.id.lblDescricaoEvento);
+            tt5 = (TextView) itemView.findViewById(R.id.lblHoraLocal);
+
+
+           // itemView.setOnClickListener(this);
+          //  itemView.setClickable(true);
+          //  itemView.setLongClickable(true);
+          //  itemView.setOnLongClickListener(this);
+
+            ColorDrawable selectionColor = new ColorDrawable();
+            selectionColor.setColor(Color.LTGRAY);
+            setSelectionModeBackgroundDrawable(selectionColor);
+
+        }
+
+        /*@Override
+        public void onClick(View v) {
+            if (mDisciplinas == null) {
+                return;
+            } else if (actionModeStatus == 1) {
+
+                if (mMultiSelector.isSelected(lstMaterias.getChildAdapterPosition(v), 0)) {
+
+                    v.setBackgroundColor(0);
+                    mMultiSelector.setSelected(this, false);
+                    selectedDisciplinas = mMultiSelector.getSelectedPositions();
+                    String sizeSelect = String.valueOf(selectedDisciplinas.size());
+                    mActionDeleteMode.setTitle(sizeSelect + " selecionado");
+                    //  lstMaterias.getAdapter().notifyDataSetChanged();
+
+
+
+
+                } else {
+                    v.setBackgroundColor(Color.LTGRAY);
+                    mMultiSelector.setSelected(this, true);
+                    selectedDisciplinas = mMultiSelector.getSelectedPositions();
+                    String sizeSelect = String.valueOf(selectedDisciplinas.size());
+                    mActionDeleteMode.setTitle(sizeSelect + " selecionado");
+                    //lstMaterias.getAdapter().notifyDataSetChanged();
+
+
+
+
+                }
+
+
+
+            }
+            else if (!mMultiSelector.tapSelection(this) && actionModeStatus == 0) {
+                // start an instance of CrimePagerActivity
+                String id = teste.get(lstMaterias.getChildAdapterPosition(v));
+                Intent i = new Intent (contextFragment, DialogActivity.class);
+                Bundle args = new Bundle();
+                args.putString("DISCIPLINA_ID", id);
+                args.putString("EDITAR_DISCIPLINA", "1");
+
+
+                nDisciplinas = lstMaterias.getAdapter().getItemCount();
+                disciplinaPosition = lstMaterias.getChildAdapterPosition(v);
+
+                i.putExtras(args);
+                contextFragment.startActivity(i);
+            }
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            AppCompatActivity activity = (AppCompatActivity)activityDisciplina;
+            // activity.startSupportActionMode(mDeleteMode);
+            mActionDeleteMode = activity.startSupportActionMode(mDeleteMode);
+            actionModeStatus = 1;
+            v.setBackgroundColor(Color.LTGRAY);
+            mMultiSelector.setSelected(this, true);
+            selectedDisciplinas = mMultiSelector.getSelectedPositions();
+            String sizeSelect = String.valueOf(selectedDisciplinas.size());
+            mActionDeleteMode.setTitle(sizeSelect + " selecionado");
+            //  lstMaterias.getAdapter().notifyDataSetChanged();
+
+
+            ;
+
+            return true;
+        }*/
+
+
+
+        public void bindEventos(EventosListModel eventoslistmodel) {
+            mEventos = eventoslistmodel;
+
+          //  teste.add(materialistmodel.getId().toString());
+
+
+
+
+            if (tt1 != null) {
+
+                tt1.setText("Mes Teste");
+
+            }
+
+            if (tt2 != null) {
+
+                tt2.setText("07");
+
+            }
+
+            if (tt3 != null) {
+
+                tt3.setText("qui");
+
+            }
+
+            if (tt4 != null) {
+
+                tt4.setText("PROVA INTEGRADA");
+
+
+            }
+
+            if (tt5 != null) {
+
+                tt5.setText("19:00-22:00 em UMC");
+
+            }
+
+        }
+
+
+    }
+
+    private static class EventosAdapter
+            extends RecyclerView.Adapter<EventosHolder> {
+        @Override
+        public EventosHolder onCreateViewHolder(ViewGroup parent, int pos) {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.agenda_recyclerview, parent, false);
+
+
+
+
+            return new EventosHolder(view);
+        }
+
+
+
+        @Override
+        public void onBindViewHolder(EventosHolder eventosHolder, int i) {
+            eventosList = EventosListModel.listAll(EventosListModel.class);
+            EventosListModel eventosListModel = eventosList.get(i);
+
+            eventosHolder.bindEventos(eventosListModel);
+
+            //    disciplinasHolder.itemView.setSelected(selectedDisciplinas.contains(i));
+
+          //  if (selectedDisciplinas.contains(i)) {
+           //     disciplinasHolder.itemView.setBackgroundColor(Color.LTGRAY);
+          //  }
+
+        }
+
+        @Override
+        public int getItemCount() {
+            List<EventosListModel> eventos = EventosListModel.listAll(EventosListModel.class);
+            return eventos.size();
+        }
+
+
+
     }
 
 
