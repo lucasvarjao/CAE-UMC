@@ -33,6 +33,7 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -63,6 +64,8 @@ import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -85,11 +88,14 @@ import java.nio.charset.CoderResult;
 import java.util.ArrayList;
 
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 
 public class NavDrawerActivity extends AppCompatActivity{
 
+    private static SwipeRefreshLayout swipeRefreshLayout;
     private static CalendarView calendarView;
     private DrawerLayout mDrawerLayout;
     public static int notifyUpdate = 0;
@@ -102,7 +108,7 @@ public class NavDrawerActivity extends AppCompatActivity{
     private NavigationView mNavigationView;
     private Toolbar toolbar;
    private static RecyclerView lstMaterias;
-    private static RecyclerView lstEventos;
+    private static ListView lstEventos;
     private static ListAdapter adapter;
     private static String ALTERACAO2 = "0";
     static Context context;
@@ -124,7 +130,7 @@ public class NavDrawerActivity extends AppCompatActivity{
     static List<EventosListModel> eventosList = new ArrayList<>();
     static ActionMode.Callback mDeleteMode;
     static ActionMode mActionDeleteMode;
-
+static RelativeLayout layoutLoading;
    private static TextView tt1 = null;
     private static TextView tt2= null;
     private static TextView tt3= null;
@@ -132,6 +138,8 @@ public class NavDrawerActivity extends AppCompatActivity{
     private static TextView tt5= null;
     private static TextView tt6= null;
     private static CheckBox chbDP = null;
+
+    private static ProgressBar pgbLoading;
 
     private static TextView tv1 = null;
     private static TextView tv2= null;
@@ -142,7 +150,7 @@ public class NavDrawerActivity extends AppCompatActivity{
     static String[] n = null;
     private static MateriaListModel mDisciplinas;
     private static EventosListModel mEventos;
-
+static List<Long> eventosID = new ArrayList<>();
     static com.google.api.services.calendar.Calendar mService;
     static GoogleAccountCredential credential;
     static final HttpTransport transport = AndroidHttp.newCompatibleTransport();
@@ -409,12 +417,19 @@ public class NavDrawerActivity extends AppCompatActivity{
             }
 
             if (i == 1) {
-                if (isGooglePlayServicesAvailable()) {
-                    refreshResults();
+                List<EventosListModel> eventosListModels = EventosListModel.findWithQuery(EventosListModel.class, "SELECT * FROM EVENTOS_LIST_MODEL ORDER BY datetime(data*1000, 'unixepoch', 'localtime') DESC");
+                if (eventosListModels.size() <= 0 || eventosListModels == null) {
+                    if (isGooglePlayServicesAvailable()) {
+                        refreshResults();
+                    } else {
+                        Toast.makeText(contextFragment,"Google Play Services required: " +
+                                "after installing, close and relaunch this app.", Toast.LENGTH_LONG).show();
+                    }
                 } else {
-                    Toast.makeText(contextFragment,"Google Play Services required: " +
-                            "after installing, close and relaunch this app.", Toast.LENGTH_LONG).show();
+                    updateResultsText(eventosListModels);
                 }
+
+
             }
         }
 
@@ -528,7 +543,7 @@ public class NavDrawerActivity extends AppCompatActivity{
                     });
 
 
-                    adapter = new ListAdapter(rootView.getContext(), R.layout.materias_listrow, materias);
+                    adapter = new ListAdapter(getActivity(),rootView.getContext(), R.layout.materias_listrow, materias);
 
                     DisciplinaAdapter disciplinaAdapter = new DisciplinaAdapter();
                     disciplinaAdapter.setHasStableIds(true);
@@ -541,6 +556,10 @@ public class NavDrawerActivity extends AppCompatActivity{
                     break;
                 case 1:
                     rootView = inflater.inflate(R.layout.fragment_calendario, container, false);
+                    pgbLoading = (ProgressBar) rootView.findViewById(R.id.pgbLoading);
+                    layoutLoading = (RelativeLayout) rootView.findViewById(R.id.layoutLoading);
+                    FloatingActionButton fab3 = (FloatingActionButton) appView.findViewById(R.id.fab);
+                    fab3.setVisibility(View.INVISIBLE);
                     snackView = rootView;
 
                     contextFragment = rootView.getContext();
@@ -554,6 +573,17 @@ public class NavDrawerActivity extends AppCompatActivity{
                             transport, jsonFactory, credential)
                             .setApplicationName("CAE UMC")
                             .build();
+
+                    swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.activity_main_swipe_refresh_layout);
+                    swipeRefreshLayout.setColorSchemeResources(R.color.accent, R.color.primary);
+                    swipeRefreshLayout.setEnabled(false);
+                    swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                        @Override
+                        public void onRefresh() {
+                            swipeRefreshLayout.setEnabled(false);
+                            AtualizarCalendario();
+                        }
+                    });
 
                     break;
                 case 2:
@@ -596,6 +626,12 @@ public class NavDrawerActivity extends AppCompatActivity{
     public String getSelectedTitle() {
         String Title = getString(R.string.selected_count, selectedDisciplinas.size());
         return Title;
+    }
+
+    static void AtualizarCalendario() {
+
+        refreshResults();
+
     }
 
     private static class DisciplinasHolder extends SwappingHolder implements View.OnClickListener, View.OnLongClickListener {
@@ -929,13 +965,13 @@ public class NavDrawerActivity extends AppCompatActivity{
         mainActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-
+                EventosListModel.deleteAll(EventosListModel.class);
 
             }
         });
     }
 
-    public void updateResultsText(final List<String> dataStrings) {
+    public static void updateResultsText(final List<EventosListModel> dataStrings) {
         fragmentActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -945,18 +981,17 @@ public class NavDrawerActivity extends AppCompatActivity{
                     Toast.makeText(contextFragment, "No data found.", Toast.LENGTH_LONG).show();
                 } else {
 
-                    lstEventos = (RecyclerView) snackView.findViewById(R.id.lstEventos);
-                    LinearLayoutManager layoutManager = new LinearLayoutManager(fragmentActivity);
-                    layoutManager.supportsPredictiveItemAnimations();
-                    lstEventos.setLayoutManager(layoutManager);
-                    lstEventos.setItemAnimator(new DefaultItemAnimator());
-                    lstEventos.setHasFixedSize(true);
-                    //lstEventos.addItemDecoration(new DividerItemDecoration(fragmentActivity, null));
-                    EventosAdapter eventosAdapter = new EventosAdapter();
-                    eventosAdapter.setHasStableIds(true);
-                    lstEventos.setAdapter(eventosAdapter);
-
-
+                    lstEventos = (ListView) snackView.findViewById(R.id.lstEventos);
+                   // eventosList = EventosListModel.findWithQuery(EventosListModel.class, "SELECT * FROM EVENTOS_LIST_MODEL ORDER BY datetime(data*1000, 'unixepoch', 'localtime') DESC");
+                    ArrayAdapter<EventosListModel> arrayAdapter = new EventosListAdapter(activityDisciplina, contextFragment, R.layout.agenda_recyclerview, dataStrings);
+                    lstEventos.setDividerHeight(0);
+                    lstEventos.setDivider(null);
+                    lstEventos.setAdapter(arrayAdapter);
+                    swipeRefreshLayout.setEnabled(true);
+                    lstEventos.setVisibility(View.VISIBLE);
+                    pgbLoading.setVisibility(View.GONE);
+                    layoutLoading.setVisibility(View.GONE);
+                    swipeRefreshLayout.setRefreshing(false);
                     Toast.makeText(contextFragment, "Data retrieved using" +
                             " the Google Calendar API:", Toast.LENGTH_LONG).show();
 
@@ -1017,187 +1052,10 @@ public class NavDrawerActivity extends AppCompatActivity{
         });
     }
 
-    private static class EventosHolder extends SwappingHolder {
 
-        private EventosListModel mEventos;
 
 
-        public EventosHolder(View itemView) {
-            super(itemView, mMultiSelector);
 
-            tt1 = (TextView) itemView.findViewById(R.id.lblMesAno);
-            tt2 = (TextView) itemView.findViewById(R.id.lblDiaMes);
-            tt3 = (TextView) itemView.findViewById(R.id.lblDiaSemana);
-            tt4 = (TextView) itemView.findViewById(R.id.lblDescricaoEvento);
-            tt5 = (TextView) itemView.findViewById(R.id.lblHoraLocal);
-
-
-           // itemView.setOnClickListener(this);
-          //  itemView.setClickable(true);
-          //  itemView.setLongClickable(true);
-          //  itemView.setOnLongClickListener(this);
-
-            ColorDrawable selectionColor = new ColorDrawable();
-            selectionColor.setColor(Color.LTGRAY);
-            setSelectionModeBackgroundDrawable(selectionColor);
-
-        }
-
-        /*@Override
-        public void onClick(View v) {
-            if (mDisciplinas == null) {
-                return;
-            } else if (actionModeStatus == 1) {
-
-                if (mMultiSelector.isSelected(lstMaterias.getChildAdapterPosition(v), 0)) {
-
-                    v.setBackgroundColor(0);
-                    mMultiSelector.setSelected(this, false);
-                    selectedDisciplinas = mMultiSelector.getSelectedPositions();
-                    String sizeSelect = String.valueOf(selectedDisciplinas.size());
-                    mActionDeleteMode.setTitle(sizeSelect + " selecionado");
-                    //  lstMaterias.getAdapter().notifyDataSetChanged();
-
-
-
-
-                } else {
-                    v.setBackgroundColor(Color.LTGRAY);
-                    mMultiSelector.setSelected(this, true);
-                    selectedDisciplinas = mMultiSelector.getSelectedPositions();
-                    String sizeSelect = String.valueOf(selectedDisciplinas.size());
-                    mActionDeleteMode.setTitle(sizeSelect + " selecionado");
-                    //lstMaterias.getAdapter().notifyDataSetChanged();
-
-
-
-
-                }
-
-
-
-            }
-            else if (!mMultiSelector.tapSelection(this) && actionModeStatus == 0) {
-                // start an instance of CrimePagerActivity
-                String id = teste.get(lstMaterias.getChildAdapterPosition(v));
-                Intent i = new Intent (contextFragment, DialogActivity.class);
-                Bundle args = new Bundle();
-                args.putString("DISCIPLINA_ID", id);
-                args.putString("EDITAR_DISCIPLINA", "1");
-
-
-                nDisciplinas = lstMaterias.getAdapter().getItemCount();
-                disciplinaPosition = lstMaterias.getChildAdapterPosition(v);
-
-                i.putExtras(args);
-                contextFragment.startActivity(i);
-            }
-        }
-
-        @Override
-        public boolean onLongClick(View v) {
-            AppCompatActivity activity = (AppCompatActivity)activityDisciplina;
-            // activity.startSupportActionMode(mDeleteMode);
-            mActionDeleteMode = activity.startSupportActionMode(mDeleteMode);
-            actionModeStatus = 1;
-            v.setBackgroundColor(Color.LTGRAY);
-            mMultiSelector.setSelected(this, true);
-            selectedDisciplinas = mMultiSelector.getSelectedPositions();
-            String sizeSelect = String.valueOf(selectedDisciplinas.size());
-            mActionDeleteMode.setTitle(sizeSelect + " selecionado");
-            //  lstMaterias.getAdapter().notifyDataSetChanged();
-
-
-            ;
-
-            return true;
-        }*/
-
-
-
-        public void bindEventos(EventosListModel eventoslistmodel) {
-            mEventos = eventoslistmodel;
-
-          //  teste.add(materialistmodel.getId().toString());
-
-
-
-
-            if (tt1 != null) {
-
-                tt1.setText("Mes Teste");
-
-            }
-
-            if (tt2 != null) {
-
-                tt2.setText("07");
-
-            }
-
-            if (tt3 != null) {
-
-                tt3.setText("qui");
-
-            }
-
-            if (tt4 != null) {
-
-                tt4.setText("PROVA INTEGRADA");
-
-
-            }
-
-            if (tt5 != null) {
-
-                tt5.setText("19:00-22:00 em UMC");
-
-            }
-
-        }
-
-
-    }
-
-    private static class EventosAdapter
-            extends RecyclerView.Adapter<EventosHolder> {
-        @Override
-        public EventosHolder onCreateViewHolder(ViewGroup parent, int pos) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.agenda_recyclerview, parent, false);
-
-
-
-
-            return new EventosHolder(view);
-        }
-
-
-
-        @Override
-        public void onBindViewHolder(EventosHolder eventosHolder, int i) {
-            eventosList = EventosListModel.listAll(EventosListModel.class);
-            EventosListModel eventosListModel = eventosList.get(i);
-
-            eventosHolder.bindEventos(eventosListModel);
-
-            //    disciplinasHolder.itemView.setSelected(selectedDisciplinas.contains(i));
-
-          //  if (selectedDisciplinas.contains(i)) {
-           //     disciplinasHolder.itemView.setBackgroundColor(Color.LTGRAY);
-          //  }
-
-        }
-
-        @Override
-        public int getItemCount() {
-            List<EventosListModel> eventos = EventosListModel.listAll(EventosListModel.class);
-            return eventos.size();
-        }
-
-
-
-    }
 
 
 }

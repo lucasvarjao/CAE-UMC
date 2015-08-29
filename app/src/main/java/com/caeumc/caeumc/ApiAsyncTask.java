@@ -62,7 +62,7 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
      * @return List of Strings describing returned events.
      * @throws IOException
      */
-    private List<String> getDataFromApi() throws IOException, ParseException {
+    private List<EventosListModel> getDataFromApi() throws IOException, ParseException {
         // List the next 10 events from the primary calendar.
         DateTime now = new DateTime(System.currentTimeMillis());
         List<String> eventStrings = new ArrayList<String>();
@@ -73,14 +73,16 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
                 .setSingleEvents(true)
                 .execute();
         List<Event> items = events.getItems();
-        EventosListModel.deleteAll(EventosListModel.class);
 
         for (Event event : items) {
 
            String descricao = event.getSummary();
             long data = event.getStart().getDateTime().getValue();
+            data = data / 1000;
             long horaInicio = event.getStart().getDateTime().getValue();
+            horaInicio = horaInicio / 1000;
             long horaFinal = event.getEnd().getDateTime().getValue();
+            horaFinal = horaFinal / 1000;
             String local = event.getLocation();
 
 
@@ -126,11 +128,13 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
                 // the start date.
                 start = event.getStart().getDate();
                 data = event.getStart().getDate().getValue();
+                data = data / 1000;
                 horaInicio = 0;
                 horaFinal = 0;
             } else {
 
                 data = event.getStart().getDateTime().getValue();
+                data = data / 1000;
                 horaInicio = event.getStart().getDateTime().getValue();
                 horaFinal = event.getEnd().getDateTime().getValue();
             }
@@ -140,8 +144,8 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
             eventosListModel.save();
 
         }
-
-        return eventStrings;
+        List<EventosListModel> eventosList = EventosListModel.findWithQuery(EventosListModel.class, "SELECT * FROM EVENTOS_LIST_MODEL ORDER BY datetime(data*1000, 'unixepoch', 'localtime') DESC");
+        return eventosList;
     }
 
 }
