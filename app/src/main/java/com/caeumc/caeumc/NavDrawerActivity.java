@@ -417,7 +417,7 @@ static List<Long> eventosID = new ArrayList<>();
             }
 
             if (i == 1) {
-                List<EventosListModel> eventosListModels = EventosListModel.findWithQuery(EventosListModel.class, "SELECT * FROM EVENTOS_LIST_MODEL ORDER BY datetime(data*1000, 'unixepoch', 'localtime') DESC");
+                List<EventosListModel> eventosListModels = EventosListModel.findWithQuery(EventosListModel.class, "SELECT * FROM EVENTOS_LIST_MODEL ORDER BY data*1000 ASC");
                 if (eventosListModels.size() <= 0 || eventosListModels == null) {
                     if (isGooglePlayServicesAvailable()) {
                         refreshResults();
@@ -957,6 +957,8 @@ static List<Long> eventosID = new ArrayList<>();
                 new ApiAsyncTask(drawerActivity).execute();
             } else {
                 Toast.makeText(contextFragment,"No network connection available.", Toast.LENGTH_LONG).show();
+                swipeRefreshLayout.setRefreshing(false);
+                swipeRefreshLayout.setEnabled(true);
             }
         }
     }
@@ -977,15 +979,20 @@ static List<Long> eventosID = new ArrayList<>();
             public void run() {
                 if (dataStrings == null) {
                     Toast.makeText(contextFragment, "Error retrieving data!", Toast.LENGTH_LONG).show();
+                    swipeRefreshLayout.setRefreshing(false);
+                    swipeRefreshLayout.setEnabled(true);
                 } else if (dataStrings.size() == 0) {
                     Toast.makeText(contextFragment, "No data found.", Toast.LENGTH_LONG).show();
+                    swipeRefreshLayout.setRefreshing(false);
+                    swipeRefreshLayout.setEnabled(true);
                 } else {
 
                     lstEventos = (ListView) snackView.findViewById(R.id.lstEventos);
                    // eventosList = EventosListModel.findWithQuery(EventosListModel.class, "SELECT * FROM EVENTOS_LIST_MODEL ORDER BY datetime(data*1000, 'unixepoch', 'localtime') DESC");
-                    ArrayAdapter<EventosListModel> arrayAdapter = new EventosListAdapter(activityDisciplina, contextFragment, R.layout.agenda_recyclerview, dataStrings);
+                    EventosListAdapter arrayAdapter = new EventosListAdapter(activityDisciplina, contextFragment, R.layout.agenda_recyclerview, dataStrings);
                     lstEventos.setDividerHeight(0);
                     lstEventos.setDivider(null);
+                    lstEventos.setClickable(false);
                     lstEventos.setAdapter(arrayAdapter);
                     swipeRefreshLayout.setEnabled(true);
                     lstEventos.setVisibility(View.VISIBLE);
@@ -1005,6 +1012,8 @@ static List<Long> eventosID = new ArrayList<>();
            @Override
            public void run() {
                Toast.makeText(contextFragment, message, Toast.LENGTH_LONG).show();
+               swipeRefreshLayout.setRefreshing(false);
+               swipeRefreshLayout.setEnabled(true);
            }
        });
     }

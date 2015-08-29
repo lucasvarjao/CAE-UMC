@@ -22,7 +22,8 @@
         android:layout_height="match_parent"
         android:overScrollMode="always"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:visibility="gone" />
+        android:visibility="gone"
+        android:choiceMode="none" />
     </android.support.v4.widget.SwipeRefreshLayout>
 
     <RelativeLayout

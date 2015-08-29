@@ -77,6 +77,9 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
         for (Event event : items) {
 
            String descricao = event.getSummary();
+            if (descricao == null) {
+                descricao = "(Sem título)";
+            }
             long data = event.getStart().getDateTime().getValue();
             data = data / 1000;
             long horaInicio = event.getStart().getDateTime().getValue();
@@ -102,7 +105,7 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
             eventosListModel.save();
         }
 
-       Date dateDiaMinimo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2015-08-03 00:00:00");
+     /*  Date dateDiaMinimo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2015-08-03 00:00:00");
         DateTime diaMinimo = new DateTime(dateDiaMinimo);
 
         Date dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2016-01-01 00:00:00");
@@ -143,8 +146,8 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
             EventosListModel eventosListModel = new EventosListModel(descricao, (int)data, (int)horaInicio, (int)horaFinal, local);
             eventosListModel.save();
 
-        }
-        List<EventosListModel> eventosList = EventosListModel.findWithQuery(EventosListModel.class, "SELECT * FROM EVENTOS_LIST_MODEL ORDER BY datetime(data*1000, 'unixepoch', 'localtime') DESC");
+        }*/
+        List<EventosListModel> eventosList = EventosListModel.findWithQuery(EventosListModel.class, "SELECT * FROM EVENTOS_LIST_MODEL ORDER BY data*1000 ASC");
         return eventosList;
     }
 
