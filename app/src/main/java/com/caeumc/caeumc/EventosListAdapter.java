@@ -3,6 +3,7 @@ package com.caeumc.caeumc;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -11,6 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.text.DateFormat;
@@ -39,9 +42,9 @@ public class EventosListAdapter extends BaseAdapter {
 
     }
 
-    public EventosListAdapter(Activity a, Context context, int resource, List<EventosListModel> items) {
+    public EventosListAdapter(Activity a, Context context) {
         activityDisciplina = a;
-        data = items;
+      //  data = items;
         vi = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -96,13 +99,16 @@ public class EventosListAdapter extends BaseAdapter {
             switch (rowType) {
                 case TYPE_ITEM:
                     v = vi.inflate(R.layout.agenda_recyclerview, null);
-                    holder.tt1 = (TextView) v.findViewById(R.id.lblMesAno);
                     holder.tt2 = (TextView) v.findViewById(R.id.lblDiaMes);
                     holder.tt3 = (TextView) v.findViewById(R.id.lblDiaSemana);
                     holder.tt4 = (TextView) v.findViewById(R.id.lblDescricaoEvento);
                     holder.tt5 = (TextView) v.findViewById(R.id.lblHoraLocal);
+                    holder.layoutDiaSemana = (LinearLayout) v.findViewById(R.id.layoutDiaSemana);
+                    holder.eventoLayout = (LinearLayout) v.findViewById(R.id.eventoLayout);
                     break;
                 case TYPE_SEPARATOR:
+                    v = vi.inflate(R.layout.agenda_headermes, null);
+                    holder.tt6 = (TextView) v.findViewById(R.id.lblHeaderMes);
                     break;
             }
             v.setTag(holder);
@@ -126,6 +132,20 @@ public class EventosListAdapter extends BaseAdapter {
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(dataEvento);
                 int day = calendar.get(Calendar.DAY_OF_MONTH);
+            if (p.getFeriado()) {
+                day = day + 1;
+                if (rowType == TYPE_ITEM) {
+                    GradientDrawable bgShape = (GradientDrawable)holder.eventoLayout.getBackground();
+                    bgShape.setColor(Color.parseColor("#00695C"));
+                }
+
+            } else {
+                if (rowType == TYPE_ITEM) {
+                    GradientDrawable bgShape = (GradientDrawable)holder.eventoLayout.getBackground();
+                    bgShape.setColor(Color.parseColor("#283593"));
+                }
+
+            }
                 int diasemana = calendar.get(Calendar.DAY_OF_WEEK);
                 int mes = calendar.get(Calendar.MONTH);
                 String mesEvento = "";
@@ -220,7 +240,7 @@ public class EventosListAdapter extends BaseAdapter {
                 //  teste.add(materialistmodel.getId().toString());
 
 
-                if (holder.tt1 != null) {
+                /*if (holder.tt1 != null) {
                     if (mesAnterior.equals("")) {
                         holder.tt1.setText(String.format("%s de %s", mesEvento, String.valueOf(ano)));
                         holder.tt1.setVisibility(View.VISIBLE);
@@ -234,17 +254,26 @@ public class EventosListAdapter extends BaseAdapter {
                         mesAnterior = mesEvento;
                     }
 
-                }
+                }*/
 
                 if (holder.tt2 != null) {
 
-                    holder.tt2.setText(String.valueOf(dia));
+                    if (p.getDiaEvento() != null ) {
+
+                        holder.tt2.setText("");
+                    } else {
+                        holder.tt2.setText(String.valueOf(dia));
+                    }
 
                 }
 
                 if (holder.tt3 != null) {
 
-                    holder.tt3.setText(diasemanaEvento);
+                    if (p.getDiaSemanaEvento() != null) {
+                        holder.tt3.setText("");
+                    } else {
+                        holder.tt3.setText(diasemanaEvento);
+                    }
 
                 }
 
@@ -267,6 +296,26 @@ public class EventosListAdapter extends BaseAdapter {
 
 
                 }
+
+                if (holder.tt6 != null) {
+                    holder.tt6.setText(String.format("%s de %s", p.getMes(), String.valueOf(ano)));
+                }
+
+                if (p.getDiaSemanaEvento() != null && p.getDiaEvento() != null){
+                    if (p.getDiaSemanaEvento().equals("") && p.getDiaEvento() == 0) {
+                        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams)holder.layoutDiaSemana.getLayoutParams();
+                        layoutParams.setMargins(16, 0, 8, 0);
+                        holder.layoutDiaSemana.setLayoutParams(layoutParams);
+                    }
+                } else {
+                    if (rowType == TYPE_ITEM) {
+                        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) holder.layoutDiaSemana.getLayoutParams();
+                        layoutParams.setMargins(16, 16, 8, 0);
+                        holder.layoutDiaSemana.setLayoutParams(layoutParams);
+                    }
+                }
+
+
             }
 
             return v;
@@ -279,5 +328,8 @@ public class EventosListAdapter extends BaseAdapter {
         TextView tt3 ;
         TextView  tt4 ;
         TextView tt5;
+        LinearLayout layoutDiaSemana;
+        LinearLayout eventoLayout;
+        TextView tt6;
     }
 }

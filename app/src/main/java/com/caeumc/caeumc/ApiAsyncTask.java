@@ -101,17 +101,17 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
             }
             eventStrings.add(
                     String.format("%s (%s)", event.getSummary(), start));
-            EventosListModel eventosListModel = new EventosListModel(descricao, (int)data, (int)horaInicio, (int)horaFinal, local);
+            EventosListModel eventosListModel = new EventosListModel(descricao, (int)data, (int)horaInicio, (int)horaFinal, local, false);
             eventosListModel.save();
         }
 
-     /*  Date dateDiaMinimo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2015-08-03 00:00:00");
+       Date dateDiaMinimo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2015-08-03 00:00:00");
         DateTime diaMinimo = new DateTime(dateDiaMinimo);
 
         Date dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2016-01-01 00:00:00");
         DateTime diaMaximo = new DateTime(dateDiaMaximo);
 
-        Events events1 = mActivity.mService.events().list("pt-br.brazilian#holiday@group.v.calendar.google.com")
+        Events events1 = mActivity.mService.events().list("pt.brazilian#holiday@group.v.calendar.google.com")
                 .setTimeMin(diaMinimo)
                 .setTimeMax(diaMaximo)
                 .setOrderBy("startTime")
@@ -143,10 +143,10 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
             }
             eventStrings.add(
                     String.format("%s (%s)", event.getSummary(), start));
-            EventosListModel eventosListModel = new EventosListModel(descricao, (int)data, (int)horaInicio, (int)horaFinal, local);
+            EventosListModel eventosListModel = new EventosListModel(descricao, (int)data, (int)horaInicio, (int)horaFinal, local, true);
             eventosListModel.save();
 
-        }*/
+        }
         List<EventosListModel> eventosList = EventosListModel.findWithQuery(EventosListModel.class, "SELECT * FROM EVENTOS_LIST_MODEL ORDER BY data*1000 ASC");
         return eventosList;
     }

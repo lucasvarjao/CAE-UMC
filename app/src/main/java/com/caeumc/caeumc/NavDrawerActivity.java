@@ -989,7 +989,48 @@ static List<Long> eventosID = new ArrayList<>();
 
                     lstEventos = (ListView) snackView.findViewById(R.id.lstEventos);
                    // eventosList = EventosListModel.findWithQuery(EventosListModel.class, "SELECT * FROM EVENTOS_LIST_MODEL ORDER BY datetime(data*1000, 'unixepoch', 'localtime') DESC");
-                    EventosListAdapter arrayAdapter = new EventosListAdapter(activityDisciplina, contextFragment, R.layout.agenda_recyclerview, dataStrings);
+                    EventosListAdapter arrayAdapter = new EventosListAdapter(activityDisciplina, contextFragment);
+                    String mesAnterior = "";
+                    int diaAnterior =0;
+                    EventosListModel model = new EventosListModel();
+                    EventosListModel diaModel = new EventosListModel();
+                    for (int i=0; i < dataStrings.size(); i++) {
+                        String mesEvento = getMesEvento(dataStrings.get(i).getData());
+                        int diaEvento = getDiaEvento(dataStrings.get(i).getData());
+                        if (mesAnterior.equals("")) {
+                            model = dataStrings.get(i);
+                            model.setMes(mesEvento);
+                            arrayAdapter.addSectionHeaderItem(model);
+                            arrayAdapter.addItem(dataStrings.get(i));
+                            mesAnterior = mesEvento;
+                            diaAnterior = diaEvento;
+                        } else if (mesAnterior == mesEvento) {
+                            if (diaEvento == diaAnterior) {
+                                diaModel = dataStrings.get(i);
+                                diaModel.setDiaEvento(0);
+                                diaModel.setDiaSemanaEvento("");
+                                arrayAdapter.addItem(diaModel);
+                            } else {
+                                arrayAdapter.addItem(dataStrings.get(i));
+                            }
+                            diaAnterior = diaEvento;
+
+                        } else {
+                            model = dataStrings.get(i);
+                            model.setMes(mesEvento);
+                            arrayAdapter.addSectionHeaderItem(model);
+                            if (diaEvento == diaAnterior) {
+                                diaModel = dataStrings.get(i);
+                                diaModel.setDiaEvento(0);
+                                diaModel.setDiaSemanaEvento("");
+                                arrayAdapter.addItem(diaModel);
+                            } else {
+                                arrayAdapter.addItem(dataStrings.get(i));
+                            }
+                            mesAnterior = mesEvento;
+                            diaAnterior = diaEvento;
+                        }
+                    }
                     lstEventos.setDividerHeight(0);
                     lstEventos.setDivider(null);
                     lstEventos.setClickable(false);
@@ -1005,6 +1046,63 @@ static List<Long> eventosID = new ArrayList<>();
                 }
             }
         });
+    }
+
+    private static String getMesEvento (long data) {
+        Date dataEvento = new Date(data * 1000L);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(dataEvento);
+        int mes = calendar.get(Calendar.MONTH);
+        String mesEvento = "";
+        switch (mes) {
+            case 0:
+                mesEvento = "janeiro";
+                break;
+            case 1:
+                mesEvento = "fevereiro";
+                break;
+            case 2:
+                mesEvento = "março";
+                break;
+            case 3:
+                mesEvento = "abril";
+                break;
+            case 4:
+                mesEvento = "maio";
+                break;
+            case 5:
+                mesEvento = "junho";
+                break;
+            case 6:
+                mesEvento = "julho";
+                break;
+            case 7:
+                mesEvento = "agosto";
+                break;
+            case 8:
+                mesEvento = "setembro";
+                break;
+            case 9:
+                mesEvento = "outubro";
+                break;
+            case 10:
+                mesEvento = "novembro";
+                break;
+            case 11:
+                mesEvento = "dezembro";
+                break;
+
+        }
+
+        return  mesEvento;
+    }
+
+    private static int getDiaEvento (long data) {
+        Date dataEvento = new Date(data * 1000L);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(dataEvento);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        return  day;
     }
 
     public void updateStatus(final String message) {
