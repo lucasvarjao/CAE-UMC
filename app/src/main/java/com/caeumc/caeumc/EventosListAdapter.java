@@ -2,8 +2,13 @@ package com.caeumc.caeumc;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.GradientDrawable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -12,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -30,11 +36,14 @@ import java.util.TreeSet;
 public class EventosListAdapter extends BaseAdapter {
     List<EventosListModel> data = new ArrayList<>();
     private TreeSet<Integer> sectionHeader = new TreeSet<Integer>();
+    private TreeSet<Integer> semanasHeader = new TreeSet<Integer>();
     Activity activityDisciplina ;
     static ActionMode mActionDeleteMode;
     static ActionMode.Callback mDeleteMode;
     private static final int TYPE_ITEM = 0;
     private static final int TYPE_SEPARATOR = 1;
+    private static final int TYPE_SEMANAS = 2;
+    Context context2;
     String mesAnterior = "";
     LayoutInflater vi;
 
@@ -44,6 +53,7 @@ public class EventosListAdapter extends BaseAdapter {
 
     public EventosListAdapter(Activity a, Context context) {
         activityDisciplina = a;
+        context2 = context;
       //  data = items;
         vi = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -59,14 +69,28 @@ public class EventosListAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    public void addSemanaItem(final EventosListModel item) {
+        data.add(item);
+        semanasHeader.add(data.size() - 1);
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getItemViewType(int position) {
-        return sectionHeader.contains(position) ? TYPE_SEPARATOR : TYPE_ITEM;
+        int i;
+        if (sectionHeader.contains(position)) {
+            i = TYPE_SEPARATOR;
+        } else if (semanasHeader.contains(position)) {
+            i = TYPE_SEMANAS;
+        } else {
+            i = TYPE_ITEM;
+        }
+        return i;
     }
 
     @Override
     public int getViewTypeCount() {
-        return 2;
+        return 3;
     }
 
     public int getCount() {
@@ -110,6 +134,10 @@ public class EventosListAdapter extends BaseAdapter {
                     v = vi.inflate(R.layout.agenda_headermes, null);
                     holder.tt6 = (TextView) v.findViewById(R.id.lblHeaderMes);
                     break;
+                case TYPE_SEMANAS:
+                    v = vi.inflate(R.layout.agenda_semanaheader, null);
+                    holder.tt7 = (TextView) v.findViewById(R.id.lblSemanas);
+                    break;
             }
             v.setTag(holder);
 
@@ -136,7 +164,7 @@ public class EventosListAdapter extends BaseAdapter {
                 day = day + 1;
                 if (rowType == TYPE_ITEM) {
                     GradientDrawable bgShape = (GradientDrawable)holder.eventoLayout.getBackground();
-                    bgShape.setColor(Color.parseColor("#00695C"));
+                    bgShape.setColor(Color.parseColor("#F50057"));
                 }
 
             } else {
@@ -155,36 +183,47 @@ public class EventosListAdapter extends BaseAdapter {
                         break;
                     case 1:
                         mesEvento = "fevereiro";
+
                         break;
                     case 2:
                         mesEvento = "março";
+
                         break;
                     case 3:
                         mesEvento = "abril";
+
                         break;
                     case 4:
                         mesEvento = "maio";
+
                         break;
                     case 5:
                         mesEvento = "junho";
+
                         break;
                     case 6:
                         mesEvento = "julho";
+
                         break;
                     case 7:
                         mesEvento = "agosto";
+
                         break;
                     case 8:
                         mesEvento = "setembro";
+
                         break;
                     case 9:
                         mesEvento = "outubro";
+
                         break;
                     case 10:
                         mesEvento = "novembro";
+
                         break;
                     case 11:
                         mesEvento = "dezembro";
+
                         break;
 
                 }
@@ -217,9 +256,6 @@ public class EventosListAdapter extends BaseAdapter {
                 }
                 Log.e("Dia", String.valueOf(diasemana));
                 String dia = String.valueOf(day);
-                if (dia.length() == 1) {
-                    dia = "0" + dia;
-                }
                 long horaInicio = (long) p.getHoraInicio();
                 String horaInicioFormatada = "";
                 String horaFinalFormatada = "";
@@ -301,6 +337,10 @@ public class EventosListAdapter extends BaseAdapter {
                     holder.tt6.setText(String.format("%s de %s", p.getMes(), String.valueOf(ano)));
                 }
 
+            if (holder.tt7 != null) {
+                holder.tt7.setText(p.getSemana());
+            }
+
                 if (p.getDiaSemanaEvento() != null && p.getDiaEvento() != null){
                     if (p.getDiaSemanaEvento().equals("") && p.getDiaEvento() == 0) {
                         RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams)holder.layoutDiaSemana.getLayoutParams();
@@ -331,5 +371,7 @@ public class EventosListAdapter extends BaseAdapter {
         LinearLayout layoutDiaSemana;
         LinearLayout eventoLayout;
         TextView tt6;
+        ImageView imgMes;
+        TextView tt7;
     }
 }

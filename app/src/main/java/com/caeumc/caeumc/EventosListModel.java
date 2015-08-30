@@ -22,6 +22,8 @@ public class EventosListModel extends SugarRecord<EventosListModel> {
     Integer DiaEvento;
     @Ignore
     String DiaSemanaEvento;
+    @Ignore
+    String Semana;
 
     public EventosListModel() {
 
@@ -49,6 +51,9 @@ public class EventosListModel extends SugarRecord<EventosListModel> {
     public String getDiaSemanaEvento() {return  this.DiaSemanaEvento;}
     public void setDiaEvento (Integer diaEvento) {this.DiaEvento = diaEvento;}
     public Integer getDiaEvento() {return  this.DiaEvento;}
+    public void setSemana (String semana) {this.Semana = semana;}
+    public String getSemana() {return  this.Semana;}
+
 
     public String getDescricao() {return this.Descricao;}
     public Integer getData() {return  this.Data;}

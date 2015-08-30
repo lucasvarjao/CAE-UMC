@@ -17,7 +17,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:id="@+id/lblDiaMes"
         android:textSize="28sp"
-        android:text="25" />
+        android:text="5" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -36,7 +36,8 @@
     android:layout_toRightOf="@+id/layoutDiaSemana"
     android:layout_alignTop="@+id/layoutDiaSemana"
 
-    android:layout_marginRight="16dp">
+    android:layout_marginRight="16dp"
+    android:background="@drawable/borderlayout">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -60,7 +61,9 @@
             android:textColor="@color/primary_text_default_material_dark"
             android:layout_toRightOf="@+id/lblDiaMes"
             android:textStyle="bold"
-            android:singleLine="true" />
+            android:singleLine="true"
+            android:text="M1 - RESMAT"
+            android:textSize="13sp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -69,7 +72,9 @@
             android:id="@+id/lblHoraLocal"
             android:textColor="@color/primary_text_default_material_dark"
             android:singleLine="true"
-            android:visibility="visible" />
+            android:visibility="visible"
+            android:text="19:00-22:30 em UMC"
+            android:textSize="13sp" />
     </LinearLayout>
     </RelativeLayout>
 </LinearLayout>

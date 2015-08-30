@@ -23,7 +23,10 @@
         android:overScrollMode="always"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:visibility="gone"
-        android:choiceMode="none" />
+        android:listSelector="@android:color/transparent"
+        android:cacheColorHint="@android:color/transparent"
+        android:choiceMode="none"
+        android:clickable="false" />
     </android.support.v4.widget.SwipeRefreshLayout>
 
     <RelativeLayout

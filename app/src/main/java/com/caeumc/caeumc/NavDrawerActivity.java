@@ -2,63 +2,43 @@ package com.caeumc.caeumc;
 
 import android.accounts.AccountManager;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.app.Fragment;
 import android.app.SearchManager;
-import android.app.usage.UsageEvents;
 import android.content.Context;
 
 import android.content.Intent;
 
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.database.Cursor;
-import android.graphics.Canvas;
 import android.graphics.Color;
 
-import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.preference.PreferenceManager;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.os.Bundle;
-import android.support.v7.widget.helper.ItemTouchHelper;
-import android.text.Editable;
-import android.text.TextUtils;
-import android.text.TextWatcher;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import android.widget.ArrayAdapter;
 import android.widget.CalendarView;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
@@ -71,8 +51,6 @@ import android.widget.Toast;
 
 import com.bignerdranch.android.multiselector.ModalMultiSelectorCallback;
 import com.bignerdranch.android.multiselector.MultiSelector;
-import com.bignerdranch.android.multiselector.MultiSelectorBindingHolder;
-import com.bignerdranch.android.multiselector.SingleSelector;
 import com.bignerdranch.android.multiselector.SwappingHolder;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -84,13 +62,13 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.util.ExponentialBackOff;
 import com.google.api.services.calendar.CalendarScopes;
 
-import java.nio.charset.CoderResult;
 import java.util.ArrayList;
 
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.TreeSet;
 
 
 public class NavDrawerActivity extends AppCompatActivity{
@@ -561,7 +539,7 @@ static List<Long> eventosID = new ArrayList<>();
                     FloatingActionButton fab3 = (FloatingActionButton) appView.findViewById(R.id.fab);
                     fab3.setVisibility(View.INVISIBLE);
                     snackView = rootView;
-
+                    activityDisciplina = getActivity();
                     contextFragment = rootView.getContext();
                     SharedPreferences settings = getActivity().getPreferences(Context.MODE_PRIVATE);
                     credential = GoogleAccountCredential.usingOAuth2(
@@ -991,19 +969,27 @@ static List<Long> eventosID = new ArrayList<>();
                    // eventosList = EventosListModel.findWithQuery(EventosListModel.class, "SELECT * FROM EVENTOS_LIST_MODEL ORDER BY datetime(data*1000, 'unixepoch', 'localtime') DESC");
                     EventosListAdapter arrayAdapter = new EventosListAdapter(activityDisciplina, contextFragment);
                     String mesAnterior = "";
+                    String semanaAnterior = "";
                     int diaAnterior =0;
                     EventosListModel model = new EventosListModel();
                     EventosListModel diaModel = new EventosListModel();
+
                     for (int i=0; i < dataStrings.size(); i++) {
+                        model = dataStrings.get(i);
+                        diaModel = dataStrings.get(i);
                         String mesEvento = getMesEvento(dataStrings.get(i).getData());
                         int diaEvento = getDiaEvento(dataStrings.get(i).getData());
+                        String semana = getSemana(diaEvento);
                         if (mesAnterior.equals("")) {
                             model = dataStrings.get(i);
                             model.setMes(mesEvento);
+                            model.setSemana(String.format("%s de %s", semana, mesEvento));
                             arrayAdapter.addSectionHeaderItem(model);
+                            arrayAdapter.addSemanaItem(model);
                             arrayAdapter.addItem(dataStrings.get(i));
                             mesAnterior = mesEvento;
                             diaAnterior = diaEvento;
+                            semanaAnterior = semana;
                         } else if (mesAnterior == mesEvento) {
                             if (diaEvento == diaAnterior) {
                                 diaModel = dataStrings.get(i);
@@ -1011,9 +997,14 @@ static List<Long> eventosID = new ArrayList<>();
                                 diaModel.setDiaSemanaEvento("");
                                 arrayAdapter.addItem(diaModel);
                             } else {
-                                arrayAdapter.addItem(dataStrings.get(i));
+                                if (!semana.equals(semanaAnterior)) {
+                                    model.setSemana(String.format("%s de %s", semana, mesEvento));
+                                    arrayAdapter.addSemanaItem(model);
+                                }
+                                arrayAdapter.addItem(model);
                             }
                             diaAnterior = diaEvento;
+                            semanaAnterior = semana;
 
                         } else {
                             model = dataStrings.get(i);
@@ -1025,10 +1016,15 @@ static List<Long> eventosID = new ArrayList<>();
                                 diaModel.setDiaSemanaEvento("");
                                 arrayAdapter.addItem(diaModel);
                             } else {
-                                arrayAdapter.addItem(dataStrings.get(i));
+                                if (!semana.equals(semanaAnterior)) {
+                                    model.setSemana(String.format("%s de %s", semana, mesEvento));
+                                    arrayAdapter.addSemanaItem(model);
+                                }
+                                arrayAdapter.addItem(model);
                             }
                             mesAnterior = mesEvento;
                             diaAnterior = diaEvento;
+                            semanaAnterior = semana;
                         }
                     }
                     lstEventos.setDividerHeight(0);
@@ -1103,6 +1099,58 @@ static List<Long> eventosID = new ArrayList<>();
         calendar.setTime(dataEvento);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         return  day;
+    }
+
+    private static String getSemana (int dia) {
+        String semana="";
+        TreeSet<Integer> semana1 = new TreeSet<Integer>();
+        semana1.add(1);
+        semana1.add(2);
+        semana1.add(3);
+        semana1.add(4);
+        semana1.add(5);
+        semana1.add(6);
+        TreeSet<Integer> semana2 = new TreeSet<Integer>();
+        semana2.add(7);
+        semana2.add(8);
+        semana2.add(9);
+        semana2.add(10);
+        semana2.add(11);
+        semana2.add(12);
+        TreeSet<Integer> semana3 = new TreeSet<Integer>();
+        semana3.add(13);
+        semana3.add(14);
+        semana3.add(15);
+        semana3.add(16);
+        semana3.add(17);
+        semana3.add(18);
+        TreeSet<Integer> semana4 = new TreeSet<Integer>();
+        semana4.add(19);
+        semana4.add(20);
+        semana4.add(21);
+        semana4.add(22);
+        semana4.add(23);
+        semana4.add(24);
+        TreeSet<Integer> semana5 = new TreeSet<Integer>();
+        semana5.add(25);
+        semana5.add(26);
+        semana5.add(27);
+        semana5.add(28);
+        semana5.add(29);
+        semana5.add(30);
+        semana5.add(31);
+        if (semana1.contains(dia)) {
+                semana = String.format("%s-%s", semana1.first(), semana1.last());
+        } else if (semana2.contains(dia)) {
+            semana = String.format("%s-%s", semana2.first(), semana2.last());
+        } else if (semana3.contains(dia)) {
+            semana = String.format("%s-%s", semana3.first(), semana3.last());
+        } else if (semana4.contains(dia)) {
+            semana = String.format("%s-%s", semana4.first(), semana4.last());
+        } else if (semana5.contains(dia)) {
+            semana = String.format("%s-%s", semana5.first(), semana5.last());
+        }
+        return semana;
     }
 
     public void updateStatus(final String message) {

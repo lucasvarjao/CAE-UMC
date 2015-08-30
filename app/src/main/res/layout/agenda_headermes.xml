@@ -1,22 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
+
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="72dp"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="setembro de 2015"
         android:id="@+id/lblHeaderMes"
         android:layout_alignParentTop="true"
-        android:layout_centerInParent="true"
         android:layout_alignParentLeft="false"
         android:layout_alignParentBottom="false"
         android:layout_alignParentRight="false"
         android:layout_alignWithParentIfMissing="false"
-        android:gravity="center"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginRight="16dp" />
-</RelativeLayout>
+        android:paddingTop="16dp"
+        android:textStyle="bold"
+        android:gravity="bottom|center_horizontal" />
+</FrameLayout>
