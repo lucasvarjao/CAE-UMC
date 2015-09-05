@@ -39,6 +39,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CalendarView;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
@@ -85,7 +87,7 @@ public class NavDrawerActivity extends AppCompatActivity{
     static int actionModeStatus=0;
     private NavigationView mNavigationView;
     private Toolbar toolbar;
-   private static RecyclerView lstMaterias;
+   private static ListView lstMaterias;
     private static ListView lstEventos;
     private static ListAdapter adapter;
     private static String ALTERACAO2 = "0";
@@ -374,14 +376,16 @@ static List<Long> eventosID = new ArrayList<>();
 
                 if (notifyUpdate == 1) {
                     teste.clear();
-                    lstMaterias.setAdapter(new DisciplinaAdapter());
+                    List<MateriaListModel> materiaListModels = MateriaListModel.listAll(MateriaListModel.class);
+                    ArrayAdapter arrayAdapter = new ListAdapter(activityDisciplina, contextFragment, R.layout.materias_listrow, materiaListModels);
+                    lstMaterias.setAdapter(arrayAdapter);
 
                     notifyUpdate = 0;
                     Snackbar.make(rootLayout, "Disciplina Alterada", Snackbar.LENGTH_SHORT).show();
                 }
 
 
-                int nDisciplinas2 = lstMaterias.getAdapter().getItemCount();
+                int nDisciplinas2 = lstMaterias.getAdapter().getCount();
                 ALTERACAO2 = "0";
 
                 if (nDisciplinas2 > nDisciplinas) {
@@ -434,9 +438,10 @@ static List<Long> eventosID = new ArrayList<>();
                         @Override
                         public void onDestroyActionMode(ActionMode mode) {
                             actionModeStatus = 0;
-                            mMultiSelector.clearSelections();
-                            selectedDisciplinas.clear();
-                            lstMaterias.setAdapter(new DisciplinaAdapter());
+                            lstMaterias.clearChoices();
+                            List<MateriaListModel> materiaListModels = MateriaListModel.listAll(MateriaListModel.class);
+                            ArrayAdapter arrayAdapter = new ListAdapter(activityDisciplina, contextFragment, R.layout.materias_listrow, materiaListModels);
+                            lstMaterias.setAdapter(arrayAdapter);
 
                             //lstMaterias.getAdapter().notifyDataSetChanged();
                         }
@@ -459,7 +464,7 @@ static List<Long> eventosID = new ArrayList<>();
                                     actionModeStatus = 0;
 
 
-                                    for (int i = lstMaterias.getAdapter().getItemCount()-1; i >= 0; i--) {
+                                    for (int i = lstMaterias.getAdapter().getCount()-1; i >= 0; i--) {
                                         if (mMultiSelector.isSelected(i, 0)) {
                                             MateriaListModel materiaListModel = MateriaListModel.findById(MateriaListModel.class, Long.valueOf(teste.get(i)));
                                             teste.remove(i);
@@ -470,9 +475,10 @@ static List<Long> eventosID = new ArrayList<>();
                                     }
 
                                     teste.clear();
-                                    lstMaterias.setAdapter(new DisciplinaAdapter());
-                                    mMultiSelector.clearSelections();
-                                    selectedDisciplinas.clear();
+                                    List<MateriaListModel> materiaListModels = MateriaListModel.listAll(MateriaListModel.class);
+                                    ArrayAdapter arrayAdapter = new ListAdapter(activityDisciplina, contextFragment, R.layout.materias_listrow, materiaListModels);
+                                    lstMaterias.setAdapter(arrayAdapter);
+                                    lstMaterias.clearChoices();
                                     actionMode.finish();
                                     return true;
                                 default:
@@ -483,15 +489,7 @@ static List<Long> eventosID = new ArrayList<>();
                     };
 
                     rootView = inflater.inflate(R.layout.fragment_notas, container, false);
-                    lstMaterias = (RecyclerView) rootView.findViewById(R.id.lstMaterias);
-                    LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-                    layoutManager.supportsPredictiveItemAnimations();
-                    lstMaterias.setLayoutManager(layoutManager);
-                    lstMaterias.setItemAnimator(new DefaultItemAnimator());
-                    lstMaterias.setHasFixedSize(true);
-                    lstMaterias.addItemDecoration(new DividerItemDecoration(getActivity(), null));
-
-
+                    lstMaterias = (ListView) rootView.findViewById(R.id.lstMaterias);
                     activityDisciplina = getActivity();
 
 
@@ -504,28 +502,109 @@ static List<Long> eventosID = new ArrayList<>();
 
 
                             fab.setOnClickListener(new View.OnClickListener() {
-                        @Override public void onClick(View v) {
-                           // disciplinaDialogFragment.show(getFragmentManager(), "Teste");
-                            DialogActivity dialogActivity = new DialogActivity();
+                                @Override
+                                public void onClick(View v) {
+                                    // disciplinaDialogFragment.show(getFragmentManager(), "Teste");
+                                    DialogActivity dialogActivity = new DialogActivity();
 
 
-                            nDisciplinas = lstMaterias.getAdapter().getItemCount();
+                                    nDisciplinas = lstMaterias.getAdapter().getCount();
 
-                            Intent intent = new Intent(rootView.getContext(), DialogActivity.class);
-                            Bundle args = new Bundle();
-                            args.putString("DISCIPLINA_ID", "");
-                            args.putString("EDITAR_DISCIPLINA", "0");
-                            intent.putExtras(args);
-                            startActivity(intent);
+                                    Intent intent = new Intent(rootView.getContext(), DialogActivity.class);
+                                    Bundle args = new Bundle();
+                                    args.putString("DISCIPLINA_ID", "");
+                                    args.putString("EDITAR_DISCIPLINA", "0");
+                                    intent.putExtras(args);
+                                    startActivity(intent);
+                                }
+                            });
+
+                    List<MateriaListModel> materiaListModels = MateriaListModel.listAll(MateriaListModel.class);
+                    ArrayAdapter arrayAdapter = new ListAdapter(activityDisciplina, contextFragment, R.layout.materias_listrow, materiaListModels);
+                    lstMaterias.setAdapter(arrayAdapter);
+                    lstMaterias.setClickable(true);
+                    lstMaterias.setLongClickable(true);
+                    lstMaterias.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                            if (actionModeStatus == 1) {
+
+                                if (v.isSelected()) {
+                                    v.setBackgroundColor(0);
+                                    v.setSelected(false);
+                                    String sizeSelect = String.valueOf(lstMaterias.getCheckedItemCount());
+                                    mActionDeleteMode.setTitle(sizeSelect + " selecionado");
+                                    //  lstMaterias.getAdapter().notifyDataSetChanged();
+
+
+
+
+                                } else {
+                                    v.setBackgroundColor(Color.LTGRAY);
+                                    v.setSelected(true);
+                                    String sizeSelect = String.valueOf(lstMaterias.getCheckedItemCount());
+                                    mActionDeleteMode.setTitle(sizeSelect + " selecionado");
+                                    //lstMaterias.getAdapter().notifyDataSetChanged();
+
+                                }
+
+                            }
+                            else if (actionModeStatus == 0) {
+                                // start an instance of CrimePagerActivity
+                                String ids = String.valueOf(id);
+                                Intent i = new Intent (contextFragment, DialogActivity.class);
+                                Bundle args = new Bundle();
+                                args.putString("DISCIPLINA_ID", ids);
+                                args.putString("EDITAR_DISCIPLINA", "1");
+
+
+                                nDisciplinas = parent.getCount();
+                                disciplinaPosition = position;
+
+                                i.putExtras(args);
+                                contextFragment.startActivity(i);
+                            }
                         }
                     });
 
+                    lstMaterias.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                        @Override
+                        public boolean onItemLongClick(AdapterView<?> parent, View v, int position, long id) {
 
-                    adapter = new ListAdapter(getActivity(),rootView.getContext(), R.layout.materias_listrow, materias);
+                            if (actionModeStatus == 1) {
 
-                    DisciplinaAdapter disciplinaAdapter = new DisciplinaAdapter();
-                    disciplinaAdapter.setHasStableIds(true);
-                    lstMaterias.setAdapter(disciplinaAdapter);
+                                if (v.isSelected()) {
+                                    v.setBackgroundColor(0);
+                                    v.setSelected(false);
+                                    String sizeSelect = String.valueOf(lstMaterias.getCheckedItemCount());
+                                    mActionDeleteMode.setTitle(sizeSelect + " selecionado");
+                                    //  lstMaterias.getAdapter().notifyDataSetChanged();
+
+
+                                } else {
+                                    v.setBackgroundColor(Color.LTGRAY);
+                                    v.setSelected(true);
+                                    String sizeSelect = String.valueOf(lstMaterias.getCheckedItemCount());
+                                    mActionDeleteMode.setTitle(sizeSelect + " selecionado");
+                                    //lstMaterias.getAdapter().notifyDataSetChanged();
+
+                                }
+                            } else {
+                                AppCompatActivity activity = (AppCompatActivity) activityDisciplina;
+                                // activity.startSupportActionMode(mDeleteMode);
+                                mActionDeleteMode = activity.startSupportActionMode(mDeleteMode);
+                                actionModeStatus = 1;
+                                v.setBackgroundColor(Color.LTGRAY);
+                                v.setSelected(true);
+                                String sizeSelect = String.valueOf(lstMaterias.getCheckedItemCount());
+                                mActionDeleteMode.setTitle(sizeSelect + " selecionado");
+                                //  lstMaterias.getAdapter().notifyDataSetChanged();
+
+                            }
+
+                            return true;
+                        }
+                    });
 
                   //  ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
                   //  itemTouchHelper.attachToRecyclerView(lstMaterias);
@@ -612,7 +691,8 @@ static List<Long> eventosID = new ArrayList<>();
 
     }
 
-    private static class DisciplinasHolder extends SwappingHolder implements View.OnClickListener, View.OnLongClickListener {
+
+    /*private static class DisciplinasHolder extends SwappingHolder implements View.OnClickListener, View.OnLongClickListener {
 
         private MateriaListModel mDisciplinas;
         LinearLayout swipeableContent;
@@ -888,7 +968,7 @@ static List<Long> eventosID = new ArrayList<>();
 
 
 
-    }
+    }*/
 
     @Override
     protected void onActivityResult(

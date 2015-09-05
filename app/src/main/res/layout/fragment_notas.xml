@@ -12,12 +12,14 @@
         android:orientation="vertical"
         >
 
-        <android.support.v7.widget.RecyclerView
+        <ListView
             android:id="@+id/lstMaterias"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
 android:overScrollMode="always"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:choiceMode="multipleChoice"
+            android:clickable="false" />
 
 
 

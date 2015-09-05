@@ -44,14 +44,12 @@ public class ListAdapter extends ArrayAdapter<MateriaListModel> {
     }
 
     public MateriaListModel getItem(int position) {
-        MateriaListModel listModel = getItem(position);
+        MateriaListModel listModel = data.get(position);
         return listModel;
     }
 
     public long getItemId(int position) {
-        List<MateriaListModel> listModel = MateriaListModel.listAll(MateriaListModel.class);
-        MateriaListModel materiaListModel = listModel.get(position);
-        long id = materiaListModel.getId();
+        long id = data.get(position).getId();
         return id;
     }
 
