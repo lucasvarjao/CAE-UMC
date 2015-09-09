@@ -501,7 +501,7 @@ public class DialogActivity extends AppCompatActivity {
                     MateriaListModel materia = new MateriaListModel(disciplina2, M1, M2, PI, EX, NF, DP);
                     materia.save();
 
-
+                    NavDrawerActivity.notifyUpdate = 2;
 
                     DialogActivity.this.finish();
                 }

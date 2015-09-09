@@ -72,6 +72,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.TreeSet;
 
+import static android.view.View.INVISIBLE;
+
 
 public class NavDrawerActivity extends AppCompatActivity{
 
@@ -382,19 +384,18 @@ static List<Long> eventosID = new ArrayList<>();
 
                     notifyUpdate = 0;
                     Snackbar.make(rootLayout, "Disciplina Alterada", Snackbar.LENGTH_SHORT).show();
+                } else if (notifyUpdate == 2) {
+                    List<MateriaListModel> materiaListModels = MateriaListModel.listAll(MateriaListModel.class);
+                    ArrayAdapter arrayAdapter = new ListAdapter(activityDisciplina, contextFragment, R.layout.materias_listrow, materiaListModels);
+                    lstMaterias.setAdapter(arrayAdapter);
+                    notifyUpdate = 0;
+                    Snackbar.make(rootLayout, "Disciplina Adicionada", Snackbar.LENGTH_SHORT).show();
                 }
 
 
-                int nDisciplinas2 = lstMaterias.getAdapter().getCount();
+               // int nDisciplinas2 = lstMaterias.getAdapter().getCount();
                 ALTERACAO2 = "0";
 
-                if (nDisciplinas2 > nDisciplinas) {
-
-                    nDisciplinas = nDisciplinas2;
-                    Snackbar.make(rootLayout, "Disciplina Adicionada", Snackbar.LENGTH_SHORT).show();
-
-
-                }
 
             }
 
@@ -439,10 +440,19 @@ static List<Long> eventosID = new ArrayList<>();
                         public void onDestroyActionMode(ActionMode mode) {
                             actionModeStatus = 0;
                             lstMaterias.clearChoices();
+                            for (int i = 0; i < lstMaterias.getCount(); i++)
+                                lstMaterias.setItemChecked(i, false);
                             List<MateriaListModel> materiaListModels = MateriaListModel.listAll(MateriaListModel.class);
-                            ArrayAdapter arrayAdapter = new ListAdapter(activityDisciplina, contextFragment, R.layout.materias_listrow, materiaListModels);
-                            lstMaterias.setAdapter(arrayAdapter);
 
+                            if (materiaListModels.size() == 0)
+                            {
+                                lstMaterias.setAdapter(null);
+                            } else {
+                                ArrayAdapter arrayAdapter = new ListAdapter(activityDisciplina, contextFragment, R.layout.materias_listrow, materiaListModels);
+                                lstMaterias.setAdapter(arrayAdapter);
+                            }
+                            final FloatingActionButton fab = (FloatingActionButton) appView.findViewById(R.id.fab);
+                            fab.setVisibility(View.VISIBLE);
                             //lstMaterias.getAdapter().notifyDataSetChanged();
                         }
 
@@ -465,20 +475,27 @@ static List<Long> eventosID = new ArrayList<>();
 
 
                                     for (int i = lstMaterias.getAdapter().getCount()-1; i >= 0; i--) {
-                                        if (mMultiSelector.isSelected(i, 0)) {
-                                            MateriaListModel materiaListModel = MateriaListModel.findById(MateriaListModel.class, Long.valueOf(teste.get(i)));
-                                            teste.remove(i);
+                                        if (lstMaterias.isItemChecked(i)) {
+                                            long idDeletar = lstMaterias.getAdapter().getItemId(i);
+                                            MateriaListModel materiaListModel = MateriaListModel.findById(MateriaListModel.class, idDeletar);
                                             materiaListModel.delete();
-
 
                                         }
                                     }
-
-                                    teste.clear();
-                                    List<MateriaListModel> materiaListModels = MateriaListModel.listAll(MateriaListModel.class);
-                                    ArrayAdapter arrayAdapter = new ListAdapter(activityDisciplina, contextFragment, R.layout.materias_listrow, materiaListModels);
-                                    lstMaterias.setAdapter(arrayAdapter);
                                     lstMaterias.clearChoices();
+                                    for (int i = 0; i < lstMaterias.getCount(); i++)
+                                        lstMaterias.setItemChecked(i, false);
+                                    List<MateriaListModel> materiaListModels = MateriaListModel.listAll(MateriaListModel.class);
+
+                                    if (materiaListModels.size() == 0)
+                                    {
+                                        lstMaterias.setAdapter(null);
+                                    } else {
+                                        ArrayAdapter arrayAdapter = new ListAdapter(activityDisciplina, contextFragment, R.layout.materias_listrow, materiaListModels);
+                                        lstMaterias.setAdapter(arrayAdapter);
+                                    }
+                                    final FloatingActionButton fab = (FloatingActionButton) appView.findViewById(R.id.fab);
+                                    fab.setVisibility(View.VISIBLE);
                                     actionMode.finish();
                                     return true;
                                 default:
@@ -494,7 +511,7 @@ static List<Long> eventosID = new ArrayList<>();
 
 
 
-                    FloatingActionButton fab = (FloatingActionButton) appView.findViewById(R.id.fab);
+                    final FloatingActionButton fab = (FloatingActionButton) appView.findViewById(R.id.fab);
                     fab.setVisibility(View.VISIBLE);
                     List<MateriaListModel> materias = MateriaListModel.listAll(MateriaListModel.class);
 
@@ -507,7 +524,9 @@ static List<Long> eventosID = new ArrayList<>();
                                     // disciplinaDialogFragment.show(getFragmentManager(), "Teste");
                                     DialogActivity dialogActivity = new DialogActivity();
 
-
+                                    if (lstMaterias.getAdapter() == null)
+                                        nDisciplinas = 0;
+                                    else
                                     nDisciplinas = lstMaterias.getAdapter().getCount();
 
                                     Intent intent = new Intent(rootView.getContext(), DialogActivity.class);
@@ -529,22 +548,30 @@ static List<Long> eventosID = new ArrayList<>();
                         public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                             if (actionModeStatus == 1) {
 
-                                if (v.isSelected()) {
+                                if (!lstMaterias.isItemChecked(position)) {
+                                   // v.setSelected(false);
+                                    lstMaterias.setItemChecked(position, false);
                                     v.setBackgroundColor(0);
-                                    v.setSelected(false);
                                     String sizeSelect = String.valueOf(lstMaterias.getCheckedItemCount());
+                                    if (lstMaterias.getCheckedItemCount() <=1)
                                     mActionDeleteMode.setTitle(sizeSelect + " selecionado");
-                                    //  lstMaterias.getAdapter().notifyDataSetChanged();
+                                    else
+                                        mActionDeleteMode.setTitle(sizeSelect + " selecionados");
 
 
 
 
                                 } else {
+
+                                    //v.setSelected(true);
+                                    lstMaterias.setItemChecked(position, true);
                                     v.setBackgroundColor(Color.LTGRAY);
-                                    v.setSelected(true);
                                     String sizeSelect = String.valueOf(lstMaterias.getCheckedItemCount());
-                                    mActionDeleteMode.setTitle(sizeSelect + " selecionado");
-                                    //lstMaterias.getAdapter().notifyDataSetChanged();
+                                    if (lstMaterias.getCheckedItemCount() <=1)
+                                        mActionDeleteMode.setTitle(sizeSelect + " selecionado");
+                                    else
+                                        mActionDeleteMode.setTitle(sizeSelect + " selecionados");
+
 
                                 }
 
@@ -573,31 +600,49 @@ static List<Long> eventosID = new ArrayList<>();
 
                             if (actionModeStatus == 1) {
 
-                                if (v.isSelected()) {
+                                if (lstMaterias.isItemChecked(position)) {
+
+                                   // v.setSelected(false);
+                                    lstMaterias.setItemChecked(position, false);
                                     v.setBackgroundColor(0);
-                                    v.setSelected(false);
                                     String sizeSelect = String.valueOf(lstMaterias.getCheckedItemCount());
-                                    mActionDeleteMode.setTitle(sizeSelect + " selecionado");
-                                    //  lstMaterias.getAdapter().notifyDataSetChanged();
+                                    if (lstMaterias.getCheckedItemCount() <=1)
+                                        mActionDeleteMode.setTitle(sizeSelect + " selecionado");
+                                    else
+                                        mActionDeleteMode.setTitle(sizeSelect + " selecionados");
+
 
 
                                 } else {
+
+                                   //v.setSelected(true);
+                                    lstMaterias.setItemChecked(position, true);
                                     v.setBackgroundColor(Color.LTGRAY);
-                                    v.setSelected(true);
                                     String sizeSelect = String.valueOf(lstMaterias.getCheckedItemCount());
-                                    mActionDeleteMode.setTitle(sizeSelect + " selecionado");
-                                    //lstMaterias.getAdapter().notifyDataSetChanged();
+                                    if (lstMaterias.getCheckedItemCount() <=1)
+                                        mActionDeleteMode.setTitle(sizeSelect + " selecionado");
+                                    else
+                                        mActionDeleteMode.setTitle(sizeSelect + " selecionados");
+
 
                                 }
                             } else {
                                 AppCompatActivity activity = (AppCompatActivity) activityDisciplina;
+                                fab.setVisibility(INVISIBLE);
                                 // activity.startSupportActionMode(mDeleteMode);
                                 mActionDeleteMode = activity.startSupportActionMode(mDeleteMode);
                                 actionModeStatus = 1;
+                                lstMaterias.clearChoices();
+                                for (int i = 0; i < lstMaterias.getCount(); i++)
+                                    lstMaterias.setItemChecked(i, false);
+                                //v.setSelected(true);
+                                lstMaterias.setItemChecked(position, true);
                                 v.setBackgroundColor(Color.LTGRAY);
-                                v.setSelected(true);
                                 String sizeSelect = String.valueOf(lstMaterias.getCheckedItemCount());
-                                mActionDeleteMode.setTitle(sizeSelect + " selecionado");
+                                if (lstMaterias.getCheckedItemCount() <=1)
+                                    mActionDeleteMode.setTitle(sizeSelect + " selecionado");
+                                else
+                                    mActionDeleteMode.setTitle(sizeSelect + " selecionados");
                                 //  lstMaterias.getAdapter().notifyDataSetChanged();
 
                             }
@@ -616,7 +661,7 @@ static List<Long> eventosID = new ArrayList<>();
                     pgbLoading = (ProgressBar) rootView.findViewById(R.id.pgbLoading);
                     layoutLoading = (RelativeLayout) rootView.findViewById(R.id.layoutLoading);
                     FloatingActionButton fab3 = (FloatingActionButton) appView.findViewById(R.id.fab);
-                    fab3.setVisibility(View.INVISIBLE);
+                    fab3.setVisibility(INVISIBLE);
                     snackView = rootView;
                     activityDisciplina = getActivity();
                     contextFragment = rootView.getContext();
@@ -649,7 +694,7 @@ static List<Long> eventosID = new ArrayList<>();
                 case 3:
                     rootView = inflater.inflate(R.layout.fragment_home, container, false);
                     FloatingActionButton fab2 = (FloatingActionButton) appView.findViewById(R.id.fab);
-                    fab2.setVisibility(View.INVISIBLE);
+                    fab2.setVisibility(INVISIBLE);
                     ImageButton btnFacebook = (ImageButton) rootView.findViewById(R.id.btnFacebook);
                     btnFacebook.setOnClickListener(new View.OnClickListener() {
                         @Override
