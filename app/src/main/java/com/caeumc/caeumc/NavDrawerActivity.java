@@ -50,10 +50,6 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.bignerdranch.android.multiselector.ModalMultiSelectorCallback;
-import com.bignerdranch.android.multiselector.MultiSelector;
-import com.bignerdranch.android.multiselector.SwappingHolder;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -102,7 +98,6 @@ public class NavDrawerActivity extends AppCompatActivity{
     static Activity fragmentActivity;
     static NavDrawerActivity drawerActivity;
     static List<String> teste = new ArrayList<String>();
-    private static MultiSelector mMultiSelector = new MultiSelector();
 
     static List<Integer> selectedDisciplinas = new ArrayList<>();
 
@@ -427,7 +422,7 @@ static List<Long> eventosID = new ArrayList<>();
 
 
                     //mDeleteMode = new ModalMultiSelectorCallback(mMultiSelector) {
-                    mDeleteMode = new ModalMultiSelectorCallback(mMultiSelector) {
+                    mDeleteMode = new ActionMode.Callback() {
 
                         @Override
                         public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
@@ -452,7 +447,8 @@ static List<Long> eventosID = new ArrayList<>();
                                 lstMaterias.setAdapter(arrayAdapter);
                             }
                             final FloatingActionButton fab = (FloatingActionButton) appView.findViewById(R.id.fab);
-                            fab.setVisibility(View.VISIBLE);
+                           // fab.setVisibility(View.VISIBLE);
+                            fab.show();
                             //lstMaterias.getAdapter().notifyDataSetChanged();
                         }
 
@@ -495,7 +491,8 @@ static List<Long> eventosID = new ArrayList<>();
                                         lstMaterias.setAdapter(arrayAdapter);
                                     }
                                     final FloatingActionButton fab = (FloatingActionButton) appView.findViewById(R.id.fab);
-                                    fab.setVisibility(View.VISIBLE);
+                                    //fab.setVisibility(View.VISIBLE);
+                                    fab.show();
                                     actionMode.finish();
                                     return true;
                                 default:
@@ -512,7 +509,8 @@ static List<Long> eventosID = new ArrayList<>();
 
 
                     final FloatingActionButton fab = (FloatingActionButton) appView.findViewById(R.id.fab);
-                    fab.setVisibility(View.VISIBLE);
+                    //fab.setVisibility(View.VISIBLE);
+                    fab.show();
                     List<MateriaListModel> materias = MateriaListModel.listAll(MateriaListModel.class);
 
                     contextFragment = rootView.getContext();
@@ -628,7 +626,8 @@ static List<Long> eventosID = new ArrayList<>();
                                 }
                             } else {
                                 AppCompatActivity activity = (AppCompatActivity) activityDisciplina;
-                                fab.setVisibility(INVISIBLE);
+                               // fab.setVisibility(INVISIBLE);
+                                fab.hide();
                                 // activity.startSupportActionMode(mDeleteMode);
                                 mActionDeleteMode = activity.startSupportActionMode(mDeleteMode);
                                 actionModeStatus = 1;
@@ -661,7 +660,8 @@ static List<Long> eventosID = new ArrayList<>();
                     pgbLoading = (ProgressBar) rootView.findViewById(R.id.pgbLoading);
                     layoutLoading = (RelativeLayout) rootView.findViewById(R.id.layoutLoading);
                     FloatingActionButton fab3 = (FloatingActionButton) appView.findViewById(R.id.fab);
-                    fab3.setVisibility(INVISIBLE);
+                    //fab3.setVisibility(INVISIBLE);
+                    fab3.hide();
                     snackView = rootView;
                     activityDisciplina = getActivity();
                     contextFragment = rootView.getContext();
@@ -694,7 +694,8 @@ static List<Long> eventosID = new ArrayList<>();
                 case 3:
                     rootView = inflater.inflate(R.layout.fragment_home, container, false);
                     FloatingActionButton fab2 = (FloatingActionButton) appView.findViewById(R.id.fab);
-                    fab2.setVisibility(INVISIBLE);
+                  //  fab2.setVisibility(INVISIBLE);
+                    fab2.hide();
                     ImageButton btnFacebook = (ImageButton) rootView.findViewById(R.id.btnFacebook);
                     btnFacebook.setOnClickListener(new View.OnClickListener() {
                         @Override
