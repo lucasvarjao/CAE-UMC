@@ -9,7 +9,8 @@ android:theme="@style/ThemeOverlay.AppCompat.Dark"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:src="@drawable/nav_header"
-    android:scaleType="centerCrop" />
+    android:scaleType="centerCrop"
+    android:contentDescription="@string/hifen"/>
 
 
 
@@ -18,7 +19,8 @@ android:theme="@style/ThemeOverlay.AppCompat.Dark"
     android:layout_height="wrap_content"
     android:layout_gravity="bottom"
     android:layout_margin="16dp"
-    android:text="Lucas Varjão"
+    android:text="@string/usuario"
+    android:visibility="gone"
     android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
 
 </FrameLayout>

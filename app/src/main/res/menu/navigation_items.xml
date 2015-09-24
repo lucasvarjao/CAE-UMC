@@ -6,21 +6,21 @@
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_home_grey600_24dp"
             android:checked="true"
-            android:title="Home" />
+            android:title="@string/home" />
         <item
             android:id="@+id/nav_notas"
             android:icon="@drawable/ic_note_text_grey600_24dp"
-            android:title="Notas" />
+            android:title="@string/notas" />
         <item
             android:id="@+id/nav_calendario"
             android:icon="@drawable/ic_calendar_grey600_24dp"
-            android:title="Calendário Acadêmico"
+            android:title="@string/calendarioacademico"
             android:enabled="false"
             android:visible="false"/>
         <item
             android:id="@+id/nav_arquivos"
             android:icon="@drawable/ic_file_document_grey600_24dp"
-            android:title="Arquivos"
+            android:title="@string/arquivos"
             android:enabled="false"
             android:visible="false"/>
     </group>

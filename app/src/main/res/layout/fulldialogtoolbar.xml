@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:fillViewport="true">
 <RelativeLayout
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:layout_width="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
 
@@ -16,7 +16,6 @@
         android:background="@color/primary"
         android:theme="@style/ThemeOverlay.AppCompat.Dark"
         android:id="@+id/tool_bar_dialog"
-        android:elevation="4dp"
         android:fitsSystemWindows="true"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
@@ -56,9 +55,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="0/35"
+            android:text="@string/caracteres"
             android:id="@+id/lblContador"
-            android:layout_gravity="right"
+            android:layout_gravity="end"
             android:textSize="12sp"
             android:layout_below="@+id/txtInputDisciplina"
             android:layout_alignRight="@+id/txtInputDisciplina"
@@ -83,7 +82,7 @@
         android:maxLength="5"
         android:singleLine="true"
         android:imeOptions="actionNext"
-        android:hint="M1"
+        android:hint="@string/m1"
          />
     </android.support.design.widget.TextInputLayout>
 
@@ -105,7 +104,7 @@
         android:maxLength="5"
         android:imeOptions="actionNext"
         android:singleLine="true"
-        android:hint="PI"
+        android:hint="@string/pi"
          />
     </android.support.design.widget.TextInputLayout>
 
@@ -127,7 +126,7 @@
         android:maxLength="5"
         android:imeOptions="actionNext"
         android:singleLine="true"
-        android:hint="ND"
+        android:hint="@string/nd"
          />
     </android.support.design.widget.TextInputLayout>
 
@@ -150,7 +149,7 @@
         android:id="@+id/txtEX"
         android:maxLength="5"
         android:singleLine="true"
-        android:hint="EX"
+        android:hint="@string/ex"
         android:imeOptions="actionDone"
         />
     </android.support.design.widget.TextInputLayout>
@@ -158,7 +157,7 @@
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="DP/Adaptação"
+        android:text="@string/dp"
         android:id="@+id/chbDP"
         android:layout_below="@+id/txtInputM1"
         android:layout_alignLeft="@+id/txtInputM1"
@@ -169,7 +168,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/material_grey_600"
-        android:text="Insira somente a nota da M1 para obter o mínimo necessário na ND (Sem a PI)."
+        android:text="@string/aviso1"
         android:id="@+id/textView12"
         android:textSize="12sp"
         android:layout_alignLeft="@+id/txtInputM1"
@@ -182,7 +181,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/material_grey_600"
-        android:text="Insira a nota da M1 e a nota da PI para obter o mínimo necessário na ND (Deixe o campo 'ND' em branco)."
+        android:text="@string/aviso2"
         android:id="@+id/textView13"
         android:textSize="12sp"
         android:layout_alignLeft="@+id/textView12"
@@ -195,7 +194,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/material_grey_600"
-        android:text="Após todas as notas serem adicionadas, caso a nota final não for o suficiente para ser aprovado, o sistema mostrará a nota mínima necessária no exame."
+        android:text="@string/aviso3"
         android:id="@+id/textView14"
         android:textSize="12sp"
         android:layout_alignLeft="@+id/textView13"

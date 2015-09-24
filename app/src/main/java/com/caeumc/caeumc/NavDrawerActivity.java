@@ -1021,7 +1021,7 @@ static List<Long> eventosID = new ArrayList<>();
                                 getPreferences(Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = settings.edit();
                         editor.putString(PREF_ACCOUNT_NAME, accountName);
-                        editor.commit();
+                        editor.apply();
                     }
                 } else if (resultCode == RESULT_CANCELED) {
                     Toast.makeText(contextFragment,"Account unspecified.",Toast.LENGTH_LONG).show();

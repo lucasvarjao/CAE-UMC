@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="56dp">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/home_fragment"
+            android:id="@+id/textView"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:padding="16dp"
+            />
+
+
+    </LinearLayout>
+
+
+    <ImageButton
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:id="@+id/btnFacebook"
+        android:src="@drawable/facebook_box"
+        android:elevation="4dp"
+        android:clickable="true"
+        android:layout_gravity="center"
+        android:adjustViewBounds="false"
+        android:scaleType="fitXY"
+        android:background="@android:color/transparent"
+        android:padding="0dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Curta nossa página no facebook"
+        android:id="@+id/textView2"
+        android:gravity="center" />
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Acesse nosso site \n caeumc.wix.com/villa-lobos"
+        android:id="@+id/textView15"
+        android:autoLink="web"
+        android:layout_marginTop="16dp"
+        android:gravity="center" />
+
+</LinearLayout>

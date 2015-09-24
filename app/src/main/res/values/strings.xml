@@ -38,4 +38,41 @@
     <string name="disciplina">Disciplina</string>
     <string name="campoobrigatorio">Campo obrigatório</string>
     <string name="title_activity_dialog">Adicionar</string>
+
+    <string name="excluir">Excluir</string>
+    <string name="salvar">Salvar</string>
+    <string name="home">Home</string>
+    <string name="mes">setembro de 2015</string>
+    <string name="aviso">Suas matérias aparecerão aqui, \n quando você adicioná-las.</string>
+    <string name="notas">Notas</string>
+    <string name="resmat">Resistência dos Materiais III</string>
+    <string name="calendarioacademico">Calendário Acadêmico</string>
+    <string name="n5">5</string>
+    <string name="usuario">Lucas Varjão</string>
+    <string name="arquivos">Arquivos</string>
+    <string name="diassemana">1-6 de set</string>
+    <string name="m11">M1:</string>
+    <string name="pii">PI:</string>
+    <string name="ndd">ND:</string>
+    <string name="exx">EX:</string>
+    <string name="nff">NF:</string>
+    <string name="m1">M1</string>
+    <string name="pi">PI</string>
+    <string name="nd">ND</string>
+    <string name="ex">EX</string>
+    <string name="nf">NF</string>
+    <string name="dp">DP/Adaptação</string>
+    <string name="semana">qua</string>
+    <string name="hifen">-</string>
+    <string name="curtafacebook">Curta nossa página no facebook.</string>
+    <string name="acessosite">Acesse nosso site \n caeumc.wix.com/villa-lobos</string>
+    <string name="caracteres">0/35</string>
+    <string name="M1RESMAT">M1 - RESMAT</string>
+    <string name="local">19:00-22:30 em UMC</string>
+    <string name="aviso1">Insira somente a nota da M1 para obter o mínimo necessário na ND (Sem a PI).</string>
+    <string name="aviso2">Insira a nota da M1 e a nota da PI para obter o mínimo necessário na ND (Deixe o campo 'ND' em branco).</string>
+    <string name="aviso3">Após todas as notas serem adicionadas, caso a nota final não for o suficiente para ser aprovado, o sistema mostrará a nota mínima necessária no exame.</string>
+
+
+
 </resources>

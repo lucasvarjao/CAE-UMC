@@ -17,7 +17,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:id="@+id/lblDiaMes"
         android:textSize="28sp"
-        android:text="5" />
+        android:text="@string/n5" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -27,16 +27,18 @@
         android:textStyle="normal"
         android:textColor="@color/primary_text_default_material_light"
         android:layout_marginTop="-8dp"
-        android:text="qua" />
+        android:text="@string/semana" />
 
 </LinearLayout>
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="55dp"
     android:layout_toRightOf="@+id/layoutDiaSemana"
+    android:layout_toEndOf="@+id/layoutDiaSemana"
     android:layout_alignTop="@+id/layoutDiaSemana"
 
     android:layout_marginRight="16dp"
+    android:layout_marginEnd="16dp"
     android:background="@drawable/borderlayout">
     <RelativeLayout
         android:layout_width="match_parent"
@@ -56,13 +58,10 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:id="@+id/lblDescricaoEvento"
-            android:layout_alignTop="@+id/lblDiaMes"
-            android:layout_centerHorizontal="true"
             android:textColor="@color/primary_text_default_material_dark"
-            android:layout_toRightOf="@+id/lblDiaMes"
             android:textStyle="bold"
             android:singleLine="true"
-            android:text="M1 - RESMAT"
+            android:text="@string/M1RESMAT"
             android:textSize="13sp" />
 
         <TextView
@@ -73,7 +72,7 @@
             android:textColor="@color/primary_text_default_material_dark"
             android:singleLine="true"
             android:visibility="visible"
-            android:text="19:00-22:30 em UMC"
+            android:text="@string/local"
             android:textSize="13sp" />
     </LinearLayout>
     </RelativeLayout>
