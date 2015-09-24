@@ -168,25 +168,6 @@ static List<Long> eventosID = new ArrayList<>();
 
 
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-        MateriaListModel.deleteAll(MateriaListModel.class);
-
-        MateriaListModel materia = new MateriaListModel("Resistência dos Materiais III", -1.0, -1.0, -1.0, -1.0, -1.0, false);
-        materia.save();
-
-        MateriaListModel materia1 = new MateriaListModel("Estruturas de Concreto I", -1.0, -1.0, -1.0, -1.0, -1.0, false);
-        materia1.save();
-
-        MateriaListModel materia2 = new MateriaListModel("Teoria das Estruturas II", -1.0, -1.0, -1.0, -1.0, -1.0, false);
-        materia2.save();
-
-        MateriaListModel materia3 = new MateriaListModel("Hidrologia", -1.0, -1.0, -1.0, -1.0, -1.0, false);
-        materia3.save();
-
-        MateriaListModel materia4 = new MateriaListModel("Patologia", -1.0, -1.0, -1.0, -1.0, -1.0, false);
-        materia4.save();
-
-        MateriaListModel materia5 = new MateriaListModel("Tecnologia do Concreto", -1.0, -1.0, -1.0, -1.0, -1.0, false);
-        materia5.save();
 
         context = getApplicationContext();
 
@@ -273,12 +254,12 @@ static List<Long> eventosID = new ArrayList<>();
             mDrawerLayout.closeDrawers();
         }
 
-        else if (getSupportFragmentManager().findFragmentByTag("fragBack") != null) {
+        else if (getFragmentManager().getBackStackEntryCount() > 1) {
+            getFragmentManager().popBackStack();
 
         }
         else {
             super.onBackPressed();
-            return;
         }
 
     }
@@ -503,7 +484,7 @@ static List<Long> eventosID = new ArrayList<>();
                     };
 
                     rootView = inflater.inflate(R.layout.fragment_notas, container, false);
-                    lstMaterias = (ListView) rootView.findViewById(R.id.lstMaterias);
+                    lstMaterias = (ListView) rootView.findViewById(android.R.id.list);
                     activityDisciplina = getActivity();
 
 
@@ -538,6 +519,9 @@ static List<Long> eventosID = new ArrayList<>();
 
                     List<MateriaListModel> materiaListModels = MateriaListModel.listAll(MateriaListModel.class);
                     ArrayAdapter arrayAdapter = new ListAdapter(activityDisciplina, contextFragment, R.layout.materias_listrow, materiaListModels);
+                   // View emptyView = rootView.findViewById(R.id.lblEmptyList);
+                    TextView emptyText = (TextView)rootView.findViewById(android.R.id.empty);
+                    lstMaterias.setEmptyView(emptyText);
                     lstMaterias.setAdapter(arrayAdapter);
                     lstMaterias.setClickable(true);
                     lstMaterias.setLongClickable(true);
@@ -700,7 +684,7 @@ static List<Long> eventosID = new ArrayList<>();
                     btnFacebook.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Intent facebookIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.facebook.com/"));
+                            Intent facebookIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.facebook.com/CAE-UMC-Villa-Lobos-386902094768273/"));
                             startActivity(facebookIntent);
                         }
                     });

@@ -175,9 +175,11 @@ public class DialogActivity extends AppCompatActivity {
             txtDisciplinas.setSelection(txtDisciplinas.getText().length());
             lblContador.setText(String.valueOf(txtDisciplinas.getText().length()) + "/35");
 
-            if (nNF < 5 && nNF >= 0) {
+            if (nNF < 5 && nNF >= 0 && nEX == -1) {
                 txtEX.setEnabled(true);
-            } else {
+            } else if (nEX != -1) {
+                txtEX.setEnabled(true);
+            }  else {
                 txtEX.setEnabled(false);
 
             }
@@ -484,6 +486,15 @@ public class DialogActivity extends AppCompatActivity {
                     }   else if (M1 != -1 && PI != -1 && M2 != -1) {
                         NF = (M1 + ((PI*0.3 + M2*0.7)*2))/3;
                         NF = Arredondar(NF);
+
+                        if (NF < 5) {
+                            if (M1 != -1 && PI != -1 && M2 != -1 && NF != -1 && EX != -1) {
+
+                                NF = NF + (EX - 5);
+                            } else {
+                                EX = 5 + (5 - NF);
+                            }
+                        }
 
 
                     } else if (M1 != -1 && PI != -1 && M2 != -1 && NF != -1) {

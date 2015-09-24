@@ -34,7 +34,7 @@
     <string name="notas_fragment">Fragment NOTAS</string>
     <string name="calendario_fragment">Fragment Calendário</string>
     <string name="arquivos_fragment">Fragment ARQUIVOS</string>
-    <string name="home_fragment">Bem vindo ao aplicativo do Centro Acadêmico de Engenharia da UMC - Campus Villa Lobos/Lapa</string>
+    <string name="home_fragment">Bem vindo ao aplicativo do \n Centro Acadêmico de Engenharia da \n UMC - Campus Villa Lobos/Lapa</string>
     <string name="disciplina">Disciplina</string>
     <string name="campoobrigatorio">Campo obrigatório</string>
     <string name="title_activity_dialog">Adicionar</string>

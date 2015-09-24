@@ -13,13 +13,26 @@
         >
 
         <ListView
-            android:id="@+id/lstMaterias"
+            android:id="@android:id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
 android:overScrollMode="always"
+            android:layout_weight="1"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:choiceMode="multipleChoice"
             android:clickable="false" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/material_grey_600"
+            android:text="Suas matérias aparecerão aqui, \n quando você adicioná-las."
+            android:id="@android:id/empty"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="16dp"
+            android:textSize="15sp"
+            android:gravity="center"/>
 
 
 
