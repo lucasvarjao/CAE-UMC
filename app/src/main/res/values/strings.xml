@@ -70,7 +70,7 @@
     <string name="M1RESMAT">M1 - RESMAT</string>
     <string name="local">19:00-22:30 em UMC</string>
     <string name="aviso1">Insira somente a nota da M1 para obter o mínimo necessário na ND (Sem a PI).</string>
-    <string name="aviso2">Insira a nota da M1 e a nota da PI para obter o mínimo necessário na ND (Deixe o campo 'ND' em branco).</string>
+    <string name="aviso2">Insira a nota da M1 e a nota da PI para obter o mínimo necessário na ND (Deixe o campo \'ND\' em branco).</string>
     <string name="aviso3">Após todas as notas serem adicionadas, caso a nota final não for o suficiente para ser aprovado, o sistema mostrará a nota mínima necessária no exame.</string>
 
 
