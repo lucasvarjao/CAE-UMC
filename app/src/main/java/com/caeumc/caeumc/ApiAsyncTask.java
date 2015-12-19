@@ -3,6 +3,9 @@ package com.caeumc.caeumc;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.google.android.gms.auth.GoogleAuthException;
+import com.google.android.gms.auth.GoogleAuthUtil;
+import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GooglePlayServicesAvailabilityIOException;
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 import com.google.api.client.util.DateTime;
@@ -22,13 +25,17 @@ import java.util.List;
  */
 public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
     private NavDrawerActivity mActivity;
+    String mScope;
+    String mEmail;
 
     /**
      * Constructor.
      * @param activity MainActivity that spawned this task.
      */
-    ApiAsyncTask(NavDrawerActivity activity) {
+    ApiAsyncTask(NavDrawerActivity activity, String name, String Scope) {
         this.mActivity = activity;
+        this.mScope = Scope;
+        this.mEmail = name;
     }
 
     /**
@@ -38,6 +45,7 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... params) {
         try {
+            String token = fetchToken();
             mActivity.clearResultsText();
             mActivity.updateResultsText(getDataFromApi());
 
@@ -110,7 +118,6 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
 
         Date dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2016-01-01 00:00:00");
         DateTime diaMaximo = new DateTime(dateDiaMaximo);
-
         Events events1 = mActivity.mService.events().list("pt.brazilian#holiday@group.v.calendar.google.com")
                 .setTimeMin(diaMinimo)
                 .setTimeMax(diaMaximo)
@@ -149,6 +156,21 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
         }
         List<EventosListModel> eventosList = EventosListModel.findWithQuery(EventosListModel.class, "SELECT * FROM EVENTOS_LIST_MODEL ORDER BY data*1000 ASC");
         return eventosList;
+    }
+
+    protected String fetchToken() throws IOException {
+        try {
+            return GoogleAuthUtil.getToken(mActivity, mEmail, mScope);
+        } catch (UserRecoverableAuthException userRecoverableException) {
+            // GooglePlayServices.apk is either old, disabled, or not present
+            // so we need to show the user some UI in the activity to recover.
+            mActivity.updateStatus(userRecoverableException.getMessage());
+        } catch (GoogleAuthException fatalException) {
+            // Some other type of unrecoverable exception has occurred.
+            // Report and log the error as appropriate for your app.
+
+        }
+        return null;
     }
 
 }

@@ -1,5 +1,6 @@
 package com.caeumc.caeumc;
 
+import android.Manifest;
 import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.Dialog;
@@ -8,9 +9,12 @@ import android.app.Fragment;
 import android.app.SearchManager;
 import android.content.Context;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 
+import android.content.IntentSender;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
 
@@ -18,14 +22,19 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Build;
+import android.provider.MediaStore;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -33,8 +42,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,8 +61,13 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.common.AccountPicker;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.drive.Drive;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.http.HttpTransport;
@@ -71,7 +87,7 @@ import java.util.TreeSet;
 import static android.view.View.INVISIBLE;
 
 
-public class NavDrawerActivity extends AppCompatActivity{
+public class NavDrawerActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
 
     private static SwipeRefreshLayout swipeRefreshLayout;
     private static CalendarView calendarView;
@@ -129,14 +145,21 @@ static RelativeLayout layoutLoading;
     private static EventosListModel mEventos;
 static List<Long> eventosID = new ArrayList<>();
     static com.google.api.services.calendar.Calendar mService;
+    static GoogleApiClient mGoogleApiClient;
     static GoogleAccountCredential credential;
+    static GoogleAccountCredential accountCredential;
     static final HttpTransport transport = AndroidHttp.newCompatibleTransport();
     static final JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
     static final int REQUEST_ACCOUNT_PICKER = 1000;
     static final int REQUEST_AUTHORIZATION = 1001;
     static final int REQUEST_GOOGLE_PLAY_SERVICES = 1002;
     private static final String PREF_ACCOUNT_NAME = "accountName";
+    private static final String TAG = "drive-quickstart";
     private static final String[] SCOPES = { CalendarScopes.CALENDAR_READONLY };
+    static String mEmail;
+    static int fragmentatual = -1;
+    static boolean mudarusuario = false;
+    static String emailantigo;
 
 
     private static void popularListView() {
@@ -228,12 +251,16 @@ static List<Long> eventosID = new ArrayList<>();
 
     }
 
-    /*@Override
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main, menu);
+        if (fragmentatual == 1) {
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.calendario_menu, menu);
+
+        }
+
         return super.onCreateOptionsMenu(menu);
-    }*/
+    }
 
   //* Called whenever we call invalidateOptionsMenu() *//*
     @Override
@@ -273,6 +300,16 @@ static List<Long> eventosID = new ArrayList<>();
         }
         // Handle action buttons
         switch(item.getItemId()) {
+            case R.id.alterar_conta:
+                mudarusuario = true;
+                emailantigo = mEmail;
+                getUserAccountWrapper();
+                return true;
+            case R.id.atualizar:
+                swipeRefreshLayout.setEnabled(false);
+                swipeRefreshLayout.setRefreshing(true);
+                AtualizarCalendario();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -329,6 +366,27 @@ static List<Long> eventosID = new ArrayList<>();
             // Empty constructor required for fragment subclasses
         }
 
+
+
+        @Override
+        public void onPause() {
+            super.onPause();
+            int i = getArguments().getInt(ARG_PLANET_NUMBER);
+            int n = Integer.parseInt(ALTERACAO2);
+
+            if (i == 2) {
+
+                if (mGoogleApiClient != null) {
+                    mGoogleApiClient.disconnect();
+                }
+            }
+
+        }
+
+
+
+
+
         @Override
         public void onResume() {
             super.onResume();
@@ -374,29 +432,74 @@ static List<Long> eventosID = new ArrayList<>();
                                 "after installing, close and relaunch this app.", Toast.LENGTH_LONG).show();
                     }
                 } else {
-                    updateResultsText(eventosListModels);
+                    if (mudarusuario == true) {
+                        if (emailantigo == mEmail) {
+                            swipeRefreshLayout.setEnabled(false);
+                            swipeRefreshLayout.setRefreshing(true);
+                            updateResultsText(eventosListModels);
+                        } else {
+                            if (isGooglePlayServicesAvailable()) {
+                                swipeRefreshLayout.setEnabled(false);
+                                swipeRefreshLayout.setRefreshing(true);
+                                refreshResults();
+
+                            } else {
+                                Toast.makeText(contextFragment, "Google Play Services required: " +
+                                        "after installing, close and relaunch this app.", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                        mudarusuario = false;
+                    } else {
+                        swipeRefreshLayout.setEnabled(false);
+                        swipeRefreshLayout.setRefreshing(true);
+                        updateResultsText(eventosListModels);
+                    }
                 }
 
 
             }
-        }
 
+            if (i == 2) {
+                if (mGoogleApiClient == null) {
+                    // Create the API client and bind it to an instance variable.
+                    // We use this instance as the callback for connection and connection
+                    // failures.
+                    // Since no account name is passed, the user is prompted to choose.
+                    mGoogleApiClient = new GoogleApiClient.Builder(context)
+                            .addApi(Drive.API)
+                            .addScope(Drive.SCOPE_FILE)
+                            .addConnectionCallbacks(drawerActivity)
+                            .addOnConnectionFailedListener(drawerActivity)
+                            .build();
+                }
+                // Connect the client. Once connected, the camera is launched.
+                mGoogleApiClient.connect();
+            }
+        }
+        private int statusBarColor;
         @Override
         public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                                  Bundle savedInstanceState) {
             int i = getArguments().getInt(ARG_PLANET_NUMBER);
+            fragmentatual = i;
             final View rootView;
             switch (i)
             {
                 case 0:
-
+                    mainActivity.invalidateOptionsMenu();
 
                     //mDeleteMode = new ModalMultiSelectorCallback(mMultiSelector) {
                     mDeleteMode = new ActionMode.Callback() {
 
                         @Override
                         public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                //hold current color of status bar
 
+                                statusBarColor = drawerActivity.getWindow().getStatusBarColor();
+                                //set your gray color
+                                drawerActivity.getWindow().setStatusBarColor(Color.parseColor("#1A237E"));
+                            }
                             getActivity().getMenuInflater().inflate(R.menu.delete_disciplina_menu, menu);
                             return true;
                         }
@@ -481,7 +584,7 @@ static List<Long> eventosID = new ArrayList<>();
                     final FloatingActionButton fab = (FloatingActionButton) appView.findViewById(R.id.fab);
                     //fab.setVisibility(View.VISIBLE);
                     fab.show();
-                    List<MateriaListModel> materias = MateriaListModel.listAll(MateriaListModel.class);
+                   // List<MateriaListModel> materias = MateriaListModel.listAll(MateriaListModel.class);
 
                     contextFragment = rootView.getContext();
 
@@ -512,6 +615,9 @@ static List<Long> eventosID = new ArrayList<>();
                     TextView emptyText = (TextView)rootView.findViewById(android.R.id.empty);
                     lstMaterias.setEmptyView(emptyText);
                     lstMaterias.setAdapter(arrayAdapter);
+                    if (materiaListModels.size() == 0) {
+                        lstMaterias.setAdapter(null);
+                    }
                     lstMaterias.setClickable(true);
                     lstMaterias.setLongClickable(true);
                     lstMaterias.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -638,11 +744,15 @@ static List<Long> eventosID = new ArrayList<>();
                     snackView = rootView;
                     activityDisciplina = getActivity();
                     contextFragment = rootView.getContext();
-                    SharedPreferences settings = getActivity().getPreferences(Context.MODE_PRIVATE);
+                    mainActivity.invalidateOptionsMenu();
+
+
+                    SharedPreferences settings = fragmentActivity.getPreferences(Context.MODE_PRIVATE);
                     credential = GoogleAccountCredential.usingOAuth2(
                             contextFragment.getApplicationContext(), Arrays.asList(SCOPES))
                             .setBackOff(new ExponentialBackOff())
                             .setSelectedAccountName(settings.getString(PREF_ACCOUNT_NAME, null));
+                    mEmail = credential.getSelectedAccountName();
 
                     mService = new com.google.api.services.calendar.Calendar.Builder(
                             transport, jsonFactory, credential)
@@ -663,8 +773,10 @@ static List<Long> eventosID = new ArrayList<>();
                     break;
                 case 2:
                     rootView = inflater.inflate(R.layout.fragment_arquivos, container, false);
+                    mainActivity.invalidateOptionsMenu();
                     break;
                 case 3:
+                    mainActivity.invalidateOptionsMenu();
                     rootView = inflater.inflate(R.layout.fragment_home, container, false);
                     FloatingActionButton fab2 = (FloatingActionButton) appView.findViewById(R.id.fab);
                   //  fab2.setVisibility(INVISIBLE);
@@ -704,293 +816,40 @@ static List<Long> eventosID = new ArrayList<>();
         return Title;
     }
 
-    static void AtualizarCalendario() {
-
-        refreshResults();
-
-    }
-
-
-    /*private static class DisciplinasHolder extends SwappingHolder implements View.OnClickListener, View.OnLongClickListener {
-
-        private MateriaListModel mDisciplinas;
-        LinearLayout swipeableContent;
-
-
-        public DisciplinasHolder(View itemView) {
-            super(itemView, mMultiSelector);
-
-            tt1 = (TextView) itemView.findViewById(R.id.lblExame);
-            tt2 = (TextView) itemView.findViewById(R.id.lblM1);
-            tt3 = (TextView) itemView.findViewById(R.id.lblM2);
-            tt4 = (TextView) itemView.findViewById(R.id.lblMateria);
-            tt5 = (TextView) itemView.findViewById(R.id.lblNotaFinal);
-            tt6 = (TextView) itemView.findViewById(R.id.lblPI);
-            tv1 = (TextView) itemView.findViewById(R.id.textView3);
-            tv2 = (TextView) itemView.findViewById(R.id.textView5);
-            tv3 = (TextView) itemView.findViewById(R.id.textView7);
-            tv4 = (TextView) itemView.findViewById(R.id.textView9);
-            tv5 = (TextView) itemView.findViewById(R.id.textView11);
-
-
-            itemView.setOnClickListener(this);
-            itemView.setClickable(true);
-            itemView.setLongClickable(true);
-            itemView.setOnLongClickListener(this);
-
-            ColorDrawable selectionColor = new ColorDrawable();
-            selectionColor.setColor(Color.LTGRAY);
-            setSelectionModeBackgroundDrawable(selectionColor);
-
-        }
-
-        @Override
-        public void onClick(View v) {
-            if (mDisciplinas == null) {
-                return;
-            } else if (actionModeStatus == 1) {
-
-                if (mMultiSelector.isSelected(lstMaterias.getChildAdapterPosition(v), 0)) {
-
-                    v.setBackgroundColor(0);
-                    mMultiSelector.setSelected(this, false);
-                    selectedDisciplinas = mMultiSelector.getSelectedPositions();
-                    String sizeSelect = String.valueOf(selectedDisciplinas.size());
-                    mActionDeleteMode.setTitle(sizeSelect + " selecionado");
-                  //  lstMaterias.getAdapter().notifyDataSetChanged();
-
-
-
-
-                } else {
-                    v.setBackgroundColor(Color.LTGRAY);
-                    mMultiSelector.setSelected(this, true);
-                    selectedDisciplinas = mMultiSelector.getSelectedPositions();
-                    String sizeSelect = String.valueOf(selectedDisciplinas.size());
-                    mActionDeleteMode.setTitle(sizeSelect + " selecionado");
-                    //lstMaterias.getAdapter().notifyDataSetChanged();
-
-
-
-
-                }
-
-
-
-            }
-            else if (!mMultiSelector.tapSelection(this) && actionModeStatus == 0) {
-                // start an instance of CrimePagerActivity
-                String id = teste.get(lstMaterias.getChildAdapterPosition(v));
-               Intent i = new Intent (contextFragment, DialogActivity.class);
-                Bundle args = new Bundle();
-                args.putString("DISCIPLINA_ID", id);
-                args.putString("EDITAR_DISCIPLINA", "1");
-
-
-                nDisciplinas = lstMaterias.getAdapter().getItemCount();
-                disciplinaPosition = lstMaterias.getChildAdapterPosition(v);
-
-                i.putExtras(args);
-                contextFragment.startActivity(i);
-            }
-        }
-
-        @Override
-        public boolean onLongClick(View v) {
-            AppCompatActivity activity = (AppCompatActivity)activityDisciplina;
-           // activity.startSupportActionMode(mDeleteMode);
-            mActionDeleteMode = activity.startSupportActionMode(mDeleteMode);
-            actionModeStatus = 1;
-            v.setBackgroundColor(Color.LTGRAY);
-            mMultiSelector.setSelected(this, true);
-            selectedDisciplinas = mMultiSelector.getSelectedPositions();
-            String sizeSelect = String.valueOf(selectedDisciplinas.size());
-            mActionDeleteMode.setTitle(sizeSelect + " selecionado");
-          //  lstMaterias.getAdapter().notifyDataSetChanged();
-
-
-         ;
-
-            return true;
-        }
-
-
-
-        public void bindCrime(MateriaListModel materialistmodel) {
-            mDisciplinas = materialistmodel;
-
-            teste.add(materialistmodel.getId().toString());
-
-
-
-
-            if (tt1 != null) {
-
-
-                if (materialistmodel.getEX() == -1.0)
-                    tt1.setText("-");
-                else
-                    tt1.setText(materialistmodel.getEX().toString());
-
-                if (materialistmodel.getEX() >= 9) {
-                    tt1.setTextColor(Color.parseColor("#0D47A1"));
-                } else if (materialistmodel.getEX() >= 7) {
-                    tt1.setTextColor(Color.parseColor("#1976D2"));
-                } else if (materialistmodel.getEX() >= 5) {
-                    tt1.setTextColor(Color.parseColor("#2196F3"));
-                } else if (materialistmodel.getEX() >= 3) {
-                    tt1.setTextColor(Color.parseColor("#F44336"));
-                } else if (materialistmodel.getEX() >= 0) {
-                    tt1.setTextColor(Color.parseColor("#D32F2F"));
-                } else  {
-                    tt1.setTextColor(Color.LTGRAY);
-                }
-            }
-
-            if (tt2 != null) {
-                if (materialistmodel.getM1() == -1.0)
-                    tt2.setText("-");
-                else
-                    tt2.setText(materialistmodel.getM1().toString());
-
-                if (materialistmodel.getM1() >= 9) {
-                    tt2.setTextColor(Color.parseColor("#0D47A1"));
-                } else if (materialistmodel.getM1() >= 7) {
-                    tt2.setTextColor(Color.parseColor("#1976D2"));
-                } else if (materialistmodel.getM1() >= 5) {
-                    tt2.setTextColor(Color.parseColor("#2196F3"));
-                } else if (materialistmodel.getM1() >= 3) {
-                    tt2.setTextColor(Color.parseColor("#F44336"));
-                } else if (materialistmodel.getM1() >= 0) {
-                    tt2.setTextColor(Color.parseColor("#D32F2F"));
-                } else  {
-                    tt1.setTextColor(Color.LTGRAY);
-                }
-            }
-
-            if (tt3 != null) {
-                if (materialistmodel.getM2() == -1.0)
-                    tt3.setText("-");
-                else
-                    tt3.setText(materialistmodel.getM2().toString());
-
-                if (materialistmodel.getM2() >= 9) {
-                    tt3.setTextColor(Color.parseColor("#0D47A1"));
-                } else if (materialistmodel.getM2() >= 7) {
-                    tt3.setTextColor(Color.parseColor("#1976D2"));
-                } else if (materialistmodel.getM2() >= 5) {
-                    tt3.setTextColor(Color.parseColor("#2196F3"));
-                } else if (materialistmodel.getM2() >= 3) {
-                    tt3.setTextColor(Color.parseColor("#F44336"));
-                } else if (materialistmodel.getM2() >= 0) {
-                    tt3.setTextColor(Color.parseColor("#D32F2F"));
-                } else  {
-                    tt1.setTextColor(Color.LTGRAY);
-                }
-            }
-
-            if (tt4 != null) {
-
-                if (materialistmodel.getDP() == true) {
-                    tt4.setText("DP - "+materialistmodel.getNomeMateria());
-
-                } else {
-                    tt4.setText(materialistmodel.getNomeMateria());
-                }
-
-
-
-            }
-
-            if (tt5 != null) {
-                if (materialistmodel.getNF() == -1.0)
-                    tt5.setText("-");
-                else
-                    tt5.setText(materialistmodel.getNF().toString());
-
-                if (materialistmodel.getNF() >= 9) {
-                    tt5.setTextColor(Color.parseColor("#0D47A1"));
-                } else if (materialistmodel.getNF() >= 7) {
-                    tt5.setTextColor(Color.parseColor("#1976D2"));
-                } else if (materialistmodel.getNF() >= 5) {
-                    tt5.setTextColor(Color.parseColor("#2196F3"));
-                } else if (materialistmodel.getNF() >= 3) {
-                    tt5.setTextColor(Color.parseColor("#F44336"));
-                } else if (materialistmodel.getNF() >= 0) {
-                    tt5.setTextColor(Color.parseColor("#D32F2F"));
-                } else  {
-                    tt1.setTextColor(Color.LTGRAY);
-                }
-            }
-
-            if (tt6 != null) {
-                if (materialistmodel.getPI() == -1.0)
-                    tt6.setText("-");
-                else
-                    tt6.setText(materialistmodel.getPI().toString());
-
-                if (materialistmodel.getPI() >= 9) {
-                    tt6.setTextColor(Color.parseColor("#0D47A1"));
-                } else if (materialistmodel.getPI() >= 7) {
-                    tt6.setTextColor(Color.parseColor("#1976D2"));
-                } else if (materialistmodel.getPI() >= 5) {
-                    tt6.setTextColor(Color.parseColor("#2196F3"));
-                } else if (materialistmodel.getPI() >= 3) {
-                    tt6.setTextColor(Color.parseColor("#F44336"));
-                } else if (materialistmodel.getPI() >= 0) {
-                    tt6.setTextColor(Color.parseColor("#D32F2F"));
-                } else  {
-                    tt1.setTextColor(Color.LTGRAY);
-                }
-            }
-
-        }
-
-
-    }
-
-    private static class DisciplinaAdapter
-            extends RecyclerView.Adapter<DisciplinasHolder> {
-        @Override
-        public DisciplinasHolder onCreateViewHolder(ViewGroup parent, int pos) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.materias_listrow, parent, false);
-
-
-
-
-            return new DisciplinasHolder(view);
-        }
-
-
-
-        @Override
-        public void onBindViewHolder(DisciplinasHolder disciplinasHolder, int i) {
-            disciplinasList = MateriaListModel.listAll(MateriaListModel.class);
-            MateriaListModel materiaListModel = disciplinasList.get(i);
-
-            disciplinasHolder.bindCrime(materiaListModel);
-
-        //    disciplinasHolder.itemView.setSelected(selectedDisciplinas.contains(i));
-
-           if (selectedDisciplinas.contains(i)) {
-                disciplinasHolder.itemView.setBackgroundColor(Color.LTGRAY);
-            }
-
-        }
-
-        @Override
-        public int getItemCount() {
-            List<MateriaListModel> materias = MateriaListModel.listAll(MateriaListModel.class);
-            return materias.size();
-        }
-
-
-
-    }*/
 
     @Override
-    protected void onActivityResult(
+    public void onConnectionFailed(ConnectionResult result) {
+        // Called whenever the API client fails to connect.
+        Log.i(TAG, "GoogleApiClient connection failed: " + result.toString());
+        if (!result.hasResolution()) {
+            // show the localized error dialog.
+            GoogleApiAvailability.getInstance().getErrorDialog(this, result.getErrorCode(), 0).show();
+            return;
+        }
+        // The failure has a resolution. Resolve it.
+        // Called typically when the app is not yet authorized, and an
+        // authorization
+        // dialog is displayed to the user.
+        try {
+            result.startResolutionForResult(this, 3);
+        } catch (IntentSender.SendIntentException e) {
+            Log.e(TAG, "Exception while starting resolution activity", e);
+        }
+    }
+
+
+    @Override
+    public void onConnected(Bundle connectionHint) {
+        Log.i(TAG, "API client connected.");
+    }
+
+    @Override
+    public void onConnectionSuspended(int cause) {
+        Log.i(TAG, "GoogleApiClient connection suspended");
+    }
+
+    @Override
+    public void onActivityResult(
             int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch(requestCode) {
@@ -1000,14 +859,15 @@ static List<Long> eventosID = new ArrayList<>();
                 }
                 break;
             case REQUEST_ACCOUNT_PICKER:
-                if (resultCode == RESULT_OK && data != null &&
-                        data.getExtras() != null) {
+                if (resultCode == RESULT_OK /*&& data != null &&
+                            data.getExtras() != null*/) {
                     String accountName =
                             data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+                    mEmail = accountName;
                     if (accountName != null) {
                         credential.setSelectedAccountName(accountName);
                         SharedPreferences settings =
-                                getPreferences(Context.MODE_PRIVATE);
+                                fragmentActivity.getPreferences(Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = settings.edit();
                         editor.putString(PREF_ACCOUNT_NAME, accountName);
                         editor.apply();
@@ -1018,20 +878,32 @@ static List<Long> eventosID = new ArrayList<>();
                 break;
             case REQUEST_AUTHORIZATION:
                 if (resultCode != RESULT_OK) {
-                    chooseAccount();
+                    getUserAccountWrapper();
                 }
                 break;
         }
 
-        super.onActivityResult(requestCode, resultCode, data);
+        //super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    static int MY_PERMISSIONS_REQUEST_GET_ACCOUNTS = 1;
+
+    private static void chooseAccount() {
+           /* NavDrawerActivity navDrawerActivity = new NavDrawerActivity();
+            fragmentActivity.startActivityForResult(
+                    credential.newChooseAccountIntent(), REQUEST_ACCOUNT_PICKER);*/
+
+        String[] accountTypes = new String[]{"com.google"};
+        drawerActivity.startActivityForResult(credential.newChooseAccountIntent(), REQUEST_ACCOUNT_PICKER);
     }
 
     private static void refreshResults() {
-        if (credential.getSelectedAccountName() == null) {
-            chooseAccount();
+       if (credential.getSelectedAccountName() == null) {
+            getUserAccountWrapper();
         } else {
             if (isDeviceOnline()) {
-                new ApiAsyncTask(drawerActivity).execute();
+                String SCOPE = CalendarScopes.CALENDAR_READONLY;
+                new ApiAsyncTask(drawerActivity, mEmail, SCOPE).execute();
             } else {
                 Toast.makeText(contextFragment,"No network connection available.", Toast.LENGTH_LONG).show();
                 swipeRefreshLayout.setRefreshing(false);
@@ -1040,7 +912,7 @@ static List<Long> eventosID = new ArrayList<>();
         }
     }
 
-    public void clearResultsText() {
+    public static void clearResultsText() {
         mainActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -1065,7 +937,7 @@ static List<Long> eventosID = new ArrayList<>();
                 } else {
 
                     lstEventos = (ListView) snackView.findViewById(R.id.lstEventos);
-                   // eventosList = EventosListModel.findWithQuery(EventosListModel.class, "SELECT * FROM EVENTOS_LIST_MODEL ORDER BY datetime(data*1000, 'unixepoch', 'localtime') DESC");
+                    // eventosList = EventosListModel.findWithQuery(EventosListModel.class, "SELECT * FROM EVENTOS_LIST_MODEL ORDER BY datetime(data*1000, 'unixepoch', 'localtime') DESC");
                     EventosListAdapter arrayAdapter = new EventosListAdapter(activityDisciplina, contextFragment);
                     String mesAnterior = "";
                     String semanaAnterior = "";
@@ -1142,6 +1014,16 @@ static List<Long> eventosID = new ArrayList<>();
             }
         });
     }
+
+    static void AtualizarCalendario() {
+
+        refreshResults();
+
+    }
+
+
+
+
 
     private static String getMesEvento (long data) {
         Date dataEvento = new Date(data * 1000L);
@@ -1239,7 +1121,7 @@ static List<Long> eventosID = new ArrayList<>();
         semana5.add(30);
         semana5.add(31);
         if (semana1.contains(dia)) {
-                semana = String.format("%s-%s", semana1.first(), semana1.last());
+            semana = String.format("%s-%s", semana1.first(), semana1.last());
         } else if (semana2.contains(dia)) {
             semana = String.format("%s-%s", semana2.first(), semana2.last());
         } else if (semana3.contains(dia)) {
@@ -1252,22 +1134,18 @@ static List<Long> eventosID = new ArrayList<>();
         return semana;
     }
 
-    public void updateStatus(final String message) {
-       mainActivity.runOnUiThread(new Runnable() {
-           @Override
-           public void run() {
-               Toast.makeText(contextFragment, message, Toast.LENGTH_LONG).show();
-               swipeRefreshLayout.setRefreshing(false);
-               swipeRefreshLayout.setEnabled(true);
-           }
-       });
+    public static void updateStatus(final String message) {
+        mainActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(contextFragment, message, Toast.LENGTH_LONG).show();
+                swipeRefreshLayout.setRefreshing(false);
+                swipeRefreshLayout.setEnabled(true);
+            }
+        });
     }
 
-    private static void chooseAccount() {
-        NavDrawerActivity navDrawerActivity = new NavDrawerActivity();
-        mainActivity.startActivityForResult(
-                credential.newChooseAccountIntent(), REQUEST_ACCOUNT_PICKER);
-    }
+
 
     private static boolean isDeviceOnline() {
         NavDrawerActivity navDrawerActivity = new NavDrawerActivity();
@@ -1306,10 +1184,55 @@ static List<Long> eventosID = new ArrayList<>();
         });
     }
 
+    final static private int REQUEST_CODE_ASK_PERMISSIONS = 123;
 
+    private static void getUserAccountWrapper() {
+        int hasWriteContactsPermission = ContextCompat.checkSelfPermission(contextFragment, Manifest.permission.GET_ACCOUNTS);
+        if (hasWriteContactsPermission != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(fragmentActivity,Manifest.permission.GET_ACCOUNTS)) {
+                showMessageOKCancel("Você precisa aceitar para ver esse calendário",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                ActivityCompat.requestPermissions(fragmentActivity, new String[] {Manifest.permission.GET_ACCOUNTS},
+                                        REQUEST_CODE_ASK_PERMISSIONS);
+                            }
+                        });
+                return;
+            }
+           ActivityCompat.requestPermissions(fragmentActivity, new String[] {Manifest.permission.WRITE_CONTACTS},
+                    REQUEST_CODE_ASK_PERMISSIONS);
+            return;
+        }
+        chooseAccount();
+    }
 
+    private static void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
+        new AlertDialog.Builder(fragmentActivity)
+                .setMessage(message)
+                .setPositiveButton("OK", okListener)
+                .setNegativeButton("Cancel", null)
+                .create()
+                .show();
+    }
 
-
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_ASK_PERMISSIONS:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission Granted
+                    getUserAccountWrapper();
+                } else {
+                    // Permission Denied
+                    Toast.makeText(NavDrawerActivity.this, "WRITE_CONTACTS Denied", Toast.LENGTH_SHORT)
+                            .show();
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
 
 
 }

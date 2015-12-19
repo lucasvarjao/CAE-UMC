@@ -15,14 +15,13 @@
             android:id="@+id/nav_calendario"
             android:icon="@drawable/ic_calendar_grey600_24dp"
             android:title="@string/calendarioacademico"
-            android:enabled="false"
-            android:visible="false"/>
+            android:visible="true"/>
         <item
             android:id="@+id/nav_arquivos"
             android:icon="@drawable/ic_file_document_grey600_24dp"
             android:title="@string/arquivos"
-            android:enabled="false"
-            android:visible="false"/>
+            android:enabled="true"
+            android:visible="true"/>
     </group>
 
 </menu>

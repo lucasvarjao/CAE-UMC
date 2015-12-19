@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -68,12 +69,13 @@ public class ListAdapter extends ArrayAdapter<MateriaListModel> {
             LayoutInflater vi;
             vi = LayoutInflater.from(getContext());
             v = vi.inflate(R.layout.materias_listrow, null);
+
         }
 
             MateriaListModel p = getItem(position);
 
             if (p != null) {
-
+                v.setVisibility(View.VISIBLE);
 
 
                 TextView tt1 = (TextView) v.findViewById(R.id.lblExame);
@@ -82,6 +84,14 @@ public class ListAdapter extends ArrayAdapter<MateriaListModel> {
                 TextView tt4 = (TextView) v.findViewById(R.id.lblMateria);
                 TextView tt5 = (TextView) v.findViewById(R.id.lblNotaFinal);
                 TextView tt6 = (TextView) v.findViewById(R.id.lblPI);
+                TextView tt7 = (TextView) v.findViewById(R.id.textView5);
+                LinearLayout ln = (LinearLayout) v.findViewById(R.id.layoutexame);
+                LinearLayout ln2 = (LinearLayout) v.findViewById(R.id.layoutm2);
+
+                if (p.getDP() == true) {
+                    tt6.setVisibility(View.GONE);
+                    tt7.setVisibility(View.GONE);
+                }
 
                 if (tt1 != null) {
 
@@ -99,6 +109,7 @@ public class ListAdapter extends ArrayAdapter<MateriaListModel> {
                         tt1.setTextColor(Color.parseColor("#2196F3"));
                     } else if (p.getEX() >= 3) {
                         tt1.setTextColor(Color.parseColor("#F44336"));
+
                     } else if (p.getEX() >= 0) {
                         tt1.setTextColor(Color.parseColor("#D32F2F"));
                     } else {
@@ -161,23 +172,39 @@ public class ListAdapter extends ArrayAdapter<MateriaListModel> {
                 }
 
                 if (tt5 != null) {
-                    if (p.getNF() == -1.0)
+                    if (p.getNF() == -1.0) {
                         tt5.setText("-");
-                    else
+                        ln2.setBackgroundColor(0);
+                    }
+                    else {
                         tt5.setText(p.getNF().toString());
+                        ln2.setBackgroundColor(Color.parseColor("#E0E0E0"));
+                    }
+
+                    if (p.getNF() >= 5.1) {
+                        ln2.setBackgroundColor(0);
+                    }
 
                     if (p.getNF() >= 9) {
                         tt5.setTextColor(Color.parseColor("#0D47A1"));
+                        ln.setBackgroundColor(0);
                     } else if (p.getNF() >= 7) {
                         tt5.setTextColor(Color.parseColor("#1976D2"));
+                        ln.setBackgroundColor(0);
                     } else if (p.getNF() >= 5) {
+                        ln.setBackgroundColor(0);
                         tt5.setTextColor(Color.parseColor("#2196F3"));
                     } else if (p.getNF() >= 3) {
+                        ln.setBackgroundColor(Color.parseColor("#E0E0E0"));
+                        ln2.setBackgroundColor(0);
                         tt5.setTextColor(Color.parseColor("#F44336"));
                     } else if (p.getNF() >= 0) {
+                        ln.setBackgroundColor(Color.parseColor("#E0E0E0"));
+                        ln2.setBackgroundColor(0);
                         tt5.setTextColor(Color.parseColor("#D32F2F"));
                     } else {
                         tt1.setTextColor(Color.LTGRAY);
+                        ln.setBackgroundColor(0);
                     }
                 }
 

@@ -51,7 +51,6 @@
             android:label="@string/title_activity_dialog"
             android:windowSoftInputMode="stateVisible|adjustPan"
             android:excludeFromRecents="true"
-            android:theme="@style/AppDialogTheme"
             android:parentActivityName=".NavDrawerActivity"
             tools:ignore="UnusedAttribute">
             <meta-data

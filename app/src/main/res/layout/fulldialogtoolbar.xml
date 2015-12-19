@@ -202,6 +202,19 @@
         android:layout_marginTop="8dp"
         android:layout_marginRight="16dp"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/material_grey_600"
+        android:text="@string/aviso4"
+        android:id="@+id/textView15"
+        android:textSize="12sp"
+        android:layout_alignLeft="@+id/textView14"
+        android:layout_below="@+id/textView14"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="16dp"/>
+
 
 </RelativeLayout>
 </ScrollView>

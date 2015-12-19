@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <item android:id="@+id/atualizar"
+        android:icon="@drawable/ic_calendar_black_24dp"
+        android:title="Atualizar"
+        app:showAsAction="withText" />
+
+    <item android:id="@+id/alterar_conta"
+        android:icon="@drawable/common_signin_btn_icon_focus_dark"
+        android:title="Alterar Conta"
+        app:showAsAction="withText" />
+</menu>
+
+

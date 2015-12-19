@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +23,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -75,7 +77,7 @@ public class DialogActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
-
+        getWindow().setWindowAnimations(android.R.style.Animation_Toast);
         setContentView(R.layout.fulldialogtoolbar);
       //  getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -87,7 +89,13 @@ public class DialogActivity extends AppCompatActivity {
 
         context = getApplicationContext();
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            //hold current color of status bar
 
+            //set your gray color
+            getWindow().setStatusBarColor(Color.parseColor("#1A237E"));
+            getWindow().setNavigationBarColor(Color.parseColor("#1A237E"));
+        }
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white_24dp);
 
@@ -99,6 +107,17 @@ public class DialogActivity extends AppCompatActivity {
         txtM2 = (EditText) findViewById(R.id.txtM2);
         txtEX = (EditText) findViewById(R.id.txtEX);
         chbDP = (CheckBox) findViewById(R.id.chbDP);
+
+        chbDP.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    txtPI.setVisibility(View.GONE);
+                } else {
+                    txtPI.setVisibility(View.VISIBLE);
+                }
+            }
+        });
 
         txtInputDisciplina = (TextInputLayout) findViewById(R.id.txtInputDisciplina);
        txtInputM1 = (TextInputLayout) findViewById(R.id.txtInputM1);
@@ -217,6 +236,10 @@ public class DialogActivity extends AppCompatActivity {
             }
             chbDP.setChecked(nDP);
 
+            if (nDP == true){
+                txtPI.setVisibility(View.GONE);
+            }
+
         }
 
         Log.e("ENTROU", idDisciplina + " " + editarDisciplina);
@@ -275,17 +298,18 @@ public class DialogActivity extends AppCompatActivity {
         Log.e("Arredondamento", String.valueOf(iM2));
         BigDecimal dM2 = new BigDecimal(nota % 1);
         Log.e("Arredondamento", String.valueOf(dM2));
-        dM2 = dM2.setScale(2, RoundingMode.HALF_UP);
+        dM2 = dM2.setScale(1, RoundingMode.HALF_UP);
         Log.e("Arredondamento", String.valueOf(dM2));
         double ddM2 = dM2.doubleValue();
         Log.e("Arredondamento", String.valueOf(ddM2));
-        if (ddM2 < 0.26) {
+        nota = iM2+ddM2;
+       /* if (ddM2 < 0.26) {
             nota = iM2;
         } else if (ddM2 >= 0.76) {
             nota = iM2 + 1;
         } else {
             nota = iM2 + 0.5;
-        }
+        }*/
         Log.e("Arredondamento", String.valueOf(nota));
 
         return nota;
@@ -340,60 +364,106 @@ public class DialogActivity extends AppCompatActivity {
                     }
 
                     DP = chbDP.isChecked();
-                    if (M1 != -1 && PI != -1 && M2 != -1 && NF != -1) {
-                        if (NF < 5) {
-                            if (M1 != -1 && PI != -1 && M2 != -1 && NF != -1 && EX != -1) {
+                    if (chbDP.isChecked()) {
 
-                                NF = NF + (EX - 5);
+                        if (M1 != -1 && M2 != -1 && NF != -1) {
+                            if (NF < 5) {
+                                if (M1 != -1 && M2 != -1 && NF != -1 && EX != -1) {
+
+                                    NF = NF + (EX - 5);
+                                } else {
+                                    EX = 5 + (5 - NF);
+                                }
+
+
                             } else {
-                                EX = 5 + (5 - NF);
+                                NF = (M1 + (M2 * 2)) / 3;
+                                NF = Arredondar(NF);
+                            }
+
+                        } else if (M1 != -1 && M2 == -1) {
+                            M2 = ((3 * 5) - M1) / 2;
+                            M2 = Arredondar(M2);
+                            NF = (M1 + (M2 * 2)) / 3;
+                            NF = Arredondar(NF);
+
+                        } else if (M1 != -1 && M2 != -1) {
+                            NF = (M1 + (M2 * 2)) / 3;
+                            NF = Arredondar(NF);
+
+                            if (NF < 5) {
+                                if (M1 != -1 && M2 != -1 && NF != -1 && EX != -1) {
+
+                                    NF = NF + (EX - 5);
+                                } else {
+                                    EX = 5 + (5 - NF);
+                                }
+
+
                             }
 
 
-                        }
+                        } else if (M1 != -1 && M2 == -1) {
+                            M2 = ((3 * 5) - M1) / 2;
+                            M2 = Arredondar(M2);
 
-                        else {
-                            NF = (M1 + ((PI*0.3 + M2*0.7)*2))/3;
+                            NF = (M1 + (M2 *2)) / 3;
                             NF = Arredondar(NF);
                         }
 
-                    } else if (M1 != -1 && PI == -1 && M2 == -1) {
-                        PI = -1;
-                        M2 = ((3 * 5) - M1 - (0.6*0)) / 1.4;
-                        M2 = Arredondar(M2);
-                        NF = (M1 + ((0*0.3 + M2*0.7)*2))/3;
-                        NF = Arredondar(NF);
+                    } else {
+                        if (M1 != -1 && PI != -1 && M2 != -1 && NF != -1) {
+                            if (NF < 5) {
+                                if (M1 != -1 && PI != -1 && M2 != -1 && NF != -1 && EX != -1) {
 
-                    } else if (M1 != -1 && PI == -1 && M2 != -1) {
-                        PI = -1;
-                        M2 = Arredondar(M2);
-                        NF = (M1 + ((0*0.3 + M2*0.7)*2))/3;
-                        NF = Arredondar(NF);
+                                    NF = NF + (EX - 5);
+                                } else {
+                                    EX = 5 + (5 - NF);
+                                }
 
-                    }   else if (M1 != -1 && PI != -1 && M2 != -1) {
-                        NF = (M1 + ((PI*0.3 + M2*0.7)*2))/3;
-                        NF = Arredondar(NF);
 
-                        if (NF < 5) {
-                            if (M1 != -1 && PI != -1 && M2 != -1 && NF != -1 && EX != -1) {
-
-                                NF = NF + (EX - 5);
                             } else {
-                                EX = 5 + (5 - NF);
+                                NF = (M1 + ((PI * 0.3 + M2 * 0.7) * 2)) / 3;
+                                NF = Arredondar(NF);
+                            }
+
+                        } else if (M1 != -1 && PI == -1 && M2 == -1) {
+                            PI = -1;
+                            M2 = ((3 * 5) - M1 - (0.6 * 0)) / 1.4;
+                            M2 = Arredondar(M2);
+                            NF = (M1 + ((0 * 0.3 + M2 * 0.7) * 2)) / 3;
+                            NF = Arredondar(NF);
+
+                        } else if (M1 != -1 && PI == -1 && M2 != -1) {
+                            PI = -1;
+                            M2 = Arredondar(M2);
+                            NF = (M1 + ((0 * 0.3 + M2 * 0.7) * 2)) / 3;
+                            NF = Arredondar(NF);
+
+                        } else if (M1 != -1 && PI != -1 && M2 != -1) {
+                            NF = (M1 + ((PI * 0.3 + M2 * 0.7) * 2)) / 3;
+                            NF = Arredondar(NF);
+
+                            if (NF < 5) {
+                                if (M1 != -1 && PI != -1 && M2 != -1 && NF != -1 && EX != -1) {
+
+                                    NF = NF + (EX - 5);
+                                } else {
+                                    EX = 5 + (5 - NF);
+                                }
+
+
                             }
 
 
+                        } else if (M1 != -1 && PI != -1 && M2 == -1) {
+                            M2 = ((3 * 5) - M1 - (0.6 * PI)) / 1.4;
+                            M2 = Arredondar(M2);
+
+                            NF = (M1 + ((PI * 0.3 + M2 * 0.7) * 2)) / 3;
+                            NF = Arredondar(NF);
                         }
-
-
-                    } else if (M1 != -1 && PI != -1 && M2 == -1) {
-                        M2 = ((3 * 5) - M1 - (0.6*PI)) / 1.4;
-                        M2 = Arredondar(M2);
-
-                        NF = (M1 + ((PI*0.3 + M2*0.7)*2))/3;
-                        NF = Arredondar(NF);
                     }
-
                     Long i = Long.valueOf(idDisciplina);
 
                     MateriaListModel materiaListModel = MateriaListModel.findById(MateriaListModel.class, i);
@@ -462,53 +532,100 @@ public class DialogActivity extends AppCompatActivity {
                     }
 
                     DP = chbDP.isChecked();
+                    if (chbDP.isChecked()) {
 
-                    if (M1 != -1 && PI != -1 && M2 == -1) {
-                        M2 = ((3 * 5) - M1 - (0.6*PI)) / 1.4;
-                        M2 = Arredondar(M2);
+                        if (M1 != -1 && M2 != -1 && NF != -1) {
+                            if (NF < 5) {
+                                if (M1 != -1 && M2 != -1 && NF != -1 && EX != -1) {
 
-                        NF = (M1 + ((PI*0.3 + M2*0.7)*2))/3;
-                        NF = Arredondar(NF);
+                                    NF = NF + (EX - 5);
+                                } else {
+                                    EX = 5 + (5 - NF);
+                                }
 
-                    } else if (M1 != -1 && PI == -1 && M2 == -1) {
-                        PI =0;
-                        M2 = ((3 * 5) - M1 - (0.6*PI)) / 1.4;
-                        M2 = Arredondar(M2);
-                        NF = (M1 + ((PI*0.3 + M2*0.7)*2))/3;
-                        NF = Arredondar(NF);
 
-                    } else if (M1 != -1 && PI == -1 && M2 != -1) {
-                        PI =0;
-                        M2 = Arredondar(M2);
-                        NF = (M1 + ((PI*0.3 + M2*0.7)*2))/3;
-                        NF = Arredondar(NF);
-
-                    }   else if (M1 != -1 && PI != -1 && M2 != -1) {
-                        NF = (M1 + ((PI*0.3 + M2*0.7)*2))/3;
-                        NF = Arredondar(NF);
-
-                        if (NF < 5) {
-                            if (M1 != -1 && PI != -1 && M2 != -1 && NF != -1 && EX != -1) {
-
-                                NF = NF + (EX - 5);
                             } else {
-                                EX = 5 + (5 - NF);
+                                NF = (M1 + (M2 * 2)) / 3;
+                                NF = Arredondar(NF);
                             }
+
+                        } else if (M1 != -1 && M2 == -1) {
+                            M2 = ((3 * 5) - M1) / 2;
+                            M2 = Arredondar(M2);
+                            NF = (M1 + (M2 * 2)) / 3;
+                            NF = Arredondar(NF);
+
+                        } else if (M1 != -1 && M2 != -1) {
+                            NF = (M1 + (M2 * 2)) / 3;
+                            NF = Arredondar(NF);
+
+                            if (NF < 5) {
+                                if (M1 != -1 && M2 != -1 && NF != -1 && EX != -1) {
+
+                                    NF = NF + (EX - 5);
+                                } else {
+                                    EX = 5 + (5 - NF);
+                                }
+
+
+                            }
+
+
+                        } else if (M1 != -1 && M2 == -1) {
+                            M2 = ((3 * 5) - M1) / 2;
+                            M2 = Arredondar(M2);
+
+                            NF = (M1 + (M2 *2)) / 3;
+                            NF = Arredondar(NF);
                         }
 
+                    } else{
+                        if (M1 != -1 && PI != -1 && M2 == -1) {
+                            M2 = ((3 * 5) - M1 - (0.6 * PI)) / 1.4;
+                            M2 = Arredondar(M2);
 
-                    } else if (M1 != -1 && PI != -1 && M2 != -1 && NF != -1) {
-                        if (NF < 5) {
-                            if (M1 != -1 && PI != -1 && M2 != -1 && NF != -1 && EX != -1) {
+                            NF = (M1 + ((PI * 0.3 + M2 * 0.7) * 2)) / 3;
+                            NF = Arredondar(NF);
 
-                                NF = NF + (EX - 5);
-                            } else {
-                                EX = 5 + (5 - NF);
+                        } else if (M1 != -1 && PI == -1 && M2 == -1) {
+                            PI = 0;
+                            M2 = ((3 * 5) - M1 - (0.6 * PI)) / 1.4;
+                            M2 = Arredondar(M2);
+                            NF = (M1 + ((PI * 0.3 + M2 * 0.7) * 2)) / 3;
+                            NF = Arredondar(NF);
+
+                        } else if (M1 != -1 && PI == -1 && M2 != -1) {
+                            PI = 0;
+                            M2 = Arredondar(M2);
+                            NF = (M1 + ((PI * 0.3 + M2 * 0.7) * 2)) / 3;
+                            NF = Arredondar(NF);
+
+                        } else if (M1 != -1 && PI != -1 && M2 != -1) {
+                            NF = (M1 + ((PI * 0.3 + M2 * 0.7) * 2)) / 3;
+                            NF = Arredondar(NF);
+
+                            if (NF < 5) {
+                                if (M1 != -1 && PI != -1 && M2 != -1 && NF != -1 && EX != -1) {
+
+                                    NF = NF + (EX - 5);
+                                } else {
+                                    EX = 5 + (5 - NF);
+                                }
                             }
 
+
+                        } else if (M1 != -1 && PI != -1 && M2 != -1 && NF != -1) {
+                            if (NF < 5) {
+                                if (M1 != -1 && PI != -1 && M2 != -1 && NF != -1 && EX != -1) {
+
+                                    NF = NF + (EX - 5);
+                                } else {
+                                    EX = 5 + (5 - NF);
+                                }
+
+                            }
                         }
                     }
-
                     MateriaListModel materia = new MateriaListModel(disciplina2, M1, M2, PI, EX, NF, DP);
                     materia.save();
 
@@ -560,43 +677,92 @@ public class DialogActivity extends AppCompatActivity {
 
                     DP = chbDP.isChecked();
 
-                    if (M1 != -1 && PI != -1 && M2 == -1) {
-                        M2 = ((3 * 5) - M1 - (0.6*PI)) / 1.4;
-                        M2 = Arredondar(M2);
+                    if (chbDP.isChecked()) {
 
-                        NF = (M1 + ((PI*0.3 + M2*0.7)*2))/3;
-                        NF = Arredondar(NF);
+                        if (M1 != -1 && M2 != -1 && NF != -1) {
+                            if (NF < 5) {
+                                if (M1 != -1 && M2 != -1 && NF != -1 && EX != -1) {
 
-                    } else if (M1 != -1 && PI == -1 && M2 == -1) {
-                        PI =0;
-                        M2 = ((3 * 5) - M1 - (0.6*PI)) / 1.4;
-                        M2 = Arredondar(M2);
-                        NF = (M1 + ((PI*0.3 + M2*0.7)*2))/3;
-                        NF = Arredondar(NF);
-
-                    } else if (M1 != -1 && PI == -1 && M2 != -1) {
-                        PI =0;
-                        M2 = Arredondar(M2);
-                        NF = (M1 + ((PI*0.3 + M2*0.7)*2))/3;
-                        NF = Arredondar(NF);
-
-                    }   else if (M1 != -1 && PI != -1 && M2 != -1) {
-                        NF = (M1 + ((PI*0.3 + M2*0.7)*2))/3;
-                        NF = Arredondar(NF);
+                                    NF = NF + (EX - 5);
+                                } else {
+                                    EX = 5 + (5 - NF);
+                                }
 
 
-                    } else if (M1 != -1 && PI != -1 && M2 != -1 && NF != -1) {
-                        if (NF < 5) {
-                            if (M1 != -1 && PI != -1 && M2 != -1 && NF != -1 && EX != -1) {
-
-                                NF = NF + (EX - 5);
                             } else {
-                                EX = 5 + (5 - NF);
+                                NF = (M1 + (M2 * 2)) / 3;
+                                NF = Arredondar(NF);
                             }
 
+                        } else if (M1 != -1 && M2 == -1) {
+                            M2 = ((3 * 5) - M1) / 2;
+                            M2 = Arredondar(M2);
+                            NF = (M1 + (M2 * 2)) / 3;
+                            NF = Arredondar(NF);
+
+                        } else if (M1 != -1 && M2 != -1) {
+                            NF = (M1 + (M2 * 2)) / 3;
+                            NF = Arredondar(NF);
+
+                            if (NF < 5) {
+                                if (M1 != -1 && M2 != -1 && NF != -1 && EX != -1) {
+
+                                    NF = NF + (EX - 5);
+                                } else {
+                                    EX = 5 + (5 - NF);
+                                }
+
+
+                            }
+
+
+                        } else if (M1 != -1 && M2 == -1) {
+                            M2 = ((3 * 5) - M1) / 2;
+                            M2 = Arredondar(M2);
+
+                            NF = (M1 + (M2 *2)) / 3;
+                            NF = Arredondar(NF);
+                        }
+
+                    } else {
+
+                        if (M1 != -1 && PI != -1 && M2 == -1) {
+                            M2 = ((3 * 5) - M1 - (0.6 * PI)) / 1.4;
+                            M2 = Arredondar(M2);
+
+                            NF = (M1 + ((PI * 0.3 + M2 * 0.7) * 2)) / 3;
+                            NF = Arredondar(NF);
+
+                        } else if (M1 != -1 && PI == -1 && M2 == -1) {
+                            PI = 0;
+                            M2 = ((3 * 5) - M1 - (0.6 * PI)) / 1.4;
+                            M2 = Arredondar(M2);
+                            NF = (M1 + ((PI * 0.3 + M2 * 0.7) * 2)) / 3;
+                            NF = Arredondar(NF);
+
+                        } else if (M1 != -1 && PI == -1 && M2 != -1) {
+                            PI = 0;
+                            M2 = Arredondar(M2);
+                            NF = (M1 + ((PI * 0.3 + M2 * 0.7) * 2)) / 3;
+                            NF = Arredondar(NF);
+
+                        } else if (M1 != -1 && PI != -1 && M2 != -1) {
+                            NF = (M1 + ((PI * 0.3 + M2 * 0.7) * 2)) / 3;
+                            NF = Arredondar(NF);
+
+
+                        } else if (M1 != -1 && PI != -1 && M2 != -1 && NF != -1) {
+                            if (NF < 5) {
+                                if (M1 != -1 && PI != -1 && M2 != -1 && NF != -1 && EX != -1) {
+
+                                    NF = NF + (EX - 5);
+                                } else {
+                                    EX = 5 + (5 - NF);
+                                }
+
+                            }
                         }
                     }
-
                     if ((nDisciplina2.equals(disciplina2)) && (nM1 == M1) && (nPI == PI) && (nM2 == M2) && (nEX == EX) && (nNF == NF) && (nDP == DP)) {
 
                         this.finish();
