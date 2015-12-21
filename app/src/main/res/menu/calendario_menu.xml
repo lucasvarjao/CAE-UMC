@@ -13,6 +13,11 @@
         android:icon="@drawable/common_signin_btn_icon_focus_dark"
         android:title="Alterar Conta"
         app:showAsAction="withText" />
+
+    <item android:id="@+id/opcoes_conta"
+        android:icon="@drawable/common_signin_btn_icon_focus_dark"
+        android:title="Opções"
+        app:showAsAction="withText" />
 </menu>
 
 

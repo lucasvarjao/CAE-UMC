@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent"
+    android:id="@+id/layoutagenda"
+    android:layout_marginTop="8px"
+    android:layout_marginBottom="8px"
     >
 <LinearLayout
     android:layout_width="50dp"
@@ -9,6 +12,7 @@
     android:id="@+id/layoutDiaSemana"
     android:layout_marginLeft="16dp"
     android:layout_marginTop="16dp"
+    android:clickable="true"
     android:layout_marginStart="16dp"
     android:layout_alignParentTop="false">
     <TextView
@@ -36,22 +40,23 @@
     android:layout_toRightOf="@+id/layoutDiaSemana"
     android:layout_toEndOf="@+id/layoutDiaSemana"
     android:layout_alignTop="@+id/layoutDiaSemana"
-
+    android:descendantFocusability="blocksDescendants"
     android:layout_marginRight="16dp"
     android:layout_marginEnd="16dp"
     android:background="@drawable/borderlayout">
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:descendantFocusability="blocksDescendants" >
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="8dp"
         android:id="@+id/eventoLayout"
-        android:clickable="true"
         android:layout_centerInParent="true"
-        android:background="@drawable/border">
+        android:background="@drawable/border"
+        android:descendantFocusability="blocksDescendants" >
 
         <TextView
             android:layout_width="match_parent"

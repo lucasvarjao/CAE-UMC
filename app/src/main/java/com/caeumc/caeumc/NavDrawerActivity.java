@@ -23,6 +23,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -160,6 +161,8 @@ static List<Long> eventosID = new ArrayList<>();
     static int fragmentatual = -1;
     static boolean mudarusuario = false;
     static String emailantigo;
+
+    public static long idEvento;
 
 
     private static void popularListView() {
@@ -310,6 +313,10 @@ static List<Long> eventosID = new ArrayList<>();
                 swipeRefreshLayout.setRefreshing(true);
                 AtualizarCalendario();
                 return true;
+            case R.id.opcoes_conta:
+                Intent intent = new Intent(this, SettingsAgendaActivity.class);
+                startActivity(intent);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -393,6 +400,12 @@ static List<Long> eventosID = new ArrayList<>();
 
             int i = getArguments().getInt(ARG_PLANET_NUMBER);
             int n = Integer.parseInt(ALTERACAO2);
+
+            if (i == 3) {
+                TextView txtWelcome = (TextView) appView.findViewById(R.id.textView);
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+                txtWelcome.setText(sharedPreferences.getString("alterar_usuario",""));
+            }
 
 
             if (i == 0) {
@@ -769,7 +782,19 @@ static List<Long> eventosID = new ArrayList<>();
                             AtualizarCalendario();
                         }
                     });
+                    lstEventos = (ListView) snackView.findViewById(R.id.lstEventos);
+                    lstEventos.setClickable(true);
+                    lstEventos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            if (lstEventos.getAdapter().getItemViewType(position) == 0) {
 
+                                idEvento = lstEventos.getAdapter().getItemId(position);
+
+                            }
+
+                        }
+                    });
                     break;
                 case 2:
                     rootView = inflater.inflate(R.layout.fragment_arquivos, container, false);
@@ -782,6 +807,9 @@ static List<Long> eventosID = new ArrayList<>();
                   //  fab2.setVisibility(INVISIBLE);
                     fab2.hide();
                     ImageButton btnFacebook = (ImageButton) rootView.findViewById(R.id.btnFacebook);
+                    TextView txtWelcome = (TextView) rootView.findViewById(R.id.textView);
+                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+                    txtWelcome.setText(sharedPreferences.getString("alterar_usuario",""));
                     btnFacebook.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {

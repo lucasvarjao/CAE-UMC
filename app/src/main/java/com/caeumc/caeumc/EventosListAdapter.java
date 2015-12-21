@@ -47,6 +47,7 @@ public class EventosListAdapter extends BaseAdapter {
     String mesAnterior = "";
     LayoutInflater vi;
 
+
     public EventosListAdapter(Context context, int textViewResourceId) {
 
     }
@@ -161,10 +162,13 @@ public class EventosListAdapter extends BaseAdapter {
                 calendar.setTime(dataEvento);
                 int day = calendar.get(Calendar.DAY_OF_MONTH);
             if (p.getFeriado()) {
-                day = day + 1;
+              //  day = day + 1;
                 if (rowType == TYPE_ITEM) {
                     GradientDrawable bgShape = (GradientDrawable)holder.eventoLayout.getBackground();
                     bgShape.setColor(Color.parseColor("#F50057"));
+
+                   // bgShape.setColor(Color.parseColor("#9575CD"));
+
                 }
 
             } else {
@@ -254,7 +258,7 @@ public class EventosListAdapter extends BaseAdapter {
                         diasemanaEvento = "sáb";
                         break;
                 }
-                Log.e("Dia", String.valueOf(diasemana));
+
                 String dia = String.valueOf(day);
                 long horaInicio = (long) p.getHoraInicio();
                 String horaInicioFormatada = "";
@@ -324,7 +328,13 @@ public class EventosListAdapter extends BaseAdapter {
 
                     if (p.getHoraInicio() == 0) {
                         holder.tt5.setVisibility(View.GONE);
-                    } else {
+                    } else if (p.getLocal() == null) {
+                        holder.tt5.setText("19:00-22:00 em UMC");
+                        holder.tt5.setText(String.format("%s-%s", horaInicioFormatada, horaFinalFormatada));
+                        holder.tt5.setVisibility(View.VISIBLE);
+
+                    }  else
+                    {
                         holder.tt5.setText("19:00-22:00 em UMC");
                         holder.tt5.setText(String.format("%s-%s em %s", horaInicioFormatada, horaFinalFormatada, local));
                         holder.tt5.setVisibility(View.VISIBLE);

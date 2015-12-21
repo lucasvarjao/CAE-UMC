@@ -62,7 +62,6 @@ public class ListAdapter extends ArrayAdapter<MateriaListModel> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
         View v = convertView;
 
         if (v == null) {
