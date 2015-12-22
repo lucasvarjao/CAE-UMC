@@ -22,25 +22,23 @@
         android:layout_height="match_parent"
         android:overScrollMode="always"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:visibility="gone"
         android:listSelector="@android:color/transparent"
         android:cacheColorHint="@android:color/transparent"
         android:choiceMode="none"
         android:clickable="false" />
     </android.support.v4.widget.SwipeRefreshLayout>
 
-    <RelativeLayout
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/layoutLoading">
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@android:color/darker_gray"
+        android:text="@string/aviso"
+        android:id="@android:id/empty"
+        android:layout_gravity="center_horizontal"
+        android:textSize="20sp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:gravity="center"/>
 
-    <ProgressBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/pgbLoading"
-        android:indeterminate="true"
-        android:foregroundGravity="center_vertical|center|center_horizontal"
-        android:layout_centerInParent="true" />
-
-    </RelativeLayout>
 </android.support.design.widget.CoordinatorLayout>

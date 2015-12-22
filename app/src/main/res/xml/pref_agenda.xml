@@ -20,10 +20,10 @@
     <!--android:summary="@string/pref_description_agenda_switch"-->
     <!-- This preference simply launches an intent when selected. Use this UI sparingly, per
          design guidelines. -->
-    <Preference android:title="@string/pref_title_trocar_usuario"
+<!--    <Preference android:title="@string/pref_title_trocar_usuario"
         android:key="alterar_usuario"
         android:summary=""
-        android:enabled="false"/>
+        android:enabled="false"/>-->
 
 
 </PreferenceScreen>

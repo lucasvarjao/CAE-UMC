@@ -256,7 +256,7 @@ public class SettingsAgendaActivity extends AppCompatPreferenceActivity {
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
-            findPreference("alterar_usuario").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+         /*   findPreference("alterar_usuario").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     Intent intent = AccountPicker.newChooseAccountIntent(null, null, new String[]{"com.google"},
@@ -264,9 +264,9 @@ public class SettingsAgendaActivity extends AppCompatPreferenceActivity {
                     startActivityForResult(intent, 1000);
                     return false;
                 }
-            });
+            });*/
             bindPreferenceSummaryToValue(findPreference("alcance_agenda"));
-            bindPreferenceSummaryToValue(findPreference("alterar_usuario"));
+           // bindPreferenceSummaryToValue(findPreference("alterar_usuario"));
 
 
         }

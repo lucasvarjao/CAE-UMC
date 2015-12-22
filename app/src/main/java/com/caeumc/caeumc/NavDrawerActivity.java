@@ -115,9 +115,7 @@ public class NavDrawerActivity extends AppCompatActivity implements GoogleApiCli
     static Activity fragmentActivity;
     static NavDrawerActivity drawerActivity;
     static List<String> teste = new ArrayList<String>();
-
     static List<Integer> selectedDisciplinas = new ArrayList<>();
-
     static CoordinatorLayout rootLayout;
 
     static List<MateriaListModel> disciplinasList = new ArrayList<>();
@@ -626,6 +624,7 @@ static List<Long> eventosID = new ArrayList<>();
                     ArrayAdapter arrayAdapter = new ListAdapter(activityDisciplina, contextFragment, R.layout.materias_listrow, materiaListModels);
                    // View emptyView = rootView.findViewById(R.id.lblEmptyList);
                     TextView emptyText = (TextView)rootView.findViewById(android.R.id.empty);
+                    emptyText.setText("Adicione matérias para começar a controlar suas notas.");
                     lstMaterias.setEmptyView(emptyText);
                     lstMaterias.setAdapter(arrayAdapter);
                     if (materiaListModels.size() == 0) {
@@ -749,8 +748,6 @@ static List<Long> eventosID = new ArrayList<>();
                     break;
                 case 1:
                     rootView = inflater.inflate(R.layout.fragment_calendario, container, false);
-                    pgbLoading = (ProgressBar) rootView.findViewById(R.id.pgbLoading);
-                    layoutLoading = (RelativeLayout) rootView.findViewById(R.id.layoutLoading);
                     FloatingActionButton fab3 = (FloatingActionButton) appView.findViewById(R.id.fab);
                     //fab3.setVisibility(INVISIBLE);
                     fab3.hide();
@@ -783,6 +780,9 @@ static List<Long> eventosID = new ArrayList<>();
                         }
                     });
                     lstEventos = (ListView) snackView.findViewById(R.id.lstEventos);
+                    TextView emptyTextAgenda = (TextView)rootView.findViewById(android.R.id.empty);
+                    emptyTextAgenda.setText("Faça login para vizualizar sua agenda.");
+                    lstEventos.setEmptyView(emptyTextAgenda);
                     lstEventos.setClickable(true);
                     lstEventos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
@@ -790,6 +790,8 @@ static List<Long> eventosID = new ArrayList<>();
                             if (lstEventos.getAdapter().getItemViewType(position) == 0) {
 
                                 idEvento = lstEventos.getAdapter().getItemId(position);
+                                Intent intent = new Intent(contextFragment, AgendaDetails.class);
+                                contextFragment.startActivity(intent);
 
                             }
 
@@ -1031,9 +1033,6 @@ static List<Long> eventosID = new ArrayList<>();
                     lstEventos.setClickable(false);
                     lstEventos.setAdapter(arrayAdapter);
                     swipeRefreshLayout.setEnabled(true);
-                    lstEventos.setVisibility(View.VISIBLE);
-                    pgbLoading.setVisibility(View.GONE);
-                    layoutLoading.setVisibility(View.GONE);
                     swipeRefreshLayout.setRefreshing(false);
                     Toast.makeText(contextFragment, "Data retrieved using" +
                             " the Google Calendar API:", Toast.LENGTH_LONG).show();

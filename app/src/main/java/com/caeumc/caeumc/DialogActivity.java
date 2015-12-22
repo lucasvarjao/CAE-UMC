@@ -1,5 +1,7 @@
 package com.caeumc.caeumc;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -19,6 +21,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
@@ -112,9 +115,11 @@ public class DialogActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    txtPI.setVisibility(View.GONE);
+                   // txtPI.setVisibility(View.GONE);
+                    Esconder(txtPI);
                 } else {
-                    txtPI.setVisibility(View.VISIBLE);
+                   // txtPI.setVisibility(View.VISIBLE);
+                    Revelar(txtPI);
                 }
             }
         });
@@ -237,7 +242,8 @@ public class DialogActivity extends AppCompatActivity {
             chbDP.setChecked(nDP);
 
             if (nDP == true){
-                txtPI.setVisibility(View.GONE);
+                //txtPI.setVisibility(View.GONE);
+                Esconder(txtPI);
             }
 
         }
@@ -836,5 +842,56 @@ public class DialogActivity extends AppCompatActivity {
 
             return super.onOptionsItemSelected(item);
         }
+
+        public static void Revelar(View myView) {
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+                int cx = myView.getWidth() / 2;
+                int cy = myView.getHeight() / 2;
+
+// get the final radius for the clipping circle
+                int finalRadius = Math.max(myView.getWidth(), myView.getHeight());
+
+// create the animator for this view (the start radius is zero)
+                Animator anim =
+                        ViewAnimationUtils.createCircularReveal(myView, cx, cy, 0, finalRadius);
+
+// make the view visible and start the animation
+                myView.setVisibility(View.VISIBLE);
+                anim.start();
+            }
+
+        }
+
+    public static void Esconder (final View myView) {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+// get the center for the clipping circle
+            int cx = myView.getWidth() / 2;
+            int cy = myView.getHeight() / 2;
+
+// get the initial radius for the clipping circle
+            int initialRadius = myView.getWidth();
+
+// create the animation (the final radius is zero)
+            Animator anim =
+                    ViewAnimationUtils.createCircularReveal(myView, cx, cy, initialRadius, 0);
+
+// make the view invisible when the animation is done
+            anim.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    myView.setVisibility(View.GONE);
+                }
+            });
+
+// start the animation
+            anim.start();
+        }
+    }
+
     }
 

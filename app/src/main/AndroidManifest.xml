@@ -24,7 +24,7 @@
         tools:replace="android:icon">
         <meta-data
             android:name="DATABASE"
-            android:value="cae_umc_vl.db" />
+            android:value="cae_umc_v2.db" />
         <meta-data
             android:name="VERSION"
             android:value="1" />
@@ -63,7 +63,8 @@
 
         <activity
             android:name=".SettingsAgendaActivity"
-            android:label="@string/title_activity_settings_agenda"></activity>
+            android:label="@string/title_activity_settings_agenda" />
+        <activity android:name=".AgendaDetails"></activity>
     </application>
 
 </manifest>

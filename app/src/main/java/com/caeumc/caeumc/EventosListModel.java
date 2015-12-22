@@ -15,6 +15,7 @@ public class EventosListModel extends SugarRecord<EventosListModel> {
     private Integer HoraFinal;
     private String Local;
     private Boolean Feriado;
+    private String Observacao;
 
     @Ignore
     String Mes;
@@ -29,13 +30,14 @@ public class EventosListModel extends SugarRecord<EventosListModel> {
 
     }
 
-    public EventosListModel (String descricao, Integer data, Integer horaInicio, Integer horaFinal, String local, Boolean feriado) {
+    public EventosListModel (String descricao, Integer data, Integer horaInicio, Integer horaFinal, String local, Boolean feriado, String observacao) {
         this.Descricao = descricao;
         this.Data = data;
         this.HoraInicio = horaInicio;
         this.HoraFinal = horaFinal;
         this.Local = local;
         this.Feriado = feriado;
+        this.Observacao = observacao;
     }
 
     public void setDescricao(String descricao) {this.Descricao = descricao;}
@@ -44,6 +46,7 @@ public class EventosListModel extends SugarRecord<EventosListModel> {
     public void setHoraFinal (Integer horaFinal) {this.HoraFinal = horaFinal;}
     public void setLocal (String local) {this.Local = Local;}
     public void setFeriado (Boolean feriado) {this.Feriado = feriado;}
+    public void setObservacao (String observacao) {this.Observacao = observacao;}
 
     public void setMes (String mes) {this.Mes = mes;}
     public String getMes() {return  this.Mes;}
@@ -61,4 +64,5 @@ public class EventosListModel extends SugarRecord<EventosListModel> {
     public Integer getHoraFinal() {return  this.HoraFinal;}
     public String getLocal() {return this.Local;}
     public Boolean getFeriado() {return this.Feriado;}
+    public String getObservacao() {return this.Observacao;}
 }

@@ -181,7 +181,7 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
             long horaInicio;
             long horaFinal;
             String local = event.getLocation();
-
+            String observacao = event.getDescription();
 
 
             DateTime start = event.getStart().getDateTime();
@@ -196,6 +196,7 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
                 data = data / 1000;
                 horaInicio = 0;
                 horaFinal = 0;
+
             } else {
                 // the start date.
                 Calendar dataCalendario = Calendar.getInstance();
@@ -210,7 +211,7 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
             }
             eventStrings.add(
                     String.format("%s (%s)", event.getSummary(), start));
-            EventosListModel eventosListModel = new EventosListModel(descricao, (int)data, (int)horaInicio, (int)horaFinal, local, false);
+            EventosListModel eventosListModel = new EventosListModel(descricao, (int)data, (int)horaInicio, (int)horaFinal, local, false, observacao);
             eventosListModel.save();
         }
 
@@ -322,7 +323,7 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
             }
             eventStrings.add(
                     String.format("%s (%s)", event.getSummary(), start));
-            EventosListModel eventosListModel = new EventosListModel(descricao, (int)data, (int)horaInicio, (int)horaFinal, local, true);
+            EventosListModel eventosListModel = new EventosListModel(descricao, (int)data, (int)horaInicio, (int)horaFinal, local, true, "");
             eventosListModel.save();
 
         }
