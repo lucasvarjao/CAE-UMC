@@ -4,13 +4,22 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 
+import com.caeumc.javautils.Calendario;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GooglePlayServicesAvailabilityIOException;
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.Events;
+import com.google.gson.Gson;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -36,12 +45,31 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
         this.mEmail = name;
     }
 
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        NavDrawerActivity.swipeRefreshLayout.setEnabled(false);
+        NavDrawerActivity.swipeRefreshLayout.setRefreshing(true);
+    }
+
+    protected void onPostExecute() {
+        NavDrawerActivity.swipeRefreshLayout.setEnabled(true);
+        NavDrawerActivity.swipeRefreshLayout.setRefreshing(false);
+
+    }
+
     /**
      * Background task to call Google Calendar API.
      * @param params no parameters needed for this task.
      */
     @Override
     protected Void doInBackground(Void... params) {
+
+
+
+
+
+
         try {
             NavDrawerActivity.clearResultsText();
             NavDrawerActivity.updateResultsText(getDataFromApi());
@@ -62,6 +90,56 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
         return null;
     }
 
+
+    private Calendario getCalendario(String mUrl) {
+        Calendario calendario = new Calendario();
+        Gson gson = new Gson();
+        String json = getJson(mUrl);
+
+
+        if (json != null) {
+            if (!json.trim().isEmpty()) {
+
+                calendario = gson.fromJson(json, Calendario.class);
+            }
+        }
+        return calendario;
+    }
+
+    private String getJson(String mUrl) {
+        URL url = null;
+        String json=null;
+        try {
+            url = new URL(mUrl);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        HttpURLConnection urlConnection = null;
+        try {
+            urlConnection = (HttpURLConnection) url.openConnection();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+            BufferedReader r = new BufferedReader(new InputStreamReader(in));
+            StringBuilder total = new StringBuilder();
+            String line;
+            while ((line = r.readLine()) != null) {
+                total.append(line);
+            }
+            json = total.toString();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+                urlConnection.disconnect();
+            }
+        return json;
+    }
+
+
+
     /**
      * Fetch a list of the next 10 events from the primary calendar.
      * @return List of Strings describing returned events.
@@ -69,9 +147,15 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
      */
     private List<EventosListModel> getDataFromApi() throws IOException, ParseException {
         // List the next 10 events from the primary calendar.
+
+
+
+
+
         DateTime now = new DateTime(System.currentTimeMillis());
         Date hoje = new Date(System.currentTimeMillis());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
         java.util.Calendar calendar = Calendar.getInstance();
         calendar.setTime(hoje);
         int mesatual = calendar.get(Calendar.MONTH);
@@ -88,29 +172,29 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
 
         if ((mesatual+1) <=7) {
             if (eventosAnteriores) {
-                String sDiaMinimo = String.format("%s-01-01 00:00:00", anoatual);
-                dateDiaMinimo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(sDiaMinimo);
+                String sDiaMinimo = String.format("%s-01-01T00:00:00", anoatual);
+                dateDiaMinimo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault()).parse(sDiaMinimo);
                 diaMinimo = new DateTime(dateDiaMinimo);
             }
             switch (nAlcanceAgenda) {
                 case 12:
-                   sDiaMaximo = String.format("%s-01-01 00:00:00", anoatual + 1);
-                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(sDiaMaximo);
+                   sDiaMaximo = String.format("%s-01-01T00:00:00", anoatual + 1);
+                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault()).parse(sDiaMaximo);
                     diaMaximo = new DateTime(dateDiaMaximo);
                     break;
                 case 18:
-                    sDiaMaximo = String.format("%s-07-31 23:59:59", anoatual + 1);
-                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(sDiaMaximo);
+                    sDiaMaximo = String.format("%s-07-31T23:59:59", anoatual + 1);
+                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault()).parse(sDiaMaximo);
                     diaMaximo = new DateTime(dateDiaMaximo);
                     break;
                 case 24:
-                   sDiaMaximo = String.format("%s-01-01 00:00:00", anoatual + 2);
-                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(sDiaMaximo);
+                   sDiaMaximo = String.format("%s-01-01T00:00:00", anoatual + 2);
+                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault()).parse(sDiaMaximo);
                     diaMaximo = new DateTime(dateDiaMaximo);
                     break;
                 default:
-                   sDiaMaximo = String.format("%s-07-31 23:59:59", anoatual);
-                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(sDiaMaximo);
+                   sDiaMaximo = String.format("%s-07-31T23:59:59", anoatual);
+                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault()).parse(sDiaMaximo);
                     diaMaximo = new DateTime(dateDiaMaximo);
                     break;
             }
@@ -118,34 +202,48 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
         } else {
 
             if (eventosAnteriores) {
-                String sDiaMinimo = String.format("%s-08-01 00:00:00", anoatual);
-                dateDiaMinimo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse(sDiaMinimo);
+                String sDiaMinimo = String.format("%s-08-01T00:00:00", anoatual);
+                dateDiaMinimo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault()).parse(sDiaMinimo);
                 diaMinimo = new DateTime(dateDiaMinimo);
             }
 
             switch (nAlcanceAgenda) {
                 case 12:
-                    sDiaMaximo = String.format("%s-08-01 00:00:00", anoatual + 1);
-                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse(sDiaMaximo);
+                    sDiaMaximo = String.format("%s-08-01T00:00:00", anoatual + 1);
+                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault()).parse(sDiaMaximo);
                     diaMaximo = new DateTime(dateDiaMaximo);
                     break;
                 case 18:
-                    sDiaMaximo = String.format("%s-12-31 23:59:59", anoatual + 1);
-                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse(sDiaMaximo);
+                    sDiaMaximo = String.format("%s-12-31T23:59:59", anoatual + 1);
+                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault()).parse(sDiaMaximo);
                     diaMaximo = new DateTime(dateDiaMaximo);
                     break;
                 case 24:
-                    sDiaMaximo = String.format("%s-08-01 00:00:00", anoatual + 2);
-                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse(sDiaMaximo);
+                    sDiaMaximo = String.format("%s-08-01T00:00:00", anoatual + 2);
+                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault()).parse(sDiaMaximo);
                     diaMaximo = new DateTime(dateDiaMaximo);
                     break;
                 default:
-                    sDiaMaximo = String.format("%s-12-31 23:59:59", anoatual);
-                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse(sDiaMaximo);
+                    sDiaMaximo = String.format("%s-12-31T23:59:59", anoatual);
+                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault()).parse(sDiaMaximo);
                     diaMaximo = new DateTime(dateDiaMaximo);
                     break;
             }
         }
+        String idCalendario = "ssqpnnspvp4geaq93m8ubladok@group.calendar.google.com";
+
+
+        String urlCalendario = String.format("https://www.googleapis.com/calendar/v3/calendars/%s/events?key=AIzaSyCM-Vc1sw_K18OSHlXFYhxM08VE2YFIRwA&" +
+                "orderby=starttime&" +
+                "singleevents=true&" +
+                "maxResults=2500&" +
+                "timeMin=%s&" +
+                "timeMax=%s",
+                idCalendario, diaMinimo.toString(), diaMaximo.toString());
+
+        Calendario calendario = getCalendario(urlCalendario);
+        
+
         List<String> eventStrings = new ArrayList<String>();
         Events events;
         if (eventosAnteriores) {

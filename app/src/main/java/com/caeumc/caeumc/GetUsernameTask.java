@@ -3,6 +3,7 @@ package com.caeumc.caeumc;
 import android.accounts.Account;
 import android.app.Activity;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
@@ -24,6 +25,13 @@ public class GetUsernameTask extends AsyncTask<Void, Void, Void> {
         this.mEmail = name;
         }
 
+        @Override
+        protected void onPreExecute() {
+                super.onPreExecute();
+                NavDrawerActivity.swipeRefreshLayout.setEnabled(false);
+                NavDrawerActivity.swipeRefreshLayout.setRefreshing(true);
+        }
+
 @Override
 protected Void doInBackground(Void... params) {
         try {
@@ -32,6 +40,8 @@ protected Void doInBackground(Void... params) {
         // **Insert the good stuff here.**
         // Use the token to access the user's Google data.
 
+                NavDrawerActivity.credential.setSelectedAccountName(mEmail);
+
 
 
         }
@@ -39,6 +49,7 @@ protected Void doInBackground(Void... params) {
         // The fetchToken() method handles Google-specific exceptions,
         // so this indicates something went wrong at a higher level.
         // TIP: Check for network connectivity before starting the AsyncTask.
+                Log.v("Token","DEU MERDA CUZAO");
 
         }
         return null;

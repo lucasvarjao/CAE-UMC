@@ -53,9 +53,9 @@ import android.widget.Toast;
 
 import com.google.android.gms.auth.GooglePlayServicesAvailabilityException;
 import com.google.android.gms.auth.UserRecoverableAuthException;
+import com.google.android.gms.common.AccountPicker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.plus.Plus;
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -142,7 +142,7 @@ public class NavDrawerActivity extends AppCompatActivity {
     static CircleImageView imgImageProfile;
 
 
-    private static SwipeRefreshLayout swipeRefreshLayout;
+    public static SwipeRefreshLayout swipeRefreshLayout;
 
     private static NavigationView mNavigationView;
     private static ListView lstMaterias;
@@ -175,10 +175,9 @@ public class NavDrawerActivity extends AppCompatActivity {
         /*Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         drawerActivity.startActivityForResult(signInIntent, RC_SIGN_IN);*/
 
-        //String[] accountTypes = new String[]{"com.google"};
-        //Intent intent = AccountPicker.newChooseAccountIntent(null, null,
-         //       accountTypes, false, null, null, null, null);
-        drawerActivity.startActivityForResult(credential.newChooseAccountIntent(), REQUEST_CODE_PICK_ACCOUNT);
+        String[] accountTypes = new String[]{"com.google"};
+        Intent intent = AccountPicker.newChooseAccountIntent(null, null, accountTypes, false, null, null, null, null);
+        drawerActivity.startActivityForResult(intent, REQUEST_CODE_PICK_ACCOUNT);
 
     }
 
@@ -1080,7 +1079,7 @@ public class NavDrawerActivity extends AppCompatActivity {
             getUserAccountWrapper();
         } else {
             if (isDeviceOnline()) {
-                new GetUsernameTask(NavDrawerActivity.this, mEmail, "oauth2:"+CalendarScopes.CALENDAR_READONLY+ " "+ Scopes.PLUS_ME+" "+Scopes.PLUS_LOGIN).execute();
+                new GetUsernameTask(NavDrawerActivity.this, mEmail, "oauth2:"+CalendarScopes.CALENDAR_READONLY+ " "+ Plus.SCOPE_PLUS_PROFILE).execute();
             } else {
                 Toast.makeText(this, "Sem conexão com a internet", Toast.LENGTH_LONG).show();
             }
@@ -1123,8 +1122,8 @@ public class NavDrawerActivity extends AppCompatActivity {
                         //    accountPhotoURL = uri.toString();
                        // }
                         if (accountName != null) {
+                            credential.setSelectedAccountName(accountName);
                             getUsername();
-
                             SharedPreferences settings =
                                     fragmentActivity.getPreferences(Context.MODE_PRIVATE);
                             SharedPreferences.Editor editor = settings.edit();
@@ -1134,7 +1133,7 @@ public class NavDrawerActivity extends AppCompatActivity {
                             editor.putString(ACCOUNT_PHOTOURL, accountPhotoURL);
                             editor.apply();
 
-                            credential.setSelectedAccountName(accountName);
+
 
 
 
@@ -1181,9 +1180,7 @@ public class NavDrawerActivity extends AppCompatActivity {
                             } else {
                                 imgImageProfile.setImageResource(R.drawable.dummyavatar);
                             }
-                                swipeRefreshLayout.setEnabled(false);
-                                swipeRefreshLayout.setRefreshing(true);
-                                refreshResults();
+
                         }
                     /*} else {
 
@@ -1195,7 +1192,7 @@ public class NavDrawerActivity extends AppCompatActivity {
                     }*/
                 } else if (resultCode == RESULT_CANCELED) {
                     Toast.makeText(contextFragment, "Conta não especificada.", Toast.LENGTH_LONG).show();
-                    swipeRefreshLayout.setEnabled(false);
+                    swipeRefreshLayout.setEnabled(true);
                     swipeRefreshLayout.setRefreshing(false);
                     btnCarregarAgenda.setEnabled(true);
                     mudarusuario = false;
@@ -1400,6 +1397,16 @@ public class NavDrawerActivity extends AppCompatActivity {
                         eventosListModels = EventosListModel.findWithQuery(EventosListModel.class, "SELECT * FROM EVENTOS_LIST_MODEL ORDER BY data*1000 ASC");
                     }
                 });
+                if (eventosListModels == null || eventosListModels.size() == 0) {
+
+                    if (isGooglePlayServicesAvailable()) {
+                        refreshResults();
+                    } else {
+                        Toast.makeText(contextFragment, "Google Play Services é necessário: " +
+                                "após instalar, reinicie o aplicativo.", Toast.LENGTH_LONG).show();
+                    }
+                }
+
                 if (mudarusuario == true) {
                     if (mEmail != null) {
                         if (emailantigo.equals(mEmail)) {
