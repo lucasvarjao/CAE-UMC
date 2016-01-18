@@ -2,20 +2,12 @@ package com.caeumc.caeumc;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.GradientDrawable;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.view.ActionMode;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -46,11 +38,6 @@ public class EventosListAdapter extends BaseAdapter {
     Context context2;
     String mesAnterior = "";
     LayoutInflater vi;
-
-
-    public EventosListAdapter(Context context, int textViewResourceId) {
-
-    }
 
     public EventosListAdapter(Activity a, Context context) {
         activityDisciplina = a;
@@ -149,12 +136,6 @@ public class EventosListAdapter extends BaseAdapter {
        EventosListModel p = getItem(position);
 
         if (p != null) {
-
-            /*TextView tt1 = (TextView) v.findViewById(R.id.lblMesAno);
-            TextView tt2 = (TextView) v.findViewById(R.id.lblDiaMes);
-            TextView tt3 = (TextView) v.findViewById(R.id.lblDiaSemana);
-            TextView  tt4 = (TextView) v.findViewById(R.id.lblDescricaoEvento);
-            TextView tt5 = (TextView) v.findViewById(R.id.lblHoraLocal);*/
                 String descricao = p.getDescricao();
                 long data = (long) p.getData();
                 Date dataEvento = new Date(data * 1000L);

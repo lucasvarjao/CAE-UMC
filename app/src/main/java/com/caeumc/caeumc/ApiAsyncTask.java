@@ -5,11 +5,10 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 
 import com.caeumc.javautils.Calendario;
+import com.caeumc.javautils.Item;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GooglePlayServicesAvailabilityIOException;
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 import com.google.api.client.util.DateTime;
-import com.google.api.services.calendar.model.Event;
-import com.google.api.services.calendar.model.Events;
 import com.google.gson.Gson;
 
 import java.io.BufferedInputStream;
@@ -22,11 +21,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * An asynchronous task that handles the Google Calendar API call.
@@ -146,16 +144,11 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
      * @throws IOException
      */
     private List<EventosListModel> getDataFromApi() throws IOException, ParseException {
-        // List the next 10 events from the primary calendar.
-
-
 
 
 
         DateTime now = new DateTime(System.currentTimeMillis());
         Date hoje = new Date(System.currentTimeMillis());
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-        SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
         java.util.Calendar calendar = Calendar.getInstance();
         calendar.setTime(hoje);
         int mesatual = calendar.get(Calendar.MONTH);
@@ -173,28 +166,28 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
         if ((mesatual+1) <=7) {
             if (eventosAnteriores) {
                 String sDiaMinimo = String.format("%s-01-01T00:00:00", anoatual);
-                dateDiaMinimo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault()).parse(sDiaMinimo);
+                dateDiaMinimo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(sDiaMinimo);
                 diaMinimo = new DateTime(dateDiaMinimo);
             }
             switch (nAlcanceAgenda) {
                 case 12:
                    sDiaMaximo = String.format("%s-01-01T00:00:00", anoatual + 1);
-                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault()).parse(sDiaMaximo);
+                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(sDiaMaximo);
                     diaMaximo = new DateTime(dateDiaMaximo);
                     break;
                 case 18:
                     sDiaMaximo = String.format("%s-07-31T23:59:59", anoatual + 1);
-                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault()).parse(sDiaMaximo);
+                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(sDiaMaximo);
                     diaMaximo = new DateTime(dateDiaMaximo);
                     break;
                 case 24:
                    sDiaMaximo = String.format("%s-01-01T00:00:00", anoatual + 2);
-                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault()).parse(sDiaMaximo);
+                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(sDiaMaximo);
                     diaMaximo = new DateTime(dateDiaMaximo);
                     break;
                 default:
                    sDiaMaximo = String.format("%s-07-31T23:59:59", anoatual);
-                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault()).parse(sDiaMaximo);
+                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(sDiaMaximo);
                     diaMaximo = new DateTime(dateDiaMaximo);
                     break;
             }
@@ -203,48 +196,119 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
 
             if (eventosAnteriores) {
                 String sDiaMinimo = String.format("%s-08-01T00:00:00", anoatual);
-                dateDiaMinimo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault()).parse(sDiaMinimo);
+                dateDiaMinimo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(sDiaMinimo);
                 diaMinimo = new DateTime(dateDiaMinimo);
             }
 
             switch (nAlcanceAgenda) {
                 case 12:
                     sDiaMaximo = String.format("%s-08-01T00:00:00", anoatual + 1);
-                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault()).parse(sDiaMaximo);
+                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(sDiaMaximo);
                     diaMaximo = new DateTime(dateDiaMaximo);
                     break;
                 case 18:
                     sDiaMaximo = String.format("%s-12-31T23:59:59", anoatual + 1);
-                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault()).parse(sDiaMaximo);
+                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(sDiaMaximo);
                     diaMaximo = new DateTime(dateDiaMaximo);
                     break;
                 case 24:
                     sDiaMaximo = String.format("%s-08-01T00:00:00", anoatual + 2);
-                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault()).parse(sDiaMaximo);
+                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(sDiaMaximo);
                     diaMaximo = new DateTime(dateDiaMaximo);
                     break;
                 default:
                     sDiaMaximo = String.format("%s-12-31T23:59:59", anoatual);
-                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault()).parse(sDiaMaximo);
+                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(sDiaMaximo);
                     diaMaximo = new DateTime(dateDiaMaximo);
                     break;
             }
         }
+
+        long ts = System.currentTimeMillis();
+        Date localTime = new Date(ts);
+
         String idCalendario = "ssqpnnspvp4geaq93m8ubladok@group.calendar.google.com";
 
+        List<Item> items = null;
+        if (eventosAnteriores) {
+            String urlCalendario = String.format("https://www.googleapis.com/calendar/v3/calendars/%s/events?key=AIzaSyCM-Vc1sw_K18OSHlXFYhxM08VE2YFIRwA&" +
+                            "orderby=starttime&" +
+                            "singleevents=true&" +
+                            "maxResults=2500&" +
+                            "ctz=America/Sao_Paulo&" +
+                            "timeMin=%s&" +
+                            "timeMax=%s",
+                    idCalendario, diaMinimo.toStringRfc3339(), diaMaximo.toStringRfc3339());
 
-        String urlCalendario = String.format("https://www.googleapis.com/calendar/v3/calendars/%s/events?key=AIzaSyCM-Vc1sw_K18OSHlXFYhxM08VE2YFIRwA&" +
-                "orderby=starttime&" +
-                "singleevents=true&" +
-                "maxResults=2500&" +
-                "timeMin=%s&" +
-                "timeMax=%s",
-                idCalendario, diaMinimo.toString(), diaMaximo.toString());
+            Calendario calendario = getCalendario(urlCalendario);
+            items = calendario.getItems();
+        } else {
 
-        Calendario calendario = getCalendario(urlCalendario);
-        
+            String urlCalendario = String.format("https://www.googleapis.com/calendar/v3/calendars/%s/events?key=AIzaSyCM-Vc1sw_K18OSHlXFYhxM08VE2YFIRwA&" +
+                            "orderby=starttime&" +
+                            "singleevents=true&" +
+                            "maxResults=2500&" +
+                            "ctz=America/Sao_Paulo&" +
+                            "timeMin=%s&" +
+                            "timeMax=%s",
+                    idCalendario, now.toStringRfc3339(), diaMaximo.toStringRfc3339());
 
-        List<String> eventStrings = new ArrayList<String>();
+            Calendario calendario = getCalendario(urlCalendario);
+            items = calendario.getItems();
+
+        }
+
+        if (items != null) {
+            if (items.size() > 0) {
+                for (Item item : items) {
+
+                    String descricao = item.getSummary();
+                    if (descricao == null) {
+                        descricao = "(Sem título)";
+                    }
+                    long data;
+                    long horaInicio;
+                    long horaFinal;
+                    String local = item.getLocation();
+                    String observacao = item.getDescription();
+                    //String start = item.getStart().getDate();
+                    //DateTime start = new DateTime(item.getStart().getDate());
+                    if (item.getStart().getDate() == null) {
+                        // All-day events don't have start times, so just use
+                        // the start date.
+                        // the start date.
+
+                        Calendar dataCalendario = Calendar.getInstance();
+                        dataCalendario.setTimeInMillis(new DateTime(item.getStart().getDatetime()).getValue());
+                        long timezonedif = -(dataCalendario.get(Calendar.ZONE_OFFSET)+dataCalendario.get(Calendar.DST_OFFSET));
+                        data = new DateTime(item.getStart().getDatetime()).getValue() + TimeZone.getDefault().getOffset(localTime.getTime()) + timezonedif;
+                        data = data / 1000;
+                        horaInicio = new DateTime(item.getStart().getDatetime()).getValue() + TimeZone.getDefault().getOffset(localTime.getTime()) + timezonedif;
+                        horaInicio = horaInicio / 1000;
+                        horaFinal = new DateTime(item.getEnd().getDatetime()).getValue() + TimeZone.getDefault().getOffset(localTime.getTime()) + timezonedif;
+                        horaFinal = horaFinal / 1000;
+
+
+                    } else {
+                        Calendar dataCalendario = Calendar.getInstance();
+                        dataCalendario.setTimeInMillis(new DateTime(item.getStart().getDate()).getValue());
+                        long timezonedif = -(dataCalendario.get(Calendar.ZONE_OFFSET)+dataCalendario.get(Calendar.DST_OFFSET));
+                        data = new DateTime(item.getStart().getDate()).getValue() + TimeZone.getDefault().getOffset(localTime.getTime()) + timezonedif;;
+                        data = data / 1000;
+                        horaInicio = 0;
+                        horaFinal = 0;
+                        // the start date.
+
+                    }
+                    EventosListModel eventosListModel = new EventosListModel(descricao, (int)data, (int)horaInicio, (int)horaFinal, local, false, observacao);
+                    eventosListModel.save();
+
+                }
+            }
+        }
+
+
+       /* List<String> eventStrings = new ArrayList<String>();
         Events events;
         if (eventosAnteriores) {
             events = NavDrawerActivity.mService.events().list("ssqpnnspvp4geaq93m8ubladok@group.calendar.google.com")
@@ -306,9 +370,9 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
                     String.format("%s (%s)", event.getSummary(), start));
             EventosListModel eventosListModel = new EventosListModel(descricao, (int)data, (int)horaInicio, (int)horaFinal, local, false, observacao);
             eventosListModel.save();
-        }
+        }*/
 
-        if ((mesatual+1) <=7) {
+        /*if ((mesatual+1) <=7) {
             if (eventosAnteriores) {
                 String sDiaMinimo = String.format("%s-01-01 00:00:00", anoatual);
                 dateDiaMinimo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse(sDiaMinimo);
@@ -367,8 +431,87 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
                     diaMaximo = new DateTime(dateDiaMaximo);
                     break;
             }
+        }*/
+
+
+        List<Item> itemsFeriado = null;
+        if (eventosAnteriores) {
+            String urlCalendario = String.format("https://www.googleapis.com/calendar/v3/calendars/%s/events?key=AIzaSyCM-Vc1sw_K18OSHlXFYhxM08VE2YFIRwA&" +
+                            "orderby=starttime&" +
+                            "singleevents=true&" +
+                            "maxResults=2500&" +
+                            "timeMin=%s&" +
+                            "timeMax=%s",
+                    "pt.brazilian%23holiday%40group.v.calendar.google.com", diaMinimo.toStringRfc3339(), diaMaximo.toStringRfc3339());
+
+            Calendario calendario = getCalendario(urlCalendario);
+            itemsFeriado = calendario.getItems();
+        } else {
+
+            String urlCalendario = String.format("https://www.googleapis.com/calendar/v3/calendars/%s/events?key=AIzaSyCM-Vc1sw_K18OSHlXFYhxM08VE2YFIRwA&" +
+                            "orderby=starttime&" +
+                            "singleevents=true&" +
+                            "maxResults=2500&" +
+                            "timeMin=%s&" +
+                            "timeMax=%s",
+                    "pt.brazilian%23holiday%40group.v.calendar.google.com", now.toStringRfc3339(), diaMaximo.toStringRfc3339());
+
+            Calendario calendario = getCalendario(urlCalendario);
+            itemsFeriado = calendario.getItems();
+
         }
-        Events events1;
+
+        if (itemsFeriado != null) {
+            if (itemsFeriado.size() > 0) {
+                for (Item item : itemsFeriado) {
+
+                    String descricao = item.getSummary();
+                    if (descricao == null) {
+                        descricao = "(Sem título)";
+                    }
+                    long data;
+                    long horaInicio;
+                    long horaFinal;
+                    String local = item.getLocation();
+                    String observacao = item.getDescription();
+
+
+                   // String start = item.getStart().getDate();
+                    if (item.getStart().getDate() == null) {
+                        // All-day events don't have start times, so just use
+                        // the start date.
+                        // the start date.
+
+                        Calendar dataCalendario = Calendar.getInstance();
+                        dataCalendario.setTimeInMillis(new DateTime(item.getStart().getDatetime()).getValue());
+                        long timezonedif = -(dataCalendario.get(Calendar.ZONE_OFFSET)+dataCalendario.get(Calendar.DST_OFFSET));
+                        data = new DateTime(item.getStart().getDatetime()).getValue() + TimeZone.getDefault().getOffset(localTime.getTime());
+                        data = data / 1000;
+                        horaInicio = new DateTime(item.getStart().getDatetime()).getValue() + TimeZone.getDefault().getOffset(localTime.getTime());
+                        horaInicio = horaInicio / 1000;
+                        horaFinal = new DateTime(item.getEnd().getDatetime()).getValue() + TimeZone.getDefault().getOffset(localTime.getTime());
+                        horaFinal = horaFinal / 1000;
+
+
+                    } else {
+                        Calendar dataCalendario = Calendar.getInstance();
+                        dataCalendario.setTimeInMillis(new DateTime(item.getStart().getDate()).getValue());
+                        long timezonedif = -(dataCalendario.get(Calendar.ZONE_OFFSET)+dataCalendario.get(Calendar.DST_OFFSET));
+                        data = new DateTime(item.getStart().getDate()).getValue() + timezonedif;
+                        data = data / 1000;
+                        horaInicio = 0;
+                        horaFinal = 0;
+                        // the start date.
+
+                    }
+                    EventosListModel eventosListModel = new EventosListModel(descricao, (int)data, (int)horaInicio, (int)horaFinal, local, true, observacao);
+                    eventosListModel.save();
+
+                }
+            }
+        }
+
+        /*Events events1;
         if (eventosAnteriores) {
             events1 = NavDrawerActivity.mService.events().list("pt.brazilian#holiday@group.v.calendar.google.com")
                     .setTimeMin(diaMinimo)
@@ -419,7 +562,7 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
             EventosListModel eventosListModel = new EventosListModel(descricao, (int)data, (int)horaInicio, (int)horaFinal, local, true, "");
             eventosListModel.save();
 
-        }
+        }*/
        List<EventosListModel> eventosListModel = EventosListModel.findWithQuery(EventosListModel.class, "SELECT * FROM EVENTOS_LIST_MODEL ORDER BY data*1000 ASC");
         return eventosListModel;
     }

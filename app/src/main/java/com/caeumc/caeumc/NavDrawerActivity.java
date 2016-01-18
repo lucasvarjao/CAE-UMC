@@ -235,7 +235,7 @@ public class NavDrawerActivity extends AppCompatActivity {
 
                     lstEventos = (ListView) snackView.findViewById(R.id.lstEventos);
                     // eventosList = EventosListModel.findWithQuery(EventosListModel.class, "SELECT * FROM EVENTOS_LIST_MODEL ORDER BY datetime(data*1000, 'unixepoch', 'localtime') DESC");
-                    EventosListAdapter arrayAdapter = new EventosListAdapter(activityDisciplina, contextFragment);
+                    EventosListAdapter arrayAdapter = new EventosListAdapter(drawerActivity, contextFragment);
                     String mesAnterior = "";
                     String semanaAnterior = "";
                     int diaAnterior = 0;
