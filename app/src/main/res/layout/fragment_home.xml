@@ -1,57 +1,336 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<ScrollView  xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="56dp">
+    android:background="#DCDCDC"
+    android:layout_gravity="center">
 
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:gravity="center"
+    android:layout_marginTop="56dp"
+        android:layout_height="wrap_content">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:id="@+id/layout_imagem_cae"
+        android:orientation="horizontal"
+        android:layout_height="200dp">
 
-        <TextView
+        <ImageView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/home_fragment"
-            android:id="@+id/textView"
-            android:textSize="16sp"
-            android:gravity="center_horizontal"
-            android:padding="16dp"
-            />
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/logodeusaescrito"/>
 
+    </LinearLayout>
 
+    <RelativeLayout
+        android:id="@+id/layout_menu"
+        android:layout_below="@id/layout_imagem_cae"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="2"
+        android:id="@+id/layout_view_home"
+        android:orientation="horizontal"
+        >
 
-
-    <ImageButton
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:id="@+id/btnFacebook"
-        android:src="@drawable/facebook_box"
+    <android.support.v7.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_view_notas"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:layout_weight="1"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="4dp"
         android:clickable="true"
-        android:layout_gravity="center"
-        android:adjustViewBounds="false"
-        android:scaleType="fitXY"
-        android:background="@android:color/transparent"
-        android:padding="0dp"
-        android:contentDescription="@string/hifen"/>
+        android:foreground="?android:attr/selectableItemBackground"
+        card_view:cardCornerRadius="3dp">
 
-    <TextView
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center">
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:id="@+id/img_home_notas"
+                android:scaleType="center"
+                android:src="@drawable/ic_note_text_black_48dp"
+                android:alpha="0.54"/>
+
+
+            <TextView
+                android:id="@+id/info_text_notas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="#000"
+                android:alpha="0.87"
+                android:textSize="14sp"
+                android:text="Notas"/>
+
+            </LinearLayout>
+
+
+        </RelativeLayout>
+
+
+    </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/card_view_calendario"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:layout_weight="1"
+            android:layout_marginStart="4dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="4dp"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            card_view:cardCornerRadius="3dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:id="@+id/img_home_agenda"
+                    android:scaleType="center"
+                    android:alpha="0.54"
+                    android:src="@drawable/ic_calendar_black_48dp"/>
+
+
+                <TextView
+                    android:id="@+id/info_text_calendario"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#000"
+                    android:alpha="0.87"
+                    android:textSize="14sp"
+
+                    android:text="Agenda"/>
+
+                </LinearLayout>
+
+
+            </RelativeLayout>
+
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/card_view_arquivos"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:layout_weight="1"
+            android:layout_margin="16dp"
+            android:clickable="true"
+            android:visibility="gone"
+            android:foreground="?android:attr/selectableItemBackground"
+            card_view:cardCornerRadius="3dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:id="@+id/img_home_arquivos"
+                        android:src="@drawable/ic_file_document_grey600_48dp"/>
+
+
+                <TextView
+                    android:id="@+id/info_text_arquivos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp"
+                    android:text="Arquivos"/>
+
+                </LinearLayout>
+
+
+            </RelativeLayout>
+
+
+        </android.support.v7.widget.CardView>
+
+    </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:visibility="gone"
+            android:layout_margin="8dp"
+            android:layout_below="@id/layout_view_home"
+            android:orientation="horizontal"
+            android:id="@+id/layout_att_disponivel">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@android:drawable/ic_dialog_alert"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnAtualizarApp"
+                android:text="Atualização disponível"/>
+        </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="@string/curtafacebook"
-        android:id="@+id/textView2"
-        android:gravity="center" />
+        android:orientation="horizontal"
+        android:layout_below="@+id/layout_att_disponivel"
+        android:id="@+id/layout_face_site"
+        android:weightSum="2">
 
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="@string/acessosite"
-        android:id="@+id/textView15"
-        android:autoLink="web"
-        android:layout_marginTop="16dp"
-        android:gravity="center" />
+        <android.support.v7.widget.CardView
+            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/card_view_facebook"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:layout_marginStart="24dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="8dp"
+            android:layout_weight="1"
+            card_view:cardCornerRadius="3dp"
+          >
 
-</LinearLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:id="@+id/img_home_facebook"
+                        android:alpha="0.54"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/facebook_box"/>
+
+
+                    <TextView
+                        android:id="@+id/info_text_facebook"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#000"
+                        android:alpha="0.87"
+                        android:textSize="14sp"
+                        android:text="Curta nossa página"/>
+
+                </LinearLayout>
+
+
+            </RelativeLayout>
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/card_view_sitecae"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="8dp"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:layout_weight="1"
+            card_view:cardCornerRadius="3dp"
+           >
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:id="@+id/img_home_sitecae"
+                        android:alpha="0.54"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/logocaepebmenu"/>
+
+
+                    <TextView
+                        android:id="@+id/info_text_sitecae"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#000"
+                        android:alpha="0.87"
+                        android:textSize="14sp"
+                        android:text="Acesse nosso site"/>
+
+                </LinearLayout>
+
+
+            </RelativeLayout>
+        </android.support.v7.widget.CardView>
+
+    </LinearLayout>
+
+
+    </RelativeLayout>
+
+    </RelativeLayout>
+
+</ScrollView>

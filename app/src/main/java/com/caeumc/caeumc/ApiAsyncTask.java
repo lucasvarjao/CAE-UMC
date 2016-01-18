@@ -3,23 +3,21 @@ package com.caeumc.caeumc;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
-import com.google.android.gms.auth.GoogleAuthException;
-import com.google.android.gms.auth.GoogleAuthUtil;
-import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GooglePlayServicesAvailabilityIOException;
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 import com.google.api.client.util.DateTime;
-
-import com.google.api.client.util.Strings;
-import com.google.api.services.calendar.model.*;
+import com.google.api.services.calendar.model.Event;
+import com.google.api.services.calendar.model.Events;
 
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * An asynchronous task that handles the Google Calendar API call.
@@ -27,16 +25,14 @@ import java.util.Calendar;
  */
 public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
     private NavDrawerActivity mActivity;
-    String mScope;
     String mEmail;
 
     /**
      * Constructor.
      * @param activity MainActivity that spawned this task.
      */
-    ApiAsyncTask(NavDrawerActivity activity, String name, String Scope) {
+    ApiAsyncTask(NavDrawerActivity activity, String name) {
         this.mActivity = activity;
-        this.mScope = Scope;
         this.mEmail = name;
     }
 
@@ -47,12 +43,11 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... params) {
         try {
-            String token = fetchToken();
-            mActivity.clearResultsText();
-            mActivity.updateResultsText(getDataFromApi());
+            NavDrawerActivity.clearResultsText();
+            NavDrawerActivity.updateResultsText(getDataFromApi());
 
         } catch (final GooglePlayServicesAvailabilityIOException availabilityException) {
-            mActivity.showGooglePlayServicesAvailabilityErrorDialog(
+            NavDrawerActivity.showGooglePlayServicesAvailabilityErrorDialog(
                     availabilityException.getConnectionStatusCode());
 
         } catch (UserRecoverableAuthIOException userRecoverableException) {
@@ -61,7 +56,7 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
                     NavDrawerActivity.REQUEST_AUTHORIZATION);
 
         } catch (Exception e) {
-            mActivity.updateStatus("The following error occurred:\n" +
+            NavDrawerActivity.updateStatus("O seguinte erro ocorreu:\n" +
                     e.getMessage());
         }
         return null;
@@ -124,29 +119,29 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
 
             if (eventosAnteriores) {
                 String sDiaMinimo = String.format("%s-08-01 00:00:00", anoatual);
-                dateDiaMinimo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(sDiaMinimo);
+                dateDiaMinimo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse(sDiaMinimo);
                 diaMinimo = new DateTime(dateDiaMinimo);
             }
 
             switch (nAlcanceAgenda) {
                 case 12:
                     sDiaMaximo = String.format("%s-08-01 00:00:00", anoatual + 1);
-                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(sDiaMaximo);
+                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse(sDiaMaximo);
                     diaMaximo = new DateTime(dateDiaMaximo);
                     break;
                 case 18:
                     sDiaMaximo = String.format("%s-12-31 23:59:59", anoatual + 1);
-                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(sDiaMaximo);
+                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse(sDiaMaximo);
                     diaMaximo = new DateTime(dateDiaMaximo);
                     break;
                 case 24:
                     sDiaMaximo = String.format("%s-08-01 00:00:00", anoatual + 2);
-                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(sDiaMaximo);
+                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse(sDiaMaximo);
                     diaMaximo = new DateTime(dateDiaMaximo);
                     break;
                 default:
                     sDiaMaximo = String.format("%s-12-31 23:59:59", anoatual);
-                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(sDiaMaximo);
+                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse(sDiaMaximo);
                     diaMaximo = new DateTime(dateDiaMaximo);
                     break;
             }
@@ -154,7 +149,7 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
         List<String> eventStrings = new ArrayList<String>();
         Events events;
         if (eventosAnteriores) {
-            events = mActivity.mService.events().list("primary")
+            events = NavDrawerActivity.mService.events().list("ssqpnnspvp4geaq93m8ubladok@group.calendar.google.com")
                     .setTimeMin(diaMinimo)
                     .setTimeMax(diaMaximo)
                     .setOrderBy("startTime")
@@ -162,7 +157,7 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
                     .execute();
 
         } else {
-            events = mActivity.mService.events().list("primary")
+            events = NavDrawerActivity.mService.events().list("ssqpnnspvp4geaq93m8ubladok@group.calendar.google.com")
                     .setTimeMin(now)
                     .setTimeMax(diaMaximo)
                     .setOrderBy("startTime")
@@ -218,28 +213,28 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
         if ((mesatual+1) <=7) {
             if (eventosAnteriores) {
                 String sDiaMinimo = String.format("%s-01-01 00:00:00", anoatual);
-                dateDiaMinimo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(sDiaMinimo);
+                dateDiaMinimo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse(sDiaMinimo);
                 diaMinimo = new DateTime(dateDiaMinimo);
             }
             switch (nAlcanceAgenda) {
                 case 12:
                     sDiaMaximo = String.format("%s-01-01 00:00:00", anoatual + 1);
-                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(sDiaMaximo);
+                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse(sDiaMaximo);
                     diaMaximo = new DateTime(dateDiaMaximo);
                     break;
                 case 18:
                     sDiaMaximo = String.format("%s-07-31 23:59:59", anoatual + 1);
-                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(sDiaMaximo);
+                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse(sDiaMaximo);
                     diaMaximo = new DateTime(dateDiaMaximo);
                     break;
                 case 24:
                     sDiaMaximo = String.format("%s-01-01 00:00:00", anoatual + 2);
-                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(sDiaMaximo);
+                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse(sDiaMaximo);
                     diaMaximo = new DateTime(dateDiaMaximo);
                     break;
                 default:
                     sDiaMaximo = String.format("%s-07-31 23:59:59", anoatual);
-                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(sDiaMaximo);
+                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse(sDiaMaximo);
                     diaMaximo = new DateTime(dateDiaMaximo);
                     break;
             }
@@ -248,43 +243,43 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
 
             if (eventosAnteriores) {
                 String sDiaMinimo = String.format("%s-08-01 00:00:00", anoatual);
-                dateDiaMinimo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(sDiaMinimo);
+                dateDiaMinimo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse(sDiaMinimo);
                 diaMinimo = new DateTime(dateDiaMinimo);
             }
 
             switch (nAlcanceAgenda) {
                 case 12:
                     sDiaMaximo = String.format("%s-08-01 00:00:00", anoatual + 1);
-                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(sDiaMaximo);
+                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse(sDiaMaximo);
                     diaMaximo = new DateTime(dateDiaMaximo);
                     break;
                 case 18:
                     sDiaMaximo = String.format("%s-12-31 23:59:59", anoatual + 1);
-                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(sDiaMaximo);
+                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse(sDiaMaximo);
                     diaMaximo = new DateTime(dateDiaMaximo);
                     break;
                 case 24:
                     sDiaMaximo = String.format("%s-08-01 00:00:00", anoatual + 2);
-                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(sDiaMaximo);
+                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse(sDiaMaximo);
                     diaMaximo = new DateTime(dateDiaMaximo);
                     break;
                 default:
                     sDiaMaximo = String.format("%s-12-31 23:59:59", anoatual);
-                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(sDiaMaximo);
+                    dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse(sDiaMaximo);
                     diaMaximo = new DateTime(dateDiaMaximo);
                     break;
             }
         }
         Events events1;
         if (eventosAnteriores) {
-            events1 = mActivity.mService.events().list("pt.brazilian#holiday@group.v.calendar.google.com")
+            events1 = NavDrawerActivity.mService.events().list("pt.brazilian#holiday@group.v.calendar.google.com")
                     .setTimeMin(diaMinimo)
                     .setTimeMax(diaMaximo)
                     .setOrderBy("startTime")
                     .setSingleEvents(true)
                     .execute();
         } else {
-            events1 = mActivity.mService.events().list("pt.brazilian#holiday@group.v.calendar.google.com")
+            events1 = NavDrawerActivity.mService.events().list("pt.brazilian#holiday@group.v.calendar.google.com")
                     .setTimeMin(now)
                     .setTimeMax(diaMaximo)
                     .setOrderBy("startTime")
@@ -327,23 +322,8 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
             eventosListModel.save();
 
         }
-        List<EventosListModel> eventosList = EventosListModel.findWithQuery(EventosListModel.class, "SELECT * FROM EVENTOS_LIST_MODEL ORDER BY data*1000 ASC");
-        return eventosList;
-    }
-
-    protected String fetchToken() throws IOException {
-        try {
-            return GoogleAuthUtil.getToken(mActivity, mEmail, mScope);
-        } catch (UserRecoverableAuthException userRecoverableException) {
-            // GooglePlayServices.apk is either old, disabled, or not present
-            // so we need to show the user some UI in the activity to recover.
-            mActivity.updateStatus(userRecoverableException.getMessage());
-        } catch (GoogleAuthException fatalException) {
-            // Some other type of unrecoverable exception has occurred.
-            // Report and log the error as appropriate for your app.
-
-        }
-        return null;
+       List<EventosListModel> eventosListModel = EventosListModel.findWithQuery(EventosListModel.class, "SELECT * FROM EVENTOS_LIST_MODEL ORDER BY data*1000 ASC");
+        return eventosListModel;
     }
 
 }

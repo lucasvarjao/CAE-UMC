@@ -21,7 +21,7 @@
             android:icon="@drawable/ic_file_document_grey600_24dp"
             android:title="@string/arquivos"
             android:enabled="true"
-            android:visible="true"/>
+            android:visible="false"/>
     </group>
 
 </menu>

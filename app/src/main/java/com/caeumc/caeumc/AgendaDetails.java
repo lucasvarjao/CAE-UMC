@@ -32,6 +32,7 @@ public class AgendaDetails extends AppCompatActivity {
     private String horaFinalFormatada;
     private String mesEscrito;
     private String semanaEscrita;
+    EventosListModel eventosListModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,69 +62,74 @@ public class AgendaDetails extends AppCompatActivity {
         TextView txtObservacoes = (TextView) findViewById(R.id.txtObsDetails);
        // TextView txtDescricao = (TextView) findViewById(R.id.txtDescricaoDetails);
 
-        EventosListModel eventosListModel = EventosListModel.findById(EventosListModel.class, NavDrawerActivity.idEvento);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                eventosListModel = EventosListModel.findById(EventosListModel.class, NavDrawerActivity.idEvento);
+            }
+        });
+        if (eventosListModel != null) {
+            descricao = eventosListModel.getDescricao();
+            collapsingToolbarLayout.setTitle(descricao);
+            // txtDescricao.setText(descricao);
+            data = (long) eventosListModel.getData();
+            horaInicio = (long) eventosListModel.getHoraInicio();
+            horaFinal = (long) eventosListModel.getHoraFinal();
+            local = eventosListModel.getLocal();
+            feriado = eventosListModel.getFeriado();
+            observacao = eventosListModel.getObservacao();
+            Date dataEvento = new Date(data * 1000L);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(dataEvento);
 
-        descricao = eventosListModel.getDescricao();
-        collapsingToolbarLayout.setTitle(descricao);
-       // txtDescricao.setText(descricao);
-        data = (long) eventosListModel.getData();
-        horaInicio = (long) eventosListModel.getHoraInicio();
-        horaFinal = (long) eventosListModel.getHoraFinal();
-        local = eventosListModel.getLocal();
-        feriado = eventosListModel.getFeriado();
-        observacao = eventosListModel.getObservacao();
-        Date dataEvento = new Date(data * 1000L);
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(dataEvento);
+            dia = calendar.get(Calendar.DAY_OF_MONTH);
+            mes = calendar.get(Calendar.MONTH) + 1;
+            ano = calendar.get(Calendar.YEAR);
+            diasemana = calendar.get(Calendar.DAY_OF_WEEK);
 
-        dia = calendar.get(Calendar.DAY_OF_MONTH);
-        mes = calendar.get(Calendar.MONTH) + 1;
-        ano = calendar.get(Calendar.YEAR);
-        diasemana = calendar.get(Calendar.DAY_OF_WEEK);
+            if (eventosListModel.getHoraInicio() != 0) {
+                Date horaInicioEvento = new Date(horaInicio * 1000L);
+                DateFormat dateFormat = new SimpleDateFormat("HH:mm");
+                horaInicioFormatada = dateFormat.format(horaInicioEvento);
+            }
 
-        if (eventosListModel.getHoraInicio() != 0) {
-            Date horaInicioEvento = new Date(horaInicio * 1000L);
-            DateFormat dateFormat = new SimpleDateFormat("HH:mm");
-            horaInicioFormatada = dateFormat.format(horaInicioEvento);
-        }
+            if (eventosListModel.getHoraFinal() != 0) {
+                Date horaFinalEvento = new Date(horaFinal * 1000L);
+                DateFormat dateFormat = new SimpleDateFormat("HH:mm");
+                horaFinalFormatada = dateFormat.format(horaFinalEvento);
+            }
 
-        if (eventosListModel.getHoraFinal() != 0) {
-            Date horaFinalEvento = new Date(horaFinal * 1000L);
-            DateFormat dateFormat = new SimpleDateFormat("HH:mm");
-            horaFinalFormatada = dateFormat.format(horaFinalEvento);
-        }
+            mesEscrito = getMes(mes - 1);
+            semanaEscrita = getDiaSemana(diasemana);
 
-        mesEscrito = getMes(mes-1);
-        semanaEscrita = getDiaSemana(diasemana);
+            txtDiaDetails.setText(String.format("%s, %s de %s de %s", semanaEscrita, dia, mesEscrito, ano));
+            if (eventosListModel.getHoraInicio() == 0 || eventosListModel.getHoraFinal() == 0) {
+                txtHoraDetails.setVisibility(View.GONE);
+            } else {
+                txtHoraDetails.setText(String.format("%s - %s", horaInicioFormatada, horaFinalFormatada));
+            }
 
-        txtDiaDetails.setText(String.format("%s, %s de %s de %s", semanaEscrita, dia, mesEscrito, ano));
-        if (eventosListModel.getHoraInicio() == 0 || eventosListModel.getHoraFinal() == 0) {
-            txtHoraDetails.setVisibility(View.GONE);
-        } else {
-            txtHoraDetails.setText(String.format("%s - %s", horaInicioFormatada, horaFinalFormatada));
-        }
+            if (local == null) {
+                layoutLocation.setVisibility(View.GONE);
+            } else if (local.trim().equals("")) {
+                layoutLocation.setVisibility(View.GONE);
+            } else {
+                txtLocalDetails.setText(local);
+                txtEnderecoDetails.setVisibility(View.GONE);
+            }
 
-        if (local == null) {
-            layoutLocation.setVisibility(View.GONE);
-        } else if (local.trim().equals("")) {
-            layoutLocation.setVisibility(View.GONE);
-        } else {
-            txtLocalDetails.setText(local);
-            txtEnderecoDetails.setVisibility(View.GONE);
-        }
+            if (observacao != null) {
+                if (!observacao.trim().equals("")) {
 
-        if (observacao != null) {
-            if (!observacao.trim().equals("")) {
+                    txtObservacoes.setText(observacao);
 
-                txtObservacoes.setText(observacao);
-
+                } else {
+                    layoutObservacao.setVisibility(View.GONE);
+                }
             } else {
                 layoutObservacao.setVisibility(View.GONE);
             }
-        } else {
-            layoutObservacao.setVisibility(View.GONE);
         }
-
 
     }
 

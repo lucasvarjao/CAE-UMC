@@ -3,6 +3,7 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="100dp"
     android:padding="16dp"
+    android:background="@android:color/background_light"
     android:descendantFocusability="blocksDescendants"
     android:gravity="center_vertical">
 
@@ -16,14 +17,16 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-
+        android:textColor="#000"
+        android:alpha="0.87"
         android:textSize="16sp"
-        android:textStyle="bold" />
+         />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
+        android:textColor="#000"
+        android:alpha="0.54"
         android:text="@string/m11"
         android:id="@+id/textView3"
         android:layout_below="@+id/lblMateria"
@@ -36,7 +39,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
+        android:textColor="#000"
         android:text="@string/hifen"
         android:id="@+id/lblM1"
         android:layout_below="@+id/lblMateria"
@@ -51,7 +54,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="14sp"
-
+        android:textColor="#000"
+        android:alpha="0.54"
         android:text="@string/pii"
         android:id="@+id/textView5"
         android:layout_alignBottom="@+id/lblM1"
@@ -65,7 +69,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="14sp"
-
+        android:textColor="#000"
         android:text="@string/hifen"
         android:id="@+id/lblPI"
         android:layout_alignTop="@+id/textView5"
@@ -82,11 +86,13 @@
         android:layout_toRightOf="@+id/lblPI"
         android:layout_toEndOf="@+id/lblPI"
         android:layout_marginLeft="8dp"
-        android:background="@android:color/darker_gray">
+        android:background="#DCDCDC">
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 android:layout_marginLeft="3dp"
+        android:textColor="#000"
+        android:alpha="0.54"
         android:layout_marginBottom="3dp"
         android:textSize="14sp"
         android:text="@string/ndd"
@@ -98,6 +104,7 @@ android:layout_marginLeft="3dp"
         android:layout_height="wrap_content"
         android:textSize="14sp"
         android:text="@string/hifen"
+        android:textColor="#000"
 android:layout_marginBottom="3dp"
         android:layout_marginRight="3dp"
         android:id="@+id/lblM2"
@@ -116,13 +123,15 @@ android:layout_marginBottom="3dp"
     android:layout_toEndOf="@+id/layoutm2"
 android:layout_marginLeft="8dp"
     android:layout_alignTop="@+id/layoutm2"
-    android:background="@android:color/darker_gray"
+    android:background="#DCDCDC"
     android:id="@+id/layoutexame">
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="14sp"
         android:text="@string/exx"
+        android:textColor="#000"
+        android:alpha="0.54"
 android:layout_marginBottom="3dp"
         android:id="@+id/textView9"
         android:layout_alignBottom="@+id/lblM2"
@@ -137,7 +146,7 @@ android:layout_marginBottom="3dp"
         android:textSize="14sp"
         android:text="@string/hifen"
         android:id="@+id/lblExame"
-
+        android:textColor="#000"
         android:layout_alignBottom="@+id/textView9"
         android:layout_toRightOf="@+id/textView9"
         android:layout_toEndOf="@+id/textView9"
@@ -153,6 +162,8 @@ android:layout_marginBottom="3dp"
         android:layout_height="wrap_content"
         android:textSize="14sp"
         android:text="@string/nff"
+        android:textColor="#000"
+        android:alpha="0.54"
         android:id="@+id/textView11"
         android:layout_alignTop="@+id/layoutm2"
         android:layout_alignBottom="@+id/layoutexame"
@@ -165,7 +176,7 @@ android:layout_marginBottom="3dp"
         android:layout_height="wrap_content"
         android:textSize="14sp"
         android:text="@string/hifen"
-
+        android:textColor="#000"
         android:id="@+id/lblNotaFinal"
         android:layout_alignParentRight="false"
         android:layout_alignParentEnd="false"

@@ -46,8 +46,6 @@
         android:inputType="textCapSentences"
 
         android:imeOptions="actionNext">
-
-        <requestFocus />
     </EditText>
     </android.support.design.widget.TextInputLayout>
 
@@ -57,6 +55,8 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="@string/caracteres"
             android:id="@+id/lblContador"
+            android:textColor="#000"
+            android:alpha="0.38"
             android:layout_gravity="end"
             android:textSize="12sp"
             android:layout_below="@+id/txtInputDisciplina"
@@ -154,66 +154,102 @@
         />
     </android.support.design.widget.TextInputLayout>
 
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@+id/txtInputM1"
+        android:layout_alignLeft="@+id/txtInputM1"
+        android:layout_alignStart="@+id/txtInputM1"
+        android:layout_marginRight="16dp"
+        android:id="@+id/comboLayout">
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/dp"
         android:id="@+id/chbDP"
-        android:layout_below="@+id/txtInputM1"
-        android:layout_alignLeft="@+id/txtInputM1"
-        android:layout_alignStart="@+id/txtInputM1" />
+        android:padding="8dp"
+         />
+
+    </LinearLayout>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/material_grey_600"
-        android:text="@string/aviso1"
-        android:id="@+id/textView12"
-        android:textSize="12sp"
-        android:layout_alignLeft="@+id/txtInputM1"
-        android:layout_below="@+id/txtInputM1"
-        android:layout_marginTop="48dp"
-        android:layout_marginRight="16dp"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/material_grey_600"
-        android:text="@string/aviso2"
-        android:id="@+id/textView13"
-        android:textSize="12sp"
-        android:layout_alignLeft="@+id/textView12"
-        android:layout_below="@+id/textView12"
-        android:layout_marginTop="8dp"
-        android:layout_marginRight="16dp"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/material_grey_600"
-        android:text="@string/aviso3"
-        android:id="@+id/textView14"
-        android:textSize="12sp"
-        android:layout_alignLeft="@+id/textView13"
-        android:layout_below="@+id/textView13"
-        android:layout_marginTop="8dp"
-        android:layout_marginRight="16dp"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/material_grey_600"
+        android:textColor="#000"
+        android:alpha="0.38"
         android:text="@string/aviso4"
         android:id="@+id/textView15"
         android:textSize="12sp"
-        android:layout_alignLeft="@+id/textView14"
-        android:layout_below="@+id/textView14"
-        android:layout_marginTop="8dp"
-        android:layout_marginRight="16dp"/>
+        android:layout_alignRight="@+id/comboLayout"
+        android:layout_below="@+id/comboLayout"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="16dp" />
+
+    <RelativeLayout
+        android:background="#D0000000"
+        android:id="@+id/tutorialView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/txtInputEX">
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:background="#D0000000"
+        android:id="@+id/tutorialView2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toRightOf="@+id/txtInputM1"
+        android:layout_alignBottom="@+id/txtInputM1"
+        android:layout_alignTop="@+id/txtInputM1">
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:background="#D0000000"
+        android:id="@+id/tutorialView3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/txtInputM1">
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:textColor="#FFF"
+            android:padding="16dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Insira a M1 e deixe as outras notas em branco para saber a nota necessária na ND, sem contar a nota da PI."
+            android:id="@+id/txtTutorialNota"
+
+            android:layout_marginTop="64dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="16dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:id="@+id/btnTutorialNota"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@+id/txtTutorialNota"
+            android:layout_below="@+id/txtTutorialNota"
+            android:text="Entendi" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:background="#D0000000"
+        android:id="@+id/tutorialView4"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignTop="@+id/txtInputM1"
+        android:layout_alignBottom="@+id/txtInputM1"
+        android:layout_toLeftOf="@+id/txtInputM1">
+
+    </RelativeLayout>
 
 
 </RelativeLayout>

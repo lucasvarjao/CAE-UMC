@@ -21,6 +21,8 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:id="@+id/lblDiaMes"
         android:textSize="28sp"
+        android:textColor="#000"
+        android:alpha="0.87"
         android:text="@string/n5" />
 
     <TextView
@@ -29,7 +31,8 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:id="@+id/lblDiaSemana"
         android:textStyle="normal"
-        android:textColor="@color/primary_text_default_material_light"
+        android:textColor="#000"
+        android:alpha="0.87"
         android:layout_marginTop="-8dp"
         android:text="@string/semana" />
 
@@ -68,6 +71,7 @@
             android:textColor="@color/primary_text_default_material_dark"
             android:textStyle="bold"
             android:singleLine="true"
+
             android:text="@string/M1RESMAT"
             android:textSize="13sp" />
 
@@ -76,7 +80,8 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:id="@+id/lblHoraLocal"
-            android:textColor="@color/primary_text_default_material_dark"
+            android:textColor="#FFF"
+            android:alpha="0.7"
             android:singleLine="true"
             android:visibility="visible"
             android:text="@string/local"

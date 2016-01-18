@@ -2,6 +2,7 @@ package com.caeumc.caeumc;
 
 import com.orm.SugarRecord;
 
+
 /**
  * Created by Lucas Varjao on 15/08/2015.
  */

@@ -1,28 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 android:layout_width="match_parent"
-android:layout_height="24dp"
+android:layout_height="178dp">
 
-android:theme="@style/ThemeOverlay.AppCompat.Dark"
-    >
+    <ImageView
 
-<ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/material_design2"
+        android:scaleType="center"/>
+
+<LinearLayout
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:src="@drawable/nav_header"
-    android:scaleType="centerCrop"
-    android:contentDescription="@string/hifen"
-    android:visibility="gone"/>
+    android:layout_height="56dp"
+    android:orientation="vertical"
+    android:layout_alignParentBottom="true"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentStart="true">
+    <TextView
+        android:id="@+id/nome_account"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:textColor="#FFFFFF"
+        android:text="Eng Civil 7ºE"
+        android:textSize="14sp"
+        android:textStyle="bold"/>
+    <TextView
+        android:id="@+id/email_account"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="5dp"
+        android:text="engcivil2017e@gmail.com"
+        android:textStyle="normal"
+        android:textSize="14sp"/>
+</LinearLayout>
+    
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/image_profile"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:src="@drawable/dummyavatar"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="38dp"/>
 
-
-
-<TextView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_gravity="bottom"
-    android:layout_margin="16dp"
-    android:text="@string/usuario"
-    android:visibility="gone"
-    android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
-
-</FrameLayout>
+</RelativeLayout>

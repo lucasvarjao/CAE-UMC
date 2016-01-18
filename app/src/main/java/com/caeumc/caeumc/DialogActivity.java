@@ -9,10 +9,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
+import android.preference.PreferenceManager;
+import android.provider.SyncStateContract;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.ButtonBarLayout;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -25,10 +28,13 @@ import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -45,6 +51,14 @@ public class DialogActivity extends AppCompatActivity {
     private EditText txtM2;
     private EditText txtEX;
     private CheckBox chbDP;
+
+    private RelativeLayout tutorialView;
+    private RelativeLayout tutorialView2;
+    private RelativeLayout tutorialView3;
+    private RelativeLayout tutorialView4;
+    private int ntutorial = 0;
+    private Button btnTutorial;
+    private TextView txtTutorial;
 
     private TextInputLayout txtInputDisciplina;
     private TextInputLayout txtInputM1;
@@ -73,6 +87,10 @@ public class DialogActivity extends AppCompatActivity {
     int eDisciplina = 0;
     Context context;
 
+    MateriaListModel materiaListModel;
+
+    private String PREF_KEY_TUT_MAIN;
+
 
 
 
@@ -83,6 +101,7 @@ public class DialogActivity extends AppCompatActivity {
         getWindow().setWindowAnimations(android.R.style.Animation_Toast);
         setContentView(R.layout.fulldialogtoolbar);
       //  getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 
         this.setFinishOnTouchOutside(false);
@@ -102,6 +121,14 @@ public class DialogActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white_24dp);
 
+        tutorialView = (RelativeLayout) findViewById(R.id.tutorialView);
+        tutorialView2 = (RelativeLayout) findViewById(R.id.tutorialView2);
+        tutorialView3 = (RelativeLayout) findViewById(R.id.tutorialView3);
+        tutorialView4 = (RelativeLayout) findViewById(R.id.tutorialView4);
+        btnTutorial = (Button) findViewById(R.id.btnTutorialNota);
+        txtTutorial = (TextView) findViewById(R.id.txtTutorialNota);
+
+
         txtDisciplinas = (EditText) findViewById(R.id.editText);
 
         lblContador = (TextView) findViewById(R.id.lblContador);
@@ -111,15 +138,121 @@ public class DialogActivity extends AppCompatActivity {
         txtEX = (EditText) findViewById(R.id.txtEX);
         chbDP = (CheckBox) findViewById(R.id.chbDP);
 
+
+
+        final boolean tutorialShown = PreferenceManager.getDefaultSharedPreferences(DialogActivity.this).getBoolean(PREF_KEY_TUT_MAIN, false);
+        if (!tutorialShown) {
+            this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+            txtDisciplinas.setEnabled(false);
+            txtM1.setEnabled(false);
+            txtPI.setEnabled(false);
+            txtM2.setEnabled(false);
+            txtEX.setEnabled(false);
+            chbDP.setEnabled(false);
+
+            btnTutorial.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    switch (ntutorial) {
+                        case 0:
+                            txtTutorial.setText("Insira a nota da M1 e da PI e deixe o campo 'ND' em branco para saber a nota necessária na ND.");
+                            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)tutorialView4.getLayoutParams();
+                            params.addRule(RelativeLayout.ALIGN_RIGHT, R.id.txtInputM1);
+                            tutorialView4.setLayoutParams(params);
+                            RelativeLayout.LayoutParams params1 = (RelativeLayout.LayoutParams)tutorialView2.getLayoutParams();
+                            params1.addRule(RelativeLayout.RIGHT_OF, R.id.txtInputPI);
+                            tutorialView2.setLayoutParams(params1);
+                            ntutorial += 1;
+                            break;
+                        case 1:
+                            txtTutorial.setText("Quantos todas as notas forem inseridas, caso a nota final não seja o suficiente para ser aprovado, o sistema mostrará a nota necessária no exame.");
+                            RelativeLayout.LayoutParams params2 = (RelativeLayout.LayoutParams)tutorialView4.getLayoutParams();
+                            params2.addRule(RelativeLayout.ALIGN_RIGHT, R.id.txtInputPI);
+                            tutorialView4.setLayoutParams(params2);
+                            RelativeLayout.LayoutParams params3 = (RelativeLayout.LayoutParams)tutorialView2.getLayoutParams();
+                            params3.addRule(RelativeLayout.RIGHT_OF, R.id.txtInputM2);
+                            tutorialView2.setLayoutParams(params3);
+                            ntutorial += 1;
+                            break;
+                        case 2:
+                            txtTutorial.setText("Selecione aqui caso a matéria seja DP ou Adaptação, nesse caso a nota da PI não é necessária.");
+                            RelativeLayout.LayoutParams params4 = (RelativeLayout.LayoutParams)tutorialView3.getLayoutParams();
+                            params4.addRule(RelativeLayout.BELOW, R.id.comboLayout);
+                            tutorialView3.setLayoutParams(params4);
+
+                            RelativeLayout.LayoutParams params5 = (RelativeLayout.LayoutParams)tutorialView4.getLayoutParams();
+                            params5.addRule(RelativeLayout.ALIGN_TOP, R.id.comboLayout);
+                            params5.addRule(RelativeLayout.ALIGN_BOTTOM, R.id.comboLayout);
+                            params5.addRule(RelativeLayout.LEFT_OF, R.id.comboLayout);
+
+                            tutorialView4.setLayoutParams(params5);
+                            tutorialView4.setVisibility(View.GONE);
+
+
+                            RelativeLayout.LayoutParams params6 = (RelativeLayout.LayoutParams)tutorialView.getLayoutParams();
+                            params6.addRule(RelativeLayout.ABOVE, R.id.comboLayout);
+                            tutorialView.setLayoutParams(params6);
+
+                            RelativeLayout.LayoutParams params7 = (RelativeLayout.LayoutParams)tutorialView2.getLayoutParams();
+                            params7.addRule(RelativeLayout.ALIGN_TOP, R.id.comboLayout);
+                            params7.addRule(RelativeLayout.ALIGN_BOTTOM, R.id.comboLayout);
+                            params7.addRule(RelativeLayout.RIGHT_OF, R.id.txtInputM2);
+                            tutorialView2.setLayoutParams(params7);
+                            ntutorial += 1;
+                            break;
+                        default:
+                            tutorialView.setVisibility(View.GONE);
+                            tutorialView2.setVisibility(View.GONE);
+                            tutorialView3.setVisibility(View.GONE);
+                            tutorialView4.setVisibility(View.GONE);
+                            PreferenceManager.getDefaultSharedPreferences(DialogActivity.this).edit().putBoolean(PREF_KEY_TUT_MAIN, true).commit();
+                            txtDisciplinas.setEnabled(true);
+                            txtM1.setEnabled(true);
+                            txtPI.setEnabled(true);
+                            txtM2.setEnabled(true);
+                            txtEX.setEnabled(true);
+                            chbDP.setEnabled(true);
+                            txtDisciplinas.requestFocus();
+                            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+                            break;
+                    }
+                }
+            });
+
+
+
+        } else {
+
+            tutorialView.setVisibility(View.GONE);
+            tutorialView2.setVisibility(View.GONE);
+            tutorialView3.setVisibility(View.GONE);
+            tutorialView4.setVisibility(View.GONE);
+            this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+
+        }
+
+
+
+
+
+
         chbDP.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                   // txtPI.setVisibility(View.GONE);
-                    Esconder(txtPI);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        // txtPI.setVisibility(View.GONE);
+                        Esconder(txtPI);
+                    } else {
+                        txtPI.setVisibility(View.GONE);
+                    }
                 } else {
-                   // txtPI.setVisibility(View.VISIBLE);
-                    Revelar(txtPI);
+                    // txtPI.setVisibility(View.VISIBLE);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        Revelar(txtPI);
+                    } else {
+                        txtPI.setVisibility(View.VISIBLE);
+                    }
                 }
             }
         });
@@ -185,9 +318,16 @@ public class DialogActivity extends AppCompatActivity {
 
             getSupportActionBar().setTitle("Alterar");
             Log.e("Teste","ENTROU NA CONDICAO");
-            Long i = Long.valueOf(idDisciplina);
-            Log.e("ID", i.toString() + " " + idDisciplina);
-            MateriaListModel materiaListModel = MateriaListModel.findById(MateriaListModel.class, i);
+
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Long i = Long.valueOf(idDisciplina);
+                    Log.e("ID", i.toString() + " " + idDisciplina);
+                    materiaListModel = MateriaListModel.findById(MateriaListModel.class, i);
+                }
+            });
             nDisciplina2 = materiaListModel.getNomeMateria();
             nM1 = materiaListModel.getM1();
             nM2 = materiaListModel.getM2();
@@ -470,9 +610,15 @@ public class DialogActivity extends AppCompatActivity {
                             NF = Arredondar(NF);
                         }
                     }
-                    Long i = Long.valueOf(idDisciplina);
 
-                    MateriaListModel materiaListModel = MateriaListModel.findById(MateriaListModel.class, i);
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Long i = Long.valueOf(idDisciplina);
+                            materiaListModel = MateriaListModel.findById(MateriaListModel.class, i);
+                        }
+                    });
 
                     Log.e("Teste", String.valueOf(nNF) + "=" + String.valueOf(NF) + "   " + String.valueOf(nPI) + "=" + String.valueOf(PI));
 
@@ -482,15 +628,21 @@ public class DialogActivity extends AppCompatActivity {
 
                     } else {
 
-                        materiaListModel.setNomeMateria(disciplina2);
-                        materiaListModel.setM1(M1);
-                        materiaListModel.setPI(PI);
-                        materiaListModel.setM2(M2);
-                        materiaListModel.setEX(EX);
-                        materiaListModel.setNF(NF);
-                        materiaListModel.setDP(DP);
-                        materiaListModel.save();
-                        NavDrawerActivity.notifyUpdate = 1;
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                materiaListModel.setNomeMateria(disciplina2);
+                                materiaListModel.setM1(M1);
+                                materiaListModel.setPI(PI);
+                                materiaListModel.setM2(M2);
+                                materiaListModel.setEX(EX);
+                                materiaListModel.setNF(NF);
+                                materiaListModel.setDP(DP);
+                                materiaListModel.save();
+                                NavDrawerActivity.notifyUpdate = 1;
+                            }
+                        });
+
 
                     }
 
@@ -632,8 +784,14 @@ public class DialogActivity extends AppCompatActivity {
                             }
                         }
                     }
-                    MateriaListModel materia = new MateriaListModel(disciplina2, M1, M2, PI, EX, NF, DP);
-                    materia.save();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            MateriaListModel materia = new MateriaListModel(disciplina2, M1, M2, PI, EX, NF, DP);
+                            materia.save();
+                        }
+                    });
+
 
                     NavDrawerActivity.notifyUpdate = 2;
 

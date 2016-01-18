@@ -29,6 +29,8 @@
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="@string/diassemana"
                 android:id="@+id/lblSemanas"
+                android:textColor="#000"
+                android:alpha="0.54"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="8dp"
                 android:layout_marginStart="8dp"/>

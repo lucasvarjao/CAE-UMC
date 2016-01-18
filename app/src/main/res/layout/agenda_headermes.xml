@@ -11,6 +11,8 @@
         android:text="@string/mes"
         android:id="@+id/lblHeaderMes"
         android:paddingTop="16dp"
-        android:textStyle="bold"
+
+        android:textColor="#000"
+        android:alpha="0.87"
         android:gravity="bottom|center_horizontal" />
 </FrameLayout>

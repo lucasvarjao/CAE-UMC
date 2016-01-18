@@ -9,13 +9,8 @@
         android:title="Atualizar"
         app:showAsAction="withText" />
 
-    <item android:id="@+id/alterar_conta"
-        android:icon="@drawable/common_signin_btn_icon_focus_dark"
-        android:title="Alterar Conta"
-        app:showAsAction="withText" />
-
     <item android:id="@+id/opcoes_conta"
-        android:icon="@drawable/common_signin_btn_icon_focus_dark"
+        android:icon="@drawable/common_google_signin_btn_icon_dark"
         android:title="Opções"
         app:showAsAction="withText" />
 </menu>

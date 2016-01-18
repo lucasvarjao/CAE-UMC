@@ -1,6 +1,5 @@
 package com.caeumc.caeumc;
 
-
 import com.orm.SugarRecord;
 import com.orm.dsl.Ignore;
 
@@ -8,7 +7,6 @@ import com.orm.dsl.Ignore;
  * Created by Lucas Varjao on 25/08/2015.
  */
 public class EventosListModel extends SugarRecord<EventosListModel> {
-
     private String Descricao;
     private Integer Data;
     private Integer HoraInicio;

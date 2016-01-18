@@ -96,7 +96,8 @@
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:text="Domingo, 30 de abril"
-                        android:textColor="@android:color/black"
+                        android:textColor="#000"
+                        android:alpha="0.87"
                         android:id="@+id/txtDiaDetails" />
 
                     <TextView
@@ -105,7 +106,8 @@
 
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:text="22:00 - 23:00"
-                        android:textColor="@android:color/black"
+                        android:textColor="#000"
+                        android:alpha="0.54"
                         android:id="@+id/txtHoraDetails" />
                 </LinearLayout>
             </RelativeLayout>
@@ -142,13 +144,16 @@
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:text="Shopping Bourbon"
-                        android:textColor="@android:color/black"
+                        android:textColor="#000"
+                        android:alpha="0.87"
                         android:id="@+id/txtLocalDetails" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="#000"
+                        android:alpha="0.54"
                         android:text="Avenida Pompéia, 1000 - São Paulo, SP"
                         android:id="@+id/txtEnderecoDetails" />
                 </LinearLayout>
@@ -186,6 +191,8 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:text="Observações"
+                    android:textColor="#000"
+                    android:alpha="0.54"
                     android:id="@+id/txtObsDetails" />
 
             </LinearLayout>

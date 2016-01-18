@@ -43,7 +43,7 @@
     <string name="salvar">Salvar</string>
     <string name="home">Home</string>
     <string name="mes">setembro de 2015</string>
-    <string name="aviso">Suas matérias aparecerão aqui, \n quando você adicioná-las.</string>
+    <string name="aviso">Adicione disciplinas para começar a controlar suas notas.</string>
     <string name="notas">Notas</string>
     <string name="resmat">Resistência dos Materiais III</string>
     <string name="calendarioacademico">Calendário Acadêmico</string>
@@ -72,7 +72,7 @@
     <string name="aviso1">Insira somente a nota da M1 para obter o mínimo necessário na ND (Sem a PI).</string>
     <string name="aviso2">Insira a nota da M1 e a nota da PI para obter o mínimo necessário na ND (Deixe o campo \'ND\' em branco).</string>
     <string name="aviso3">Após todas as notas serem adicionadas, caso a nota final não for o suficiente para ser aprovado, o sistema mostrará a nota mínima necessária no exame.</string>
-    <string name="aviso4">Todas as notas são de 0 a 10.</string>
+    <string name="aviso4">*Todas as notas são de 0 a 10.</string>
     <string name="title_activity_settings_agenda">Opções Agenda</string>
 
     <!-- Strings related to Settings -->
@@ -126,6 +126,9 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
+    <string name="title_activity_launch_screen">LaunchScreenActivity</string>
+
+    <string name="facebook_app_id">940451332711731</string>
 
 
 </resources>

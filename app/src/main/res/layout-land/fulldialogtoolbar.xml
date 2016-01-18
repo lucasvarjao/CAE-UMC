@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+    <RelativeLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+
+
+        >
+
+        <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+
+            android:background="@color/primary"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark"
+            android:id="@+id/tool_bar_dialog"
+            android:fitsSystemWindows="true"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+
+            android:minHeight="?attr/actionBarSize" />
+
+
+
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/txtInputDisciplina"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="64dp"
+            android:layout_marginRight="16dp"
+            >
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/editText"
+                android:hint="@string/disciplina"
+                android:textSize="22sp"
+                android:typeface="sans"
+                android:ems="10"
+                android:singleLine="true"
+                android:maxLength="35"
+                android:inputType="textCapSentences"
+
+                android:imeOptions="actionNext">
+
+                <requestFocus />
+            </EditText>
+        </android.support.design.widget.TextInputLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/caracteres"
+            android:id="@+id/lblContador"
+            android:textColor="#000"
+            android:alpha="0.38"
+            android:layout_gravity="end"
+            android:textSize="12sp"
+            android:layout_below="@+id/txtInputDisciplina"
+            android:layout_alignRight="@+id/txtInputDisciplina"
+            android:layout_alignEnd="@+id/txtInputDisciplina" />
+
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/txtInputM1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_alignLeft="@+id/txtInputDisciplina"
+            android:layout_alignStart="@+id/txtInputDisciplina"
+            android:layout_below="@+id/txtInputDisciplina"
+            >
+            <EditText
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:ems="10"
+                android:id="@+id/txtM1"
+                android:maxLength="5"
+                android:singleLine="true"
+                android:imeOptions="actionNext"
+                android:hint="@string/m1"
+                />
+        </android.support.design.widget.TextInputLayout>
+
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/txtInputPI"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/txtInputM1"
+            android:layout_toRightOf="@+id/txtInputM1"
+            android:layout_marginLeft="8dp"
+            >
+            <EditText
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:ems="10"
+                android:id="@+id/txtPI"
+                android:maxLength="5"
+                android:imeOptions="actionNext"
+                android:singleLine="true"
+                android:hint="@string/pi"
+                />
+        </android.support.design.widget.TextInputLayout>
+
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/txtInputM2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/txtInputPI"
+            android:layout_marginLeft="8dp"
+            android:layout_toRightOf="@+id/txtInputPI"
+            >
+            <EditText
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:ems="10"
+                android:id="@+id/txtM2"
+                android:maxLength="5"
+                android:imeOptions="actionNext"
+                android:singleLine="true"
+                android:hint="@string/nd"
+                />
+        </android.support.design.widget.TextInputLayout>
+
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/txtInputEX"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/txtInputM2"
+            android:layout_toRightOf="@+id/txtInputM2"
+            android:layout_toEndOf="@+id/txtInputM2"
+            android:layout_marginLeft="8dp"
+            android:layout_marginBottom="16dp"
+            >
+            <EditText
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:ems="10"
+                android:id="@+id/txtEX"
+                android:maxLength="5"
+                android:singleLine="true"
+                android:hint="@string/ex"
+                android:imeOptions="actionDone"
+                />
+        </android.support.design.widget.TextInputLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_below="@+id/txtInputM1"
+            android:layout_alignLeft="@+id/txtInputM1"
+            android:layout_alignStart="@+id/txtInputM1"
+            android:layout_marginRight="16dp"
+            android:id="@+id/comboLayout">
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/dp"
+                android:id="@+id/chbDP"
+                android:padding="8dp"
+                />
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#000"
+            android:alpha="0.38"
+            android:text="@string/aviso4"
+            android:id="@+id/textView15"
+            android:textSize="12sp"
+            android:layout_alignRight="@+id/comboLayout"
+            android:layout_below="@+id/comboLayout"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="16dp" />
+
+        <RelativeLayout
+            android:background="#D0000000"
+            android:id="@+id/tutorialView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/txtInputEX"
+            android:layout_alignParentTop="true">
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:background="#D0000000"
+            android:id="@+id/tutorialView2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@+id/txtInputM1"
+            android:layout_alignBottom="@+id/txtInputM1"
+            android:layout_alignTop="@+id/txtInputM1">
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:background="#D0000000"
+            android:id="@+id/tutorialView3"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/txtInputM1">
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:textColor="#FFF"
+                android:padding="16dp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Insira a M1 e deixe as outras notas em branco para saber a nota necessária na ND, sem contar a nota da PI."
+                android:id="@+id/txtTutorialNota"
+
+                android:layout_marginTop="48dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:id="@+id/btnTutorialNota"
+                android:layout_height="wrap_content"
+                android:layout_alignRight="@+id/txtTutorialNota"
+                android:layout_below="@+id/txtTutorialNota"
+                android:text="Entendi" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:background="#D0000000"
+            android:id="@+id/tutorialView4"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignTop="@+id/txtInputM1"
+            android:layout_alignBottom="@+id/txtInputM1"
+            android:layout_toLeftOf="@+id/txtInputM1">
+
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+</ScrollView>

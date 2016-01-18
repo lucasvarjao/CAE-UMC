@@ -14,7 +14,7 @@
         <item name="actionModeStyle">@style/Widget.ActionMode</item>
         <item name="android:actionModeStyle">@style/Widget.ActionMode</item>
 
-
+        <item name="android:popupMenuStyle">@android:style/Widget.Holo.PopupMenu</item>
 
     </style>
 
@@ -39,6 +39,18 @@
 
         <item name="android:windowBackground">@android:color/background_light</item>
 
+    </style>
+
+    <style name="WalkthroughTheme" parent="Theme.AppCompat">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
+    <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@drawable/backgroud_splash</item>
     </style>
 
 
