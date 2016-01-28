@@ -930,6 +930,7 @@ public class NavDrawerActivity extends AppCompatActivity {
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.MATCH_PARENT);
+                lp.setMargins(16,16,16,16);
                 input.setLayoutParams(lp);
                 InputFilter filter = new InputFilter() {
                     public CharSequence filter(CharSequence source, int start, int end,
@@ -989,12 +990,22 @@ public class NavDrawerActivity extends AppCompatActivity {
                                                         if (agendasListModelList != null) {
                                                             if (agendasListModelList.size() > 0) {
                                                                 AgendasListModel agendasListModel = AgendasListModel.findById(AgendasListModel.class, agendasListModelList.get(0).getId());
-                                                                agendasListModel.setIdAgenda(finalAgendas.get(0).getIdAgenda());
-                                                                agendasListModel.setIdentificacao(finalAgendas.get(0).getIdentificacao());
-                                                                agendasListModel.setEndereco(finalAgendas.get(0).getEndereco());
-                                                                agendasListModel.setCompartilhado(finalAgendas.get(0).getCompartilhado());
-                                                                agendasListModel.setIdUsuario(finalAgendas.get(0).getIdUsuario());
-                                                                agendasListModel.save();
+
+                                                                if (agendasListModel.getIdAgenda().equals(agendasListModelList.get(0).getIdAgenda()) &&
+                                                                        agendasListModel.getIdentificacao().equals(agendasListModelList.get(0).getIdentificacao()) &&
+                                                                        agendasListModel.getEndereco().equals(agendasListModelList.get(0).getEndereco()) &&
+                                                                        agendasListModel.getCompartilhado().equals(agendasListModelList.get(0).getCompartilhado()) &&
+                                                                        agendasListModel.getIdUsuario().equals(agendasListModelList.get(0).getIdUsuario())) {
+
+                                                                } else {
+
+                                                                    agendasListModel.setIdAgenda(finalAgendas.get(0).getIdAgenda());
+                                                                    agendasListModel.setIdentificacao(finalAgendas.get(0).getIdentificacao());
+                                                                    agendasListModel.setEndereco(finalAgendas.get(0).getEndereco());
+                                                                    agendasListModel.setCompartilhado(finalAgendas.get(0).getCompartilhado());
+                                                                    agendasListModel.setIdUsuario(finalAgendas.get(0).getIdUsuario());
+                                                                    agendasListModel.save();
+                                                                }
                                                             } else {
 
                                                                 AgendasListModel agendasListModel = new AgendasListModel(finalAgendas.get(0).getIdAgenda(), finalAgendas.get(0).getIdentificacao(),
@@ -1010,6 +1021,8 @@ public class NavDrawerActivity extends AppCompatActivity {
                                                     }
                                                 })
                                                 .show();
+                                    } else {
+                                        Toast.makeText(NavDrawerActivity.this, "Agenda não existe", Toast.LENGTH_LONG).show();
                                     }
 
                                 } else {

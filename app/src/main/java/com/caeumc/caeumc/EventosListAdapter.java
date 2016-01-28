@@ -309,6 +309,14 @@ public class EventosListAdapter extends BaseAdapter {
 
                     if (p.getHoraInicio() == 0) {
                         holder.tt5.setVisibility(View.GONE);
+
+                        if (p.getLocal() != null) {
+                            if (!p.getLocal().isEmpty()) {
+                                holder.tt5.setText(String.format("em %s", local));
+                                holder.tt5.setVisibility(View.VISIBLE);
+                            }
+                        }
+
                     } else if (p.getLocal() == null) {
                         holder.tt5.setText("19:00-22:00 em UMC");
                         holder.tt5.setText(String.format("%s-%s", horaInicioFormatada, horaFinalFormatada));

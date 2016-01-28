@@ -47,6 +47,8 @@ public class AgendasPhp extends AsyncTask<String, Agenda, ArrayList<Agenda>> {
 
         if (params[0].equals("getAgendasIdentificacao")) {
             agendas = getAgendasIdentificacao(params[1]);
+        } else if (params[0].equals("getAgendasCompartilhadas")) {
+            agendas = getAgendasCompartilhadas();
         }
 
         return agendas;
