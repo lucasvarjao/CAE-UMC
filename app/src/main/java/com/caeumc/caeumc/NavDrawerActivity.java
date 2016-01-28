@@ -35,6 +35,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -45,12 +47,14 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.caeumc.php.Agenda;
 import com.google.android.gms.auth.GooglePlayServicesAvailabilityException;
 import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.AccountPicker;
@@ -78,6 +82,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.TreeSet;
+import java.util.concurrent.ExecutionException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -194,9 +199,6 @@ public class NavDrawerActivity extends AppCompatActivity {
     }
 
     private static void refreshResults () {
-        if (credential.getSelectedAccountName() == null) {
-            getUserAccountWrapper();
-        } else {
             if (isDeviceOnline()) {
                 new ApiAsyncTask(drawerActivity, mEmail).execute();
 
@@ -206,7 +208,6 @@ public class NavDrawerActivity extends AppCompatActivity {
                 btnCarregarAgenda.setEnabled(true);
                 swipeRefreshLayout.setEnabled(true);
             }
-        }
     }
 
     public static void clearResultsText () {
@@ -223,6 +224,7 @@ public class NavDrawerActivity extends AppCompatActivity {
         fragmentActivity.runOnUiThread(new Runnable() {
             @Override
             public void run () {
+                lstEventos = (ListView) snackView.findViewById(R.id.lstEventos);
                 if (dataStrings == null) {
                     Toast.makeText(contextFragment, "Erro recuperando dados!", Toast.LENGTH_LONG).show();
                     swipeRefreshLayout.setRefreshing(false);
@@ -232,8 +234,6 @@ public class NavDrawerActivity extends AppCompatActivity {
                     swipeRefreshLayout.setRefreshing(false);
                     swipeRefreshLayout.setEnabled(true);
                 } else {
-
-                    lstEventos = (ListView) snackView.findViewById(R.id.lstEventos);
                     // eventosList = EventosListModel.findWithQuery(EventosListModel.class, "SELECT * FROM EVENTOS_LIST_MODEL ORDER BY datetime(data*1000, 'unixepoch', 'localtime') DESC");
                     EventosListAdapter arrayAdapter = new EventosListAdapter(drawerActivity, contextFragment);
                     String mesAnterior = "";
@@ -790,7 +790,7 @@ public class NavDrawerActivity extends AppCompatActivity {
 
         if (accountNameNav != null) {
             if (accountNameNav.isEmpty() && accountEmail.isEmpty()) {
-                txtNomeAccount.setText("Não logado");
+                txtNomeAccount.setText("Centro Acadêmico de Engenharia");
                 txtNomeAccount.setVisibility(View.VISIBLE);
             } else if (accountNameNav.isEmpty()) {
                 txtNomeAccount.setVisibility(INVISIBLE);
@@ -799,7 +799,7 @@ public class NavDrawerActivity extends AppCompatActivity {
                 txtNomeAccount.setVisibility(View.VISIBLE);
             }
         } else if (accountEmail.isEmpty()) {
-            txtNomeAccount.setText("Não logado");
+            txtNomeAccount.setText("Centro Acadêmico de Engenharia");
             txtNomeAccount.setVisibility(View.VISIBLE);
         } else {
             txtNomeAccount.setVisibility(INVISIBLE);
@@ -807,7 +807,7 @@ public class NavDrawerActivity extends AppCompatActivity {
 
         if (accountEmail != null) {
             if (accountEmail.isEmpty()) {
-                txtEmailAccount.setVisibility(View.INVISIBLE);
+                txtEmailAccount.setText("UMC - Villa Lobos");
             } else {
                 txtEmailAccount.setText(accountEmail);
                 txtEmailAccount.setVisibility(View.VISIBLE);
@@ -826,10 +826,10 @@ public class NavDrawerActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             } else {
-                imgImageProfile.setImageResource(R.drawable.dummyavatar);
+                imgImageProfile.setImageResource(R.drawable.logoandroid);
             }
         } else {
-            imgImageProfile.setImageResource(R.drawable.dummyavatar);
+            imgImageProfile.setImageResource(R.drawable.logoandroid);
         }
 
 
@@ -919,6 +919,118 @@ public class NavDrawerActivity extends AppCompatActivity {
                             .create()
                             .show();
                 }
+                return true;
+            case R.id.addagenda:
+                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(NavDrawerActivity.this);
+                    alertDialog.setTitle("Adicionar Agenda");
+                    alertDialog.setMessage("Identificação da agenda");
+
+
+                final EditText input = new EditText(NavDrawerActivity.this);
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT);
+                input.setLayoutParams(lp);
+                InputFilter filter = new InputFilter() {
+                    public CharSequence filter(CharSequence source, int start, int end,
+                                               Spanned dest, int dstart, int dend) {
+                        for (int i = start; i < end; i++) {
+                            if ( !Character.isLetterOrDigit(source.charAt(i)) && !Character.toString(source.charAt(i)).equals("-")) {
+                                return "";
+                            }
+                        }
+                        return null;
+                    }
+                };
+                input.setFilters(new InputFilter[]{filter});
+                input.setHint("Apenas letras, números e hífens permitidos");
+                alertDialog.setView(input);
+
+                alertDialog.setPositiveButton("Continuar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick (DialogInterface dialog, int which) {
+
+                        String identificacao = input.getText().toString();
+                        if (identificacao != null) {
+                            if (!identificacao.trim().equals("")) {
+
+                                ArrayList<Agenda> agendas = new ArrayList<Agenda>();
+                                String[] strings = new String[2];
+                                strings[0] = "getAgendasIdentificacao";
+                                strings[1] = identificacao;
+                                try {
+                                    agendas = new AgendasPhp().execute(strings).get();
+                                } catch (InterruptedException e) {
+                                    Toast.makeText(NavDrawerActivity.this, "Agenda não existe", Toast.LENGTH_LONG).show();
+                                    e.printStackTrace();
+                                } catch (ExecutionException e) {
+                                    Toast.makeText(NavDrawerActivity.this, "Agenda não existe", Toast.LENGTH_LONG).show();
+                                    e.printStackTrace();
+                                }
+                                if (agendas != null) {
+
+                                    if (agendas.size() == 1) {
+                                        final ArrayList<Agenda> finalAgendas = agendas;
+                                        new AlertDialog.Builder(NavDrawerActivity.this)
+                                                .setMessage("Uma agenda encontrada com essa identificação, deseja adicioná-lá?")
+                                                .setTitle("Agenda Encontrada")
+                                                .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick (DialogInterface dialog, int which) {
+                                                        dialog.dismiss();
+                                                    }
+                                                })
+                                                .setPositiveButton("Adicionar", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick (DialogInterface dialog, int which) {
+                                                        String idAgenda = finalAgendas.get(0).getIdAgenda().toString();
+                                                        List<AgendasListModel> agendasListModelList = AgendasListModel.find(AgendasListModel.class, "id_agenda = ?", idAgenda);
+
+                                                        if (agendasListModelList != null) {
+                                                            if (agendasListModelList.size() > 0) {
+                                                                AgendasListModel agendasListModel = AgendasListModel.findById(AgendasListModel.class, agendasListModelList.get(0).getId());
+                                                                agendasListModel.setIdAgenda(finalAgendas.get(0).getIdAgenda());
+                                                                agendasListModel.setIdentificacao(finalAgendas.get(0).getIdentificacao());
+                                                                agendasListModel.setEndereco(finalAgendas.get(0).getEndereco());
+                                                                agendasListModel.setCompartilhado(finalAgendas.get(0).getCompartilhado());
+                                                                agendasListModel.setIdUsuario(finalAgendas.get(0).getIdUsuario());
+                                                                agendasListModel.save();
+                                                            } else {
+
+                                                                AgendasListModel agendasListModel = new AgendasListModel(finalAgendas.get(0).getIdAgenda(), finalAgendas.get(0).getIdentificacao(),
+                                                                        finalAgendas.get(0).getEndereco(), finalAgendas.get(0).getCompartilhado(), finalAgendas.get(0).getIdUsuario());
+                                                                agendasListModel.save();
+
+                                                            }
+                                                        } else {
+                                                            AgendasListModel agendasListModel = new AgendasListModel(finalAgendas.get(0).getIdAgenda(), finalAgendas.get(0).getIdentificacao(),
+                                                                    finalAgendas.get(0).getEndereco(), finalAgendas.get(0).getCompartilhado(), finalAgendas.get(0).getIdUsuario());
+                                                            agendasListModel.save();
+                                                        }
+                                                    }
+                                                })
+                                                .show();
+                                    }
+
+                                } else {
+                                    Toast.makeText(NavDrawerActivity.this, "Agenda não existe", Toast.LENGTH_LONG).show();
+                                }
+                            }
+
+
+                        }
+                    }
+                });
+
+                alertDialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick (DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+                alertDialog.show();
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -1399,12 +1511,7 @@ public class NavDrawerActivity extends AppCompatActivity {
                 });
                 if (eventosListModels == null || eventosListModels.size() == 0) {
 
-                    if (isGooglePlayServicesAvailable()) {
-                        refreshResults();
-                    } else {
-                        Toast.makeText(contextFragment, "Google Play Services é necessário: " +
-                                "após instalar, reinicie o aplicativo.", Toast.LENGTH_LONG).show();
-                    }
+
                 }
 
                 if (mudarusuario == true) {

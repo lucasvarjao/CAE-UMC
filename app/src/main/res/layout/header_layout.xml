@@ -37,12 +37,12 @@ android:layout_height="178dp">
         android:textStyle="normal"
         android:textSize="14sp"/>
 </LinearLayout>
-    
+
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/image_profile"
         android:layout_width="65dp"
         android:layout_height="65dp"
-        android:src="@drawable/dummyavatar"
+        android:src="@drawable/logoandroid"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="38dp"/>
 
