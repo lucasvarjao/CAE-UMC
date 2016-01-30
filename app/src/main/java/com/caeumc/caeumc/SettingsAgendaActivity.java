@@ -12,18 +12,20 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
+import android.preference.MultiSelectListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
-import android.support.v7.app.ActionBar;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
+import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
 import android.view.MenuItem;
 
-import com.google.android.gms.common.AccountPicker;
-
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -43,6 +45,7 @@ public class SettingsAgendaActivity extends AppCompatPreferenceActivity {
      */
 
     String accountName;
+    static Context context;
 
     private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
 
@@ -129,6 +132,8 @@ public class SettingsAgendaActivity extends AppCompatPreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupActionBar();
+
+        context = this;
     }
 
     /**
@@ -251,6 +256,30 @@ public class SettingsAgendaActivity extends AppCompatPreferenceActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_agenda);
             setHasOptionsMenu(true);
+
+
+            List<AgendasListModel> agendasListModelList = AgendasListModel.listAll(AgendasListModel.class);
+            Set<String> selectionSet = new HashSet<String>();
+            List<String> identificacoes = new ArrayList<>();
+            List<String> idsAgendas = new ArrayList<>();
+            for (AgendasListModel agendasListModel : agendasListModelList) {
+                selectionSet.add(agendasListModel.getIdAgenda());
+                identificacoes.add(agendasListModel.getIdentificacao());
+                idsAgendas.add(agendasListModel.getIdAgenda());
+            }
+
+            String [] selections = identificacoes.toArray(new String[identificacoes.size()]);
+            String[] values = idsAgendas.toArray(new String[idsAgendas.size()]);
+
+
+
+            MultiSelectListPreference multiSelectPref = new MultiSelectListPreference(context);
+            multiSelectPref.setKey("multi_pref_agenda");
+            multiSelectPref.setTitle("Selecionar agendas");
+            multiSelectPref.setEntries(selections);
+            multiSelectPref.setEntryValues(values);
+            multiSelectPref.setDefaultValue(selectionSet);
+            getPreferenceScreen().addPreference(multiSelectPref);
 
             // Bind the summaries of EditText/List/Dialog/Ringtone preferences
             // to their values. When their values change, their summaries are

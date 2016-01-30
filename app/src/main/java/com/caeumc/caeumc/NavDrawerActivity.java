@@ -1343,6 +1343,9 @@ public class NavDrawerActivity extends AppCompatActivity {
                     mainActivity.invalidateOptionsMenu();
 
 
+
+
+
                     swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.activity_main_swipe_refresh_layout);
                     swipeRefreshLayout.setColorSchemeResources(R.color.accent, R.color.primary);
                     swipeRefreshLayout.setEnabled(false);
