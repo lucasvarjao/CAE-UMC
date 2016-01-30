@@ -25,21 +25,9 @@
         android:cacheColorHint="@android:color/transparent"
         android:choiceMode="none"
         android:clickable="false" />
-    </android.support.v4.widget.SwipeRefreshLayout>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@android:color/darker_gray"
-        android:text="@string/aviso"
-        android:id="@android:id/empty"
-        android:layout_gravity="center_horizontal"
-        android:textSize="20sp"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp"
-        android:gravity="center"
-        android:visibility="gone"/>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
     <RelativeLayout
         android:id="@+id/emptyAgendaLayout"
         android:layout_width="match_parent"
@@ -55,10 +43,14 @@
                 android:layout_height="100dp"
                 android:alpha="0.24"
                 android:src="@drawable/ic_calendar_black_48dp"/>
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:text="Carregar Agenda"
-                android:id="@+id/btnCarregarAgenda"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:alpha="0.54"
+                android:visibility="gone"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Nenhuma agenda disponível =/"/>
         </LinearLayout>
 
     </RelativeLayout>

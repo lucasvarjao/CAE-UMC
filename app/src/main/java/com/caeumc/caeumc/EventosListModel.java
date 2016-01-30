@@ -14,6 +14,8 @@ public class EventosListModel extends SugarRecord<EventosListModel> {
     private String Local;
     private Boolean Feriado;
     private String Observacao;
+    private String IDEvento;
+    private Integer DataAtualizado;
 
     @Ignore
     String Mes;
@@ -28,7 +30,7 @@ public class EventosListModel extends SugarRecord<EventosListModel> {
 
     }
 
-    public EventosListModel (String descricao, Integer data, Integer horaInicio, Integer horaFinal, String local, Boolean feriado, String observacao) {
+    public EventosListModel (String descricao, Integer data, Integer horaInicio, Integer horaFinal, String local, Boolean feriado, String observacao, String idEvento, Integer dataAtualizado) {
         this.Descricao = descricao;
         this.Data = data;
         this.HoraInicio = horaInicio;
@@ -36,6 +38,8 @@ public class EventosListModel extends SugarRecord<EventosListModel> {
         this.Local = local;
         this.Feriado = feriado;
         this.Observacao = observacao;
+        this.IDEvento = idEvento;
+        this.DataAtualizado = dataAtualizado;
     }
 
     public void setDescricao(String descricao) {this.Descricao = descricao;}
@@ -45,6 +49,8 @@ public class EventosListModel extends SugarRecord<EventosListModel> {
     public void setLocal (String local) {this.Local = Local;}
     public void setFeriado (Boolean feriado) {this.Feriado = feriado;}
     public void setObservacao (String observacao) {this.Observacao = observacao;}
+    public void setIDEvento (String idEvento) {this.IDEvento = idEvento;}
+    public void setDataAtualizado (Integer dataAtualizado) {this.DataAtualizado = dataAtualizado;}
 
     public void setMes (String mes) {this.Mes = mes;}
     public String getMes() {return  this.Mes;}
@@ -63,4 +69,6 @@ public class EventosListModel extends SugarRecord<EventosListModel> {
     public String getLocal() {return this.Local;}
     public Boolean getFeriado() {return this.Feriado;}
     public String getObservacao() {return this.Observacao;}
+    public String getIDEvento() {return this.IDEvento;}
+    public Integer getDataAtualizado() {return  this.DataAtualizado;}
 }

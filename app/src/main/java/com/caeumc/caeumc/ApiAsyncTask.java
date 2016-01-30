@@ -3,12 +3,11 @@ package com.caeumc.caeumc;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.widget.Toast;
 
 import com.caeumc.javautils.Calendario;
 import com.caeumc.javautils.Item;
 import com.caeumc.php.Agenda;
-import com.google.api.client.googleapis.extensions.android.gms.auth.GooglePlayServicesAvailabilityIOException;
-import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 import com.google.api.client.util.DateTime;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -35,7 +34,7 @@ import java.util.TimeZone;
  * An asynchronous task that handles the Google Calendar API call.
  * Placing the API calls in their own task ensures the UI stays responsive.
  */
-public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
+public class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
     private NavDrawerActivity mActivity;
     String mEmail;
 
@@ -51,13 +50,28 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        NavDrawerActivity.swipeRefreshLayout.setEnabled(false);
-        NavDrawerActivity.swipeRefreshLayout.setRefreshing(true);
+        NavDrawerActivity.swipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                NavDrawerActivity.swipeRefreshLayout.setEnabled(false);
+                NavDrawerActivity.swipeRefreshLayout.setRefreshing(true);
+            }
+        });
+
     }
 
-    protected void onPostExecute() {
-        NavDrawerActivity.swipeRefreshLayout.setEnabled(true);
-        NavDrawerActivity.swipeRefreshLayout.setRefreshing(false);
+
+    @Override
+    protected void onPostExecute(Boolean aBoolean) {
+        NavDrawerActivity.swipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                NavDrawerActivity.swipeRefreshLayout.setEnabled(true);
+                NavDrawerActivity.swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+
+        Toast.makeText(mActivity.getApplicationContext(), "Atualizado!", Toast.LENGTH_SHORT).show();
 
     }
 
@@ -66,31 +80,17 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
      * @param params no parameters needed for this task.
      */
     @Override
-    protected Void doInBackground(Void... params) {
-
-
-
-
-
+    protected Boolean doInBackground(Void... params) {
 
         try {
-            NavDrawerActivity.clearResultsText();
+           //NavDrawerActivity.clearResultsText();
             NavDrawerActivity.updateResultsText(getDataFromApi());
-
-        } catch (final GooglePlayServicesAvailabilityIOException availabilityException) {
-            NavDrawerActivity.showGooglePlayServicesAvailabilityErrorDialog(
-                    availabilityException.getConnectionStatusCode());
-
-        } catch (UserRecoverableAuthIOException userRecoverableException) {
-            mActivity.startActivityForResult(
-                    userRecoverableException.getIntent(),
-                    NavDrawerActivity.REQUEST_AUTHORIZATION);
 
         } catch (Exception e) {
             NavDrawerActivity.updateStatus("O seguinte erro ocorreu:\n" +
                     e.getMessage());
         }
-        return null;
+        return true;
     }
 
 
@@ -321,7 +321,10 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
                         if (descricao == null) {
                             descricao = "(Sem título)";
                         }
+                        String idEvento = item.getId();
+                        String updated = item.getUpdated();
                         long data;
+                        long dataAtualizado;
                         long horaInicio;
                         long horaFinal;
                         String local = item.getLocation();
@@ -343,6 +346,9 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
                             horaFinal = new DateTime(item.getEnd().getDatetime()).getValue() + TimeZone.getDefault().getOffset(localTime.getTime()) + timezonedif;
                             horaFinal = horaFinal / 1000;
 
+                            dataAtualizado = new DateTime(updated).getValue() + timezonedif;
+                            dataAtualizado = dataAtualizado / 1000;
+
 
                         } else {
                             Calendar dataCalendario = Calendar.getInstance();
@@ -354,9 +360,46 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
                             horaFinal = 0;
                             // the start date.
 
+                            dataAtualizado = new DateTime(updated).getValue() + timezonedif;
+                            dataAtualizado = dataAtualizado / 1000;
+
                         }
-                        EventosListModel eventosListModel = new EventosListModel(descricao, (int)data, (int)horaInicio, (int)horaFinal, local, false, observacao);
-                        eventosListModel.save();
+
+
+                        List<EventosListModel> eventosListModelList = EventosListModel.find(EventosListModel.class, "id_evento = ?", idEvento);
+
+                        if (eventosListModelList != null) {
+                            if (eventosListModelList.size() > 0) {
+                                long bdDataAtualizado = (long) eventosListModelList.get(0).getDataAtualizado();
+                                bdDataAtualizado = bdDataAtualizado * 1000L;
+                                long jsDataAtualizado = dataAtualizado;
+                                jsDataAtualizado = jsDataAtualizado * 1000L;
+                                if (bdDataAtualizado < jsDataAtualizado) {
+
+                                    eventosListModelList.get(0).setDescricao(descricao);
+                                    eventosListModelList.get(0).setData((int)data);
+                                    eventosListModelList.get(0).setHoraInicio((int)horaInicio);
+                                    eventosListModelList.get(0).setHoraFinal((int)horaFinal);
+                                    eventosListModelList.get(0).setLocal(local);
+                                    eventosListModelList.get(0).setFeriado(false);
+                                    eventosListModelList.get(0).setObservacao(observacao);
+                                    eventosListModelList.get(0).setIDEvento(idEvento);
+                                    eventosListModelList.get(0).setDataAtualizado((int)dataAtualizado);
+                                    eventosListModelList.get(0).save();
+
+
+                                }
+                            } else if (eventosListModelList.size() == 0) {
+
+                                EventosListModel eventosListModel = new EventosListModel(descricao, (int)data, (int)horaInicio, (int)horaFinal, local, false, observacao, idEvento, (int)dataAtualizado);
+                                eventosListModel.save();
+
+                            }
+                        } else {
+                            EventosListModel eventosListModel = new EventosListModel(descricao, (int)data, (int)horaInicio, (int)horaFinal, local, false, observacao, idEvento, (int)dataAtualizado);
+                            eventosListModel.save();
+                        }
+
 
                     }
                 }
@@ -401,10 +444,13 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
                 for (Item item : itemsFeriado) {
 
                     String descricao = item.getSummary();
+                    String idEvento = item.getId();
+                    String updated = item.getUpdated();
                     if (descricao == null) {
                         descricao = "(Sem título)";
                     }
                     long data;
+                    long dataAtualizado;
                     long horaInicio;
                     long horaFinal;
                     String local = item.getLocation();
@@ -427,6 +473,9 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
                         horaFinal = new DateTime(item.getEnd().getDatetime()).getValue() + TimeZone.getDefault().getOffset(localTime.getTime());
                         horaFinal = horaFinal / 1000;
 
+                        dataAtualizado = new DateTime(updated).getValue() + timezonedif;
+                        dataAtualizado = dataAtualizado / 1000;
+
 
                     } else {
                         Calendar dataCalendario = Calendar.getInstance();
@@ -436,12 +485,45 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
                         data = data / 1000;
                         horaInicio = 0;
                         horaFinal = 0;
+                        dataAtualizado = new DateTime(updated).getValue() + timezonedif;
+                        dataAtualizado = dataAtualizado / 1000;
                         // the start date.
 
                     }
-                    EventosListModel eventosListModel = new EventosListModel(descricao, (int)data, (int)horaInicio, (int)horaFinal, local, true, observacao);
-                    eventosListModel.save();
 
+                    List<EventosListModel> eventosListModelList = EventosListModel.find(EventosListModel.class, "id_evento = ?", idEvento);
+
+                    if (eventosListModelList != null) {
+                        if (eventosListModelList.size() > 0) {
+                            long bdDataAtualizado = (long) eventosListModelList.get(0).getDataAtualizado();
+                            bdDataAtualizado = bdDataAtualizado * 1000L;
+                            long jsDataAtualizado = dataAtualizado;
+                            jsDataAtualizado = jsDataAtualizado * 1000L;
+                            if (bdDataAtualizado < jsDataAtualizado) {
+
+                                    eventosListModelList.get(0).setDescricao(descricao);
+                                    eventosListModelList.get(0).setData((int)data);
+                                    eventosListModelList.get(0).setHoraInicio((int)horaInicio);
+                                    eventosListModelList.get(0).setHoraFinal((int)horaFinal);
+                                    eventosListModelList.get(0).setLocal(local);
+                                    eventosListModelList.get(0).setFeriado(true);
+                                    eventosListModelList.get(0).setObservacao(observacao);
+                                    eventosListModelList.get(0).setIDEvento(idEvento);
+                                    eventosListModelList.get(0).setDataAtualizado((int)dataAtualizado);
+                                    eventosListModelList.get(0).save();
+
+
+                            }
+                        } else if (eventosListModelList.size() == 0) {
+
+                            EventosListModel eventosListModel = new EventosListModel(descricao, (int)data, (int)horaInicio, (int)horaFinal, local, true, observacao, idEvento, (int)dataAtualizado);
+                            eventosListModel.save();
+
+                        }
+                    } else {
+                        EventosListModel eventosListModel = new EventosListModel(descricao, (int)data, (int)horaInicio, (int)horaFinal, local, true, observacao, idEvento, (int)dataAtualizado);
+                        eventosListModel.save();
+                    }
                 }
             }
         }

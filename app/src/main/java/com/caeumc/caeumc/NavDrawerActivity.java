@@ -1,9 +1,6 @@
 package com.caeumc.caeumc;
 
-import android.Manifest;
-import android.accounts.AccountManager;
 import android.app.Activity;
-import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.ProgressDialog;
@@ -11,7 +8,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -24,8 +20,6 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -55,20 +49,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.caeumc.php.Agenda;
-import com.google.android.gms.auth.GooglePlayServicesAvailabilityException;
-import com.google.android.gms.auth.UserRecoverableAuthException;
-import com.google.android.gms.common.AccountPicker;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.plus.Plus;
-import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.gson.GsonFactory;
-import com.google.api.client.util.ExponentialBackOff;
-import com.google.api.services.calendar.CalendarScopes;
 import com.splunk.mint.Logger;
 
 import java.io.BufferedReader;
@@ -77,7 +57,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -91,25 +70,11 @@ import static android.view.View.INVISIBLE;
 
 public class NavDrawerActivity extends AppCompatActivity {
 
-    static final HttpTransport transport = AndroidHttp.newCompatibleTransport();
-    static final JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
-    static final int REQUEST_CODE_PICK_ACCOUNT = 1000;
-    static final int REQUEST_AUTHORIZATION = 1001;
-    static final int REQUEST_GOOGLE_PLAY_SERVICES = 1002;
-
-    private static final int SIGNED_IN = 0;
-    private static final int STATE_SIGNING_IN = 1;
-    private static final int STATE_IN_PROGRESS = 2;
-    private static final int RC_SIGN_IN = 0;
     static final String fileName = "CAEUMC.apk";
     static final String url = "http://caeumc.com/download/CAEUMC.apk";
-    private static final String PREF_ACCOUNT_NAME = "accountName";
-    private static final String TAG = "drive-quickstart";
-    private static final String[] SCOPES = {CalendarScopes.CALENDAR_READONLY, Plus.SCOPE_PLUS_LOGIN.toString(), Plus.SCOPE_PLUS_PROFILE.toString()};
     private static final String ACCOUNT_NAMENAV = "accountNameNav";
     private static final String ACCOUNT_EMAIL = "accountEmail";
     private static final String ACCOUNT_PHOTOURL = "accountPhotoURL";
-    final static private int REQUEST_CODE_ASK_PERMISSIONS = 123;
     public static int notifyUpdate = 0;
     public static int disciplinaPosition = -99;
     public static int nDisciplinas = 999999999;
@@ -132,16 +97,11 @@ public class NavDrawerActivity extends AppCompatActivity {
     static ActionMode.Callback mDeleteMode;
     static ActionMode mActionDeleteMode;
     static List<MateriaListModel> materiaListModels;
-    static com.google.api.services.calendar.Calendar mService;
-    static GoogleApiClient mGoogleApiClient;
-    static GoogleAccountCredential credential;
     static String mEmail;
     static int fragmentatual = -1;
-    static boolean mudarusuario = false;
-    static String emailantigo = "";
+
     static List<EventosListModel> eventosListModels;
     static long idDeletar;
-    static Button btnCarregarAgenda;
     static TextView txtNomeAccount;
     static TextView txtEmailAccount;
     static CircleImageView imgImageProfile;
@@ -164,40 +124,6 @@ public class NavDrawerActivity extends AppCompatActivity {
     private Toolbar toolbar;
 
 
-    // Request code to use when launching the resolution activity
-    private static final int REQUEST_RESOLVE_ERROR = 1001;
-    // Unique tag for the error dialog fragment
-    private static final String DIALOG_ERROR = "dialog_error";
-    // Bool to track whether the app is already resolving an error
-    private boolean mResolvingError = false;
-
-    private static final String STATE_RESOLVING_ERROR = "resolving_error";
-
-    static final int REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR = 1001;
-
-    private static void chooseAccount () {
-
-        /*Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        drawerActivity.startActivityForResult(signInIntent, RC_SIGN_IN);*/
-
-        String[] accountTypes = new String[]{"com.google"};
-        Intent intent = AccountPicker.newChooseAccountIntent(null, null, accountTypes, false, null, null, null, null);
-        drawerActivity.startActivityForResult(intent, REQUEST_CODE_PICK_ACCOUNT);
-
-    }
-
-    private static void AlterarConta () {
-
-        //drawerActivity.startActivityForResult(credential.newChooseAccountIntent(), REQUEST_ACCOUNT_PICKER);
-
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putBoolean(STATE_RESOLVING_ERROR, mResolvingError);
-    }
-
     private static void refreshResults () {
             if (isDeviceOnline()) {
                 new ApiAsyncTask(drawerActivity, mEmail).execute();
@@ -205,7 +131,6 @@ public class NavDrawerActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(contextFragment, "Sem conexão com a internet.", Toast.LENGTH_LONG).show();
                 swipeRefreshLayout.setRefreshing(false);
-                btnCarregarAgenda.setEnabled(true);
                 swipeRefreshLayout.setEnabled(true);
             }
     }
@@ -299,8 +224,8 @@ public class NavDrawerActivity extends AppCompatActivity {
                     lstEventos.setDivider(null);
                     lstEventos.setClickable(false);
                     lstEventos.setAdapter(arrayAdapter);
-                    swipeRefreshLayout.setEnabled(true);
                     swipeRefreshLayout.setRefreshing(false);
+                    swipeRefreshLayout.setEnabled(true);
                     /*Toast.makeText(contextFragment, "Data retrieved using" +
                             " the Google Calendar API:", Toast.LENGTH_LONG).show();*/
 
@@ -427,45 +352,11 @@ public class NavDrawerActivity extends AppCompatActivity {
     }
 
 
-    public static void handleException (final Exception e) {
-        // Because this call comes from the AsyncTask, we must ensure that the following
-        // code instead executes on the UI thread.
-        drawerActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (e instanceof GooglePlayServicesAvailabilityException) {
-                    // The Google Play services APK is old, disabled, or not present.
-                    // Show a dialog created by Google Play services that allows
-                    // the user to update the APK
-                    int statusCode = ((GooglePlayServicesAvailabilityException)e)
-                            .getConnectionStatusCode();
-                    GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
-                    Dialog dialog = googleApiAvailability.getErrorDialog(
-                            drawerActivity,
-                            statusCode,
-                            REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR);
-                    dialog.show();
-                } else if (e instanceof UserRecoverableAuthException) {
-                    // Unable to authenticate, such as when the user has not yet granted
-                    // the app access to the account, but the user can fix this.
-                    // Forward the user to an activity in Google Play services.
-                    Intent intent = ((UserRecoverableAuthException)e).getIntent();
-                    drawerActivity.startActivityForResult(intent,
-                            REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR);
-                }
-            }
-        });
-    }
-
-
-
     public static void updateStatus (final String message) {
         mainActivity.runOnUiThread(new Runnable() {
             @Override
             public void run () {
                 Toast.makeText(contextFragment, message, Toast.LENGTH_LONG).show();
-                swipeRefreshLayout.setRefreshing(false);
-                swipeRefreshLayout.setEnabled(true);
             }
         });
     }
@@ -475,75 +366,6 @@ public class NavDrawerActivity extends AppCompatActivity {
                 (ConnectivityManager) contextFragment.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         return (networkInfo != null && networkInfo.isConnected());
-    }
-
-    private static boolean isGooglePlayServicesAvailable () {
-        //NavDrawerActivity navDrawerActivity = new NavDrawerActivity();
-        GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
-        final int connectionStatusCode =
-                googleApiAvailability.isGooglePlayServicesAvailable(context);
-        if (googleApiAvailability.isUserResolvableError(connectionStatusCode)) {
-            showGooglePlayServicesAvailabilityErrorDialog(connectionStatusCode);
-            return false;
-        } else if (connectionStatusCode != ConnectionResult.SUCCESS) {
-            return false;
-        }
-        return true;
-    }
-
-    static void showGooglePlayServicesAvailabilityErrorDialog (
-
-            final int connectionStatusCode) {
-        final NavDrawerActivity navDrawerActivity = new NavDrawerActivity();
-        mainActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run () {
-                GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
-                Dialog dialog = apiAvailability.getErrorDialog(
-                        drawerActivity,
-                        connectionStatusCode,
-                        REQUEST_GOOGLE_PLAY_SERVICES);
-                dialog.show();
-            }
-        });
-    }
-
-    private static void getUserAccountWrapper () {
-        int hasWriteContactsPermission = ContextCompat.checkSelfPermission(contextFragment, Manifest.permission.GET_ACCOUNTS);
-        if (hasWriteContactsPermission != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(fragmentActivity, Manifest.permission.GET_ACCOUNTS)) {
-                showMessageOKCancel("Você precisa aceitar para vizualizar a agenda",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick (DialogInterface dialog, int which) {
-                                ActivityCompat.requestPermissions(fragmentActivity, new String[]{Manifest.permission.GET_ACCOUNTS},
-                                        REQUEST_CODE_ASK_PERMISSIONS);
-                            }
-                        });
-                return;
-            }
-            ActivityCompat.requestPermissions(fragmentActivity, new String[]{Manifest.permission.GET_ACCOUNTS},
-                    REQUEST_CODE_ASK_PERMISSIONS);
-            return;
-        } else {
-            chooseAccount();
-        }
-    }
-
-    private static void showMessageOKCancel (String message, DialogInterface.OnClickListener okListener) {
-        new AlertDialog.Builder(fragmentActivity)
-                .setMessage(message)
-                .setPositiveButton("OK", okListener)
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick (DialogInterface dialog, int which) {
-                        swipeRefreshLayout.setEnabled(true);
-                        swipeRefreshLayout.setRefreshing(false);
-                        btnCarregarAgenda.setEnabled(true);
-                    }
-                })
-                .create()
-                .show();
     }
 
     public static String readFileAsString (String fileName) {
@@ -648,20 +470,6 @@ public class NavDrawerActivity extends AppCompatActivity {
         }
     }
 
-
-    @Override
-    protected void onStart () {
-        super.onStart();
-
-    }
-
-    @Override
-    protected void onStop () {
-        super.onStop();
-
-
-    }
-
     @Override
     protected void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -693,26 +501,16 @@ public class NavDrawerActivity extends AppCompatActivity {
 
         context = getApplicationContext();
 
-        mResolvingError = savedInstanceState != null
-                && savedInstanceState.getBoolean(STATE_RESOLVING_ERROR, false);
-
-      /*  GoogleSignInOptions gso =
-                new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                        .requestEmail()
-                        .requestScopes(new Scope("email"), new Scope(CalendarScopes.CALENDAR_READONLY))
-                        .build();
-        mGoogleApiClient = new GoogleApiClient.Builder(context)
-                .addConnectionCallbacks(this)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .addOnConnectionFailedListener(this)
-                .addScope(new Scope("email"))
-                .build();*/
 
         ValidateInternetConnection internetConnection = new ValidateInternetConnection(this);
         int i = internetConnection.isConnected();
 
         if (i != -1) {
+            attAvailable = false;
             attAvailable = checkUpdate();
+            SharedPreferences.Editor editor = this.getPreferences(MODE_PRIVATE).edit();
+            editor.putBoolean("updatecheck", attAvailable);
+            editor.commit();
         }
 
         mProgressDialog = new ProgressDialog(NavDrawerActivity.this);
@@ -882,8 +680,6 @@ public class NavDrawerActivity extends AppCompatActivity {
         // Handle action buttons
         switch (item.getItemId()) {
             case R.id.atualizar:
-                swipeRefreshLayout.setEnabled(false);
-                swipeRefreshLayout.setRefreshing(true);
                 AtualizarCalendario();
                 return true;
             case R.id.opcoes_conta:
@@ -930,8 +726,13 @@ public class NavDrawerActivity extends AppCompatActivity {
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.MATCH_PARENT);
-                lp.setMargins(16,16,16,16);
+
+                int paddingPixel = 8;
+                float density = context.getResources().getDisplayMetrics().density;
+                int paddingDp = (int)(paddingPixel * density);
+                lp.setMargins(paddingDp,paddingDp,paddingDp,paddingDp);
                 input.setLayoutParams(lp);
+                input.setPadding(paddingDp,paddingDp,paddingDp,paddingDp);
                 InputFilter filter = new InputFilter() {
                     public CharSequence filter(CharSequence source, int start, int end,
                                                Spanned dest, int dstart, int dend) {
@@ -955,81 +756,89 @@ public class NavDrawerActivity extends AppCompatActivity {
                         if (identificacao != null) {
                             if (!identificacao.trim().equals("")) {
 
-                                ArrayList<Agenda> agendas = new ArrayList<Agenda>();
-                                String[] strings = new String[2];
-                                strings[0] = "getAgendasIdentificacao";
-                                strings[1] = identificacao;
-                                try {
-                                    agendas = new AgendasPhp().execute(strings).get();
-                                } catch (InterruptedException e) {
-                                    Toast.makeText(NavDrawerActivity.this, "Agenda não existe", Toast.LENGTH_LONG).show();
-                                    e.printStackTrace();
-                                } catch (ExecutionException e) {
-                                    Toast.makeText(NavDrawerActivity.this, "Agenda não existe", Toast.LENGTH_LONG).show();
-                                    e.printStackTrace();
-                                }
-                                if (agendas != null) {
+                                if (isDeviceOnline()) {
 
-                                    if (agendas.size() == 1) {
-                                        final ArrayList<Agenda> finalAgendas = agendas;
-                                        new AlertDialog.Builder(NavDrawerActivity.this)
-                                                .setMessage("Uma agenda encontrada com essa identificação, deseja adicioná-lá?")
-                                                .setTitle("Agenda Encontrada")
-                                                .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick (DialogInterface dialog, int which) {
-                                                        dialog.dismiss();
-                                                    }
-                                                })
-                                                .setPositiveButton("Adicionar", new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick (DialogInterface dialog, int which) {
-                                                        String idAgenda = finalAgendas.get(0).getIdAgenda().toString();
-                                                        List<AgendasListModel> agendasListModelList = AgendasListModel.find(AgendasListModel.class, "id_agenda = ?", idAgenda);
+                                    ArrayList<Agenda> agendas = new ArrayList<Agenda>();
+                                    String[] strings = new String[2];
+                                    strings[0] = "getAgendasIdentificacao";
+                                    strings[1] = identificacao;
+                                    try {
+                                        agendas = new AgendasPhp().execute(strings).get();
+                                    } catch (InterruptedException e) {
+                                        Toast.makeText(NavDrawerActivity.this, "Agenda não existe", Toast.LENGTH_LONG).show();
+                                        e.printStackTrace();
+                                    } catch (ExecutionException e) {
+                                        Toast.makeText(NavDrawerActivity.this, "Agenda não existe", Toast.LENGTH_LONG).show();
+                                        e.printStackTrace();
+                                    }
+                                    if (agendas != null) {
+                                        if (agendas.size() == 1) {
+                                            final ArrayList<Agenda> finalAgendas = agendas;
+                                            new AlertDialog.Builder(NavDrawerActivity.this)
+                                                    .setMessage("Uma agenda encontrada com essa identificação, deseja adicioná-lá?")
+                                                    .setTitle("Agenda Encontrada")
+                                                    .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick (DialogInterface dialog, int which) {
+                                                            dialog.dismiss();
+                                                        }
+                                                    })
+                                                    .setPositiveButton("Adicionar", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick (DialogInterface dialog, int which) {
+                                                            String idAgenda = finalAgendas.get(0).getIdAgenda().toString();
+                                                            List<AgendasListModel> agendasListModelList = AgendasListModel.find(AgendasListModel.class, "id_agenda = ?", idAgenda);
 
-                                                        if (agendasListModelList != null) {
-                                                            if (agendasListModelList.size() > 0) {
-                                                                AgendasListModel agendasListModel = AgendasListModel.findById(AgendasListModel.class, agendasListModelList.get(0).getId());
+                                                            if (agendasListModelList != null) {
+                                                                if (agendasListModelList.size() > 0) {
+                                                                    AgendasListModel agendasListModel = AgendasListModel.findById(AgendasListModel.class, agendasListModelList.get(0).getId());
 
-                                                                if (agendasListModel.getIdAgenda().equals(agendasListModelList.get(0).getIdAgenda()) &&
-                                                                        agendasListModel.getIdentificacao().equals(agendasListModelList.get(0).getIdentificacao()) &&
-                                                                        agendasListModel.getEndereco().equals(agendasListModelList.get(0).getEndereco()) &&
-                                                                        agendasListModel.getCompartilhado().equals(agendasListModelList.get(0).getCompartilhado()) &&
-                                                                        agendasListModel.getIdUsuario().equals(agendasListModelList.get(0).getIdUsuario())) {
+                                                                    if (agendasListModel.getIdAgenda().equals(agendasListModelList.get(0).getIdAgenda()) &&
+                                                                            agendasListModel.getIdentificacao().equals(agendasListModelList.get(0).getIdentificacao()) &&
+                                                                            agendasListModel.getEndereco().equals(agendasListModelList.get(0).getEndereco()) &&
+                                                                            agendasListModel.getCompartilhado().equals(agendasListModelList.get(0).getCompartilhado()) &&
+                                                                            agendasListModel.getIdUsuario().equals(agendasListModelList.get(0).getIdUsuario())) {
 
+                                                                    } else {
+
+                                                                        agendasListModel.setIdAgenda(finalAgendas.get(0).getIdAgenda());
+                                                                        agendasListModel.setIdentificacao(finalAgendas.get(0).getIdentificacao());
+                                                                        agendasListModel.setEndereco(finalAgendas.get(0).getEndereco());
+                                                                        agendasListModel.setCompartilhado(finalAgendas.get(0).getCompartilhado());
+                                                                        agendasListModel.setIdUsuario(finalAgendas.get(0).getIdUsuario());
+                                                                        agendasListModel.save();
+                                                                        AtualizarCalendario();
+                                                                    }
                                                                 } else {
 
-                                                                    agendasListModel.setIdAgenda(finalAgendas.get(0).getIdAgenda());
-                                                                    agendasListModel.setIdentificacao(finalAgendas.get(0).getIdentificacao());
-                                                                    agendasListModel.setEndereco(finalAgendas.get(0).getEndereco());
-                                                                    agendasListModel.setCompartilhado(finalAgendas.get(0).getCompartilhado());
-                                                                    agendasListModel.setIdUsuario(finalAgendas.get(0).getIdUsuario());
+                                                                    AgendasListModel agendasListModel = new AgendasListModel(finalAgendas.get(0).getIdAgenda(), finalAgendas.get(0).getIdentificacao(),
+                                                                            finalAgendas.get(0).getEndereco(), finalAgendas.get(0).getCompartilhado(), finalAgendas.get(0).getIdUsuario());
                                                                     agendasListModel.save();
+
+                                                                    AtualizarCalendario();
+
+
                                                                 }
                                                             } else {
-
                                                                 AgendasListModel agendasListModel = new AgendasListModel(finalAgendas.get(0).getIdAgenda(), finalAgendas.get(0).getIdentificacao(),
                                                                         finalAgendas.get(0).getEndereco(), finalAgendas.get(0).getCompartilhado(), finalAgendas.get(0).getIdUsuario());
                                                                 agendasListModel.save();
-
+                                                                AtualizarCalendario();
                                                             }
-                                                        } else {
-                                                            AgendasListModel agendasListModel = new AgendasListModel(finalAgendas.get(0).getIdAgenda(), finalAgendas.get(0).getIdentificacao(),
-                                                                    finalAgendas.get(0).getEndereco(), finalAgendas.get(0).getCompartilhado(), finalAgendas.get(0).getIdUsuario());
-                                                            agendasListModel.save();
                                                         }
-                                                    }
-                                                })
-                                                .show();
+                                                    })
+                                                    .show();
+                                        } else {
+                                            Toast.makeText(NavDrawerActivity.this, "Agenda não existe", Toast.LENGTH_LONG).show();
+                                        }
+
                                     } else {
                                         Toast.makeText(NavDrawerActivity.this, "Agenda não existe", Toast.LENGTH_LONG).show();
                                     }
-
                                 } else {
-                                    Toast.makeText(NavDrawerActivity.this, "Agenda não existe", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(NavDrawerActivity.this, "Sem conexão com a internet", Toast.LENGTH_LONG).show();
                                 }
                             }
-
 
                         }
                     }
@@ -1088,131 +897,6 @@ public class NavDrawerActivity extends AppCompatActivity {
         return Title;
     }
 
-   /* @Override
-    public void onConnectionFailed (ConnectionResult result) {
-
-
-        if (mResolvingError) {
-            // Already attempting to resolve an error.
-            return;
-        } else if (result.hasResolution()) {
-            try {
-                mResolvingError = true;
-                result.startResolutionForResult(this, REQUEST_RESOLVE_ERROR);
-            } catch (IntentSender.SendIntentException e) {
-                // There was an error with the resolution intent. Try again.
-
-            }
-        } else {
-            // Show dialog using GoogleApiAvailability.getErrorDialog()
-            showErrorDialog(result.getErrorCode());
-            mResolvingError = true;
-        }
-
-
-
-
-        // Called whenever the API client fails to connect.
-        Log.i(TAG, "GoogleApiClient connection failed: " + result.toString());
-
-
-       *//* if (mSignInProgress != STATE_IN_PROGRESS) {
-            mSignInIntent = result.getResolution();
-            if (mSignInProgress == STATE_SIGNING_IN) {
-                resolveSignInError();
-            }
-        }
-        // Will implement shortly
-        onSignedOut();*//*
-
-
-    }
-
-    private void showErrorDialog(int errorCode) {
-        // Create a fragment for the error dialog
-        ErrorDialogFragment dialogFragment = new ErrorDialogFragment();
-        // Pass the error that should be displayed
-        Bundle args = new Bundle();
-        args.putInt(DIALOG_ERROR, errorCode);
-        dialogFragment.setArguments(args);
-        dialogFragment.show(getSupportFragmentManager(), "errordialog");
-    }
-
-    public void onDialogDismissed() {
-        mResolvingError = false;
-    }
-
-    public static class ErrorDialogFragment extends DialogFragment {
-        public ErrorDialogFragment() { }
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            // Get the error code and retrieve the appropriate dialog
-            int errorCode = this.getArguments().getInt(DIALOG_ERROR);
-            return GoogleApiAvailability.getInstance().getErrorDialog(
-                    this.getActivity(), errorCode, REQUEST_RESOLVE_ERROR);
-        }
-
-        @Override
-        public void onDismiss(DialogInterface dialog) {
-            ((NavDrawerActivity) getActivity()).onDialogDismissed();
-        }
-    }
-
-
-    private void onSignedOut() {
-        // Update the UI to reflect that the user is signed out.
-        btnCarregarAgenda.setEnabled(true);
-        swipeRefreshLayout.setRefreshing(false);
-        swipeRefreshLayout.setEnabled(true);
-    }
-
-
-
-    @Override
-    public void onConnected (Bundle connectionHint) {
-
-        mSignInProgress = SIGNED_IN;
-
-      *//*  try {
-
-            Intent intent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-            GoogleSignInResult signInResult = Auth.GoogleSignInApi.getSignInResultFromIntent(intent);
-
-            if (signInResult.isSuccess()) {
-                GoogleSignInAccount signInAccount = signInResult.getSignInAccount();
-                mEmail = signInAccount.getEmail();
-                credential.setSelectedAccountName(mEmail);
-            }
-
-        }
-        catch(Exception ex){
-            Log.v(TAG, "Deu ruim");
-        }*//*
-
-        Log.i(TAG, "API client connected.");
-    }
-
-    @Override
-    public void onConnectionSuspended (int cause) {
-        mGoogleApiClient.connect();
-        Log.i(TAG, "GoogleApiClient connection suspended");
-    }*/
-
-    private void getUsername() {
-        if (mEmail == null) {
-            getUserAccountWrapper();
-        } else {
-            if (isDeviceOnline()) {
-                new GetUsernameTask(NavDrawerActivity.this, mEmail, "oauth2:"+CalendarScopes.CALENDAR_READONLY+ " "+ Plus.SCOPE_PLUS_PROFILE).execute();
-            } else {
-                Toast.makeText(this, "Sem conexão com a internet", Toast.LENGTH_LONG).show();
-            }
-        }
-    }
-
-
-
 
 
     @Override
@@ -1220,139 +904,13 @@ public class NavDrawerActivity extends AppCompatActivity {
             int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case REQUEST_GOOGLE_PLAY_SERVICES:
-                if (resultCode != RESULT_OK) {
-                    isGooglePlayServicesAvailable();
-                }
-                break;
-            case REQUEST_RESOLVE_ERROR:
-                mResolvingError = false;
-                if (resultCode == RESULT_OK) {
-
-                }
-                break;
-
-            case REQUEST_CODE_PICK_ACCOUNT:
-                if (resultCode == RESULT_OK) {
-                    //GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-                    //if (result.isSuccess()) {
-                        //GoogleSignInAccount acct = result.getSignInAccount();
-                        String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-                        mEmail = accountName;
-                       // accountNameNav = acct.getDisplayName();
-                        //accountEmail = acct.getEmail();
-                        //Uri uri;
-                        //uri = acct.getPhotoUrl();
-                        //if (uri != null) {
-                        //    accountPhotoURL = uri.toString();
-                       // }
-                        if (accountName != null) {
-                            credential.setSelectedAccountName(accountName);
-                            getUsername();
-                            SharedPreferences settings =
-                                    fragmentActivity.getPreferences(Context.MODE_PRIVATE);
-                            SharedPreferences.Editor editor = settings.edit();
-                            editor.putString(PREF_ACCOUNT_NAME, accountName);
-                            editor.putString(ACCOUNT_NAMENAV, accountNameNav);
-                            editor.putString(ACCOUNT_EMAIL, accountEmail);
-                            editor.putString(ACCOUNT_PHOTOURL, accountPhotoURL);
-                            editor.apply();
-
-
-
-
-
-                            if (accountNameNav != null) {
-                                if (accountNameNav.isEmpty() && accountEmail.isEmpty()) {
-                                    txtNomeAccount.setText("Não logado");
-                                    txtNomeAccount.setVisibility(View.VISIBLE);
-                                } else if (accountNameNav.isEmpty()) {
-                                    txtNomeAccount.setVisibility(INVISIBLE);
-                                } else {
-                                    txtNomeAccount.setText(accountNameNav);
-                                    txtNomeAccount.setVisibility(View.VISIBLE);
-                                }
-                            } else if (accountEmail.isEmpty()) {
-                                txtNomeAccount.setText("Não logado");
-                                txtNomeAccount.setVisibility(View.VISIBLE);
-                            } else {
-                                txtNomeAccount.setVisibility(INVISIBLE);
-                            }
-
-                            if (accountEmail != null) {
-                                if (accountEmail.isEmpty()) {
-                                    txtEmailAccount.setVisibility(View.INVISIBLE);
-                                } else {
-                                    txtEmailAccount.setText(accountEmail);
-                                    txtEmailAccount.setVisibility(View.VISIBLE);
-                                }
-                            }
-
-                            if (accountPhotoURL != null) {
-                                if (!accountPhotoURL.isEmpty()) {
-                                    Uri uri2 = Uri.parse(accountPhotoURL);
-                                    try {
-                                        imageProfile = new ImageAsyncTask(drawerActivity, context, uri2.toString(), imgImageProfile).execute(uri2.toString()).get();
-                                        if (imageProfile != null) {
-                                            imgImageProfile.setImageBitmap(imageProfile);
-                                        }
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                } else {
-                                    imgImageProfile.setImageResource(R.drawable.dummyavatar);
-                                }
-                            } else {
-                                imgImageProfile.setImageResource(R.drawable.dummyavatar);
-                            }
-
-                        }
-                    /*} else {
-
-                        Toast.makeText(contextFragment, "Conta não especificada.", Toast.LENGTH_LONG).show();
-                        swipeRefreshLayout.setEnabled(false);
-                        swipeRefreshLayout.setRefreshing(false);
-                        btnCarregarAgenda.setEnabled(true);
-                        mudarusuario = false;
-                    }*/
-                } else if (resultCode == RESULT_CANCELED) {
-                    Toast.makeText(contextFragment, "Conta não especificada.", Toast.LENGTH_LONG).show();
-                    swipeRefreshLayout.setEnabled(true);
-                    swipeRefreshLayout.setRefreshing(false);
-                    btnCarregarAgenda.setEnabled(true);
-                    mudarusuario = false;
-                } else if (requestCode == REQUEST_CODE_RECOVER_FROM_PLAY_SERVICES_ERROR && resultCode == RESULT_OK) {
-
-                    //getUsername();
-
-                }
-                break;
 
         }
 
         //super.onActivityResult(requestCode, resultCode, data);
     }
 
-    @Override
-    public void onRequestPermissionsResult (int requestCode, String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_CODE_ASK_PERMISSIONS:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // Permission Granted
-                    getUserAccountWrapper();
-                } else {
-                    // Permission Denied
-                    swipeRefreshLayout.setEnabled(true);
-                    swipeRefreshLayout.setRefreshing(false);
-                    btnCarregarAgenda.setEnabled(true);
-                    Toast.makeText(NavDrawerActivity.this, "Permissão negada, vá para as opções e ative as permissões para esse aplicativo", Toast.LENGTH_LONG)
-                            .show();
-                }
-                break;
-            default:
-                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-    }
+
     private boolean checkUpdate () {
 
         final String PREFS_NAME = "com.caeumc.caeumc";
@@ -1427,31 +985,6 @@ public class NavDrawerActivity extends AppCompatActivity {
         public PlanetFragment () {
             // Empty constructor required for fragment subclasses
         }
-
-        @Override
-        public void onStart () {
-            super.onStart();
-            int i = getArguments().getInt(ARG_PLANET_NUMBER);
-
-        }
-
-        @Override
-        public void onStop () {
-            super.onStop();
-            int i = getArguments().getInt(ARG_PLANET_NUMBER);
-
-        }
-
-        @Override
-        public void onPause () {
-            super.onPause();
-            int i = getArguments().getInt(ARG_PLANET_NUMBER);
-            int n = Integer.parseInt(ALTERACAO2);
-
-
-
-        }
-
         @Override
         public void onResume () {
             super.onResume();
@@ -1516,51 +1049,12 @@ public class NavDrawerActivity extends AppCompatActivity {
 
             if (i == 1) {
                 mNavigationView.getMenu().getItem(2).setChecked(true);
-                activityDisciplina.runOnUiThread(new Runnable() {
+                /*activityDisciplina.runOnUiThread(new Runnable() {
                     @Override
                     public void run () {
                         eventosListModels = EventosListModel.findWithQuery(EventosListModel.class, "SELECT * FROM EVENTOS_LIST_MODEL ORDER BY data*1000 ASC");
                     }
-                });
-                if (eventosListModels == null || eventosListModels.size() == 0) {
-
-
-                }
-
-                if (mudarusuario == true) {
-                    if (mEmail != null) {
-                        if (emailantigo.equals(mEmail)) {
-                            swipeRefreshLayout.setEnabled(false);
-                            swipeRefreshLayout.setRefreshing(true);
-                            updateResultsText(eventosListModels);
-                        } else {
-                            if (isGooglePlayServicesAvailable()) {
-                                Log.e("EmailAntigo", "Entrou no email antigo é diferente do email atual");
-                                swipeRefreshLayout.setEnabled(false);
-                                swipeRefreshLayout.setRefreshing(true);
-                                refreshResults();
-
-                            } else {
-                                Toast.makeText(contextFragment, "Google Play Services é necessário: " +
-                                        "após instalar, reinicie o aplicativo.", Toast.LENGTH_LONG).show();
-                            }
-                        }
-                        Log.e("Email Antigo", emailantigo);
-                        Log.e("Email Novo", mEmail);
-                        mudarusuario = false;
-                    } else {
-                        if (isGooglePlayServicesAvailable()) {
-                            Log.e("EmailAntigo", "Entrou no email antigo é diferente do email atual");
-                            swipeRefreshLayout.setEnabled(false);
-                            swipeRefreshLayout.setRefreshing(true);
-                            refreshResults();
-
-                        } else {
-                            Toast.makeText(contextFragment, "Google Play Services é necessário: " +
-                                    "após instalar, reinicie o aplicativo.", Toast.LENGTH_LONG).show();
-                        }
-                    }
-                }
+                });*/
             }
         }
 
@@ -1849,21 +1343,6 @@ public class NavDrawerActivity extends AppCompatActivity {
                     mainActivity.invalidateOptionsMenu();
 
 
-                    SharedPreferences settings = fragmentActivity.getPreferences(Context.MODE_PRIVATE);
-                    credential = GoogleAccountCredential.usingOAuth2(
-                            contextFragment.getApplicationContext(), Arrays.asList(SCOPES))
-                            .setBackOff(new ExponentialBackOff())
-                            .setSelectedAccountName(settings.getString(PREF_ACCOUNT_NAME, ""));
-                    mEmail = credential.getSelectedAccountName();
-
-
-
-                    mService = new com.google.api.services.calendar.Calendar.Builder(
-                            transport, jsonFactory, credential)
-                            .setApplicationName("CAE UMC")
-                            .build();
-
-
                     swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.activity_main_swipe_refresh_layout);
                     swipeRefreshLayout.setColorSchemeResources(R.color.accent, R.color.primary);
                     swipeRefreshLayout.setEnabled(false);
@@ -1875,8 +1354,6 @@ public class NavDrawerActivity extends AppCompatActivity {
                         }
                     });
                     lstEventos = (ListView) snackView.findViewById(R.id.lstEventos);
-                    TextView emptyTextAgenda = (TextView) rootView.findViewById(android.R.id.empty);
-                    emptyTextAgenda.setText("Faça login para vizualizar sua agenda.");
                     RelativeLayout emptyAgendaLayout = (RelativeLayout) rootView.findViewById(R.id.emptyAgendaLayout);
                     lstEventos.setEmptyView(emptyAgendaLayout);
                     lstEventos.setClickable(true);
@@ -1902,45 +1379,11 @@ public class NavDrawerActivity extends AppCompatActivity {
                     });
 
                     Log.e("On Create Agenda", "Passou por aqui");
-                   /* if (eventosListModels.size() <= 0 || eventosListModels == null) {
-                        if (isGooglePlayServicesAvailable()) {
-                            swipeRefreshLayout.setEnabled(false);
-                            swipeRefreshLayout.setRefreshing(true);
-                            refreshResults();
-                        } else {
-                            Toast.makeText(contextFragment,"Google Play Services é necessário: " + "após instalar, reinicie o aplicativo.", Toast.LENGTH_LONG).show();
-                        }
-                    } else {
-                            swipeRefreshLayout.setEnabled(false);
-                            swipeRefreshLayout.setRefreshing(true);
-                            updateResultsText(eventosListModels);
-                    }*/
-
-                    btnCarregarAgenda = (Button) rootView.findViewById(R.id.btnCarregarAgenda);
-                    btnCarregarAgenda.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick (View v) {
-                            btnCarregarAgenda.setEnabled(false);
-                            if (isGooglePlayServicesAvailable()) {
-                                swipeRefreshLayout.setEnabled(false);
-                                swipeRefreshLayout.setRefreshing(true);
-                                refreshResults();
-                            } else {
-                                Toast.makeText(contextFragment, "Google Play Services é necessário: " + "após instalar, reinicie o aplicativo.", Toast.LENGTH_LONG).show();
-                                btnCarregarAgenda.setEnabled(true);
-                            }
-                        }
-                    });
 
                     if (eventosListModels.size() > 0 && eventosListModels != null) {
-                        if (isGooglePlayServicesAvailable()) {
-                            swipeRefreshLayout.setEnabled(false);
-                            swipeRefreshLayout.setRefreshing(true);
                             updateResultsText(eventosListModels);
-                        } else {
-                            Toast.makeText(contextFragment, "Google Play Services é necessário: " + "após instalar, reinicie o aplicativo.", Toast.LENGTH_LONG).show();
-                            btnCarregarAgenda.setEnabled(true);
-                        }
+                    } else {
+                        refreshResults();
                     }
 
                     break;
@@ -1956,6 +1399,8 @@ public class NavDrawerActivity extends AppCompatActivity {
                     FloatingActionButton fab2 = (FloatingActionButton) appView.findViewById(R.id.fab);
                     fab2.hide();
 
+                    SharedPreferences sharedPreferences = mainActivity.getPreferences(MODE_PRIVATE);
+                    attAvailable = sharedPreferences.getBoolean("updatecheck", false);
                     if (attAvailable) {
                         LinearLayout layoutAtualizacao = (LinearLayout) rootView.findViewById(R.id.layout_att_disponivel);
                         Button btnAtualizarApp = (Button) rootView.findViewById(R.id.btnAtualizarApp);
