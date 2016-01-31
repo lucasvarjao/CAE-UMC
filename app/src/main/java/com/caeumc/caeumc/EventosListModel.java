@@ -16,6 +16,7 @@ public class EventosListModel extends SugarRecord<EventosListModel> {
     private String Observacao;
     private String IDEvento;
     private Integer DataAtualizado;
+    private String IDAgenda;
 
     @Ignore
     String Mes;
@@ -30,7 +31,7 @@ public class EventosListModel extends SugarRecord<EventosListModel> {
 
     }
 
-    public EventosListModel (String descricao, Integer data, Integer horaInicio, Integer horaFinal, String local, Boolean feriado, String observacao, String idEvento, Integer dataAtualizado) {
+    public EventosListModel (String descricao, Integer data, Integer horaInicio, Integer horaFinal, String local, Boolean feriado, String observacao, String idEvento, Integer dataAtualizado, String idAgenda) {
         this.Descricao = descricao;
         this.Data = data;
         this.HoraInicio = horaInicio;
@@ -40,6 +41,7 @@ public class EventosListModel extends SugarRecord<EventosListModel> {
         this.Observacao = observacao;
         this.IDEvento = idEvento;
         this.DataAtualizado = dataAtualizado;
+        this.IDAgenda = idAgenda;
     }
 
     public void setDescricao(String descricao) {this.Descricao = descricao;}
@@ -51,6 +53,7 @@ public class EventosListModel extends SugarRecord<EventosListModel> {
     public void setObservacao (String observacao) {this.Observacao = observacao;}
     public void setIDEvento (String idEvento) {this.IDEvento = idEvento;}
     public void setDataAtualizado (Integer dataAtualizado) {this.DataAtualizado = dataAtualizado;}
+    public void setIDAgenda (String idAgenda) {this.IDAgenda = idAgenda;}
 
     public void setMes (String mes) {this.Mes = mes;}
     public String getMes() {return  this.Mes;}
@@ -71,4 +74,5 @@ public class EventosListModel extends SugarRecord<EventosListModel> {
     public String getObservacao() {return this.Observacao;}
     public String getIDEvento() {return this.IDEvento;}
     public Integer getDataAtualizado() {return  this.DataAtualizado;}
+    public String getIDAgenda() {return this.IDAgenda;}
 }

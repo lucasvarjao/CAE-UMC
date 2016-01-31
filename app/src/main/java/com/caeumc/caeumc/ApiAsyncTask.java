@@ -27,7 +27,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.TimeZone;
 
 /**
@@ -232,11 +234,12 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
 
         ArrayList<Agenda> agendas = new ArrayList<Agenda>();
         agendas = getAgendasCompartilhadas();
-
+        Set<String> stringSet = new HashSet<String>();
         if (agendas != null) {
             if (agendas.size() > 0) {
                 for (Agenda agenda : agendas) {
-                    String idAgenda = agenda.getIdAgenda().toString();
+                    stringSet.add(agenda.getIdAgenda());
+                    String idAgenda = agenda.getIdAgenda();
                     List<AgendasListModel> agendasListModelList = AgendasListModel.find(AgendasListModel.class, "id_agenda = ?", idAgenda);
 
                     if (agendasListModelList != null) {
@@ -267,22 +270,55 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
                             AgendasListModel agendasListModel = new AgendasListModel(agenda.getIdAgenda(), agenda.getIdentificacao(),
                                     agenda.getEndereco(), agenda.getCompartilhado(), agenda.getIdUsuario());
                             agendasListModel.save();
+                            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(mActivity.getApplicationContext()).edit();
+                            editor.putStringSet("multi_pref_agenda", stringSet);
+                            editor.apply();
 
                         }
                     } else {
                         AgendasListModel agendasListModel = new AgendasListModel(agenda.getIdAgenda(), agenda.getIdentificacao(),
                                 agenda.getEndereco(), agenda.getCompartilhado(), agenda.getIdUsuario());
                         agendasListModel.save();
+                        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(mActivity.getApplicationContext()).edit();
+                        editor.putStringSet("multi_pref_agenda", stringSet);
+                        editor.apply();
                     }
+                }
+
+            }
+        }
+
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(mActivity.getApplicationContext());
+        Set<String> selections = sharedPrefs.getStringSet("multi_pref_agenda", null);
+        List<AgendasListModel> agendasListModelList = new ArrayList<>();
+        if (selections != null) {
+            if (selections.size() > 0) {
+                String[] selected = selections.toArray(new String[selections.size()]);
+
+                for (String s : selected) {
+
+                    List<AgendasListModel> agendasListModelList2 = AgendasListModel.find(AgendasListModel.class, "id_agenda = ?", s);
+                    if (agendasListModelList2 != null) {
+                        if (agendasListModelList2.size() > 0) {
+                            agendasListModelList.add(agendasListModelList2.get(0));
+                        }
+                    }
+
                 }
             }
         }
 
-        List<AgendasListModel> agendasListModelList = AgendasListModel.listAll(AgendasListModel.class);
+
+
+
 
         for (AgendasListModel listModel : agendasListModelList) {
             String idCalendario = listModel.getEndereco();
-
+            String idAgenda = listModel.getIdAgenda();
+            Boolean feriado = false;
+            if (listModel.getIdentificacao().equals("feriados-brasil")) {
+                feriado = true;
+            }
 
             List<Item> items = null;
             if (eventosAnteriores) {
@@ -385,18 +421,19 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
                                     eventosListModelList.get(0).setObservacao(observacao);
                                     eventosListModelList.get(0).setIDEvento(idEvento);
                                     eventosListModelList.get(0).setDataAtualizado((int)dataAtualizado);
+                                    eventosListModelList.get(0).setIDAgenda(idAgenda);
                                     eventosListModelList.get(0).save();
 
 
                                 }
                             } else if (eventosListModelList.size() == 0) {
 
-                                EventosListModel eventosListModel = new EventosListModel(descricao, (int)data, (int)horaInicio, (int)horaFinal, local, false, observacao, idEvento, (int)dataAtualizado);
+                                EventosListModel eventosListModel = new EventosListModel(descricao, (int)data, (int)horaInicio, (int)horaFinal, local, feriado, observacao, idEvento, (int)dataAtualizado, idAgenda);
                                 eventosListModel.save();
 
                             }
                         } else {
-                            EventosListModel eventosListModel = new EventosListModel(descricao, (int)data, (int)horaInicio, (int)horaFinal, local, false, observacao, idEvento, (int)dataAtualizado);
+                            EventosListModel eventosListModel = new EventosListModel(descricao, (int)data, (int)horaInicio, (int)horaFinal, local, feriado, observacao, idEvento, (int)dataAtualizado, idAgenda);
                             eventosListModel.save();
                         }
 
@@ -412,7 +449,7 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
 
 
 
-        List<Item> itemsFeriado = null;
+       /* List<Item> itemsFeriado = null;
         if (eventosAnteriores) {
             String urlCalendario = String.format("https://www.googleapis.com/calendar/v3/calendars/%s/events?key=AIzaSyCM-Vc1sw_K18OSHlXFYhxM08VE2YFIRwA&" +
                             "orderby=starttime&" +
@@ -510,23 +547,24 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
                                     eventosListModelList.get(0).setObservacao(observacao);
                                     eventosListModelList.get(0).setIDEvento(idEvento);
                                     eventosListModelList.get(0).setDataAtualizado((int)dataAtualizado);
+                                    eventosListModelList.get(0).setIDAgenda("feriados");
                                     eventosListModelList.get(0).save();
 
 
                             }
                         } else if (eventosListModelList.size() == 0) {
 
-                            EventosListModel eventosListModel = new EventosListModel(descricao, (int)data, (int)horaInicio, (int)horaFinal, local, true, observacao, idEvento, (int)dataAtualizado);
+                            EventosListModel eventosListModel = new EventosListModel(descricao, (int)data, (int)horaInicio, (int)horaFinal, local, true, observacao, idEvento, (int)dataAtualizado,"feriados");
                             eventosListModel.save();
 
                         }
                     } else {
-                        EventosListModel eventosListModel = new EventosListModel(descricao, (int)data, (int)horaInicio, (int)horaFinal, local, true, observacao, idEvento, (int)dataAtualizado);
+                        EventosListModel eventosListModel = new EventosListModel(descricao, (int)data, (int)horaInicio, (int)horaFinal, local, true, observacao, idEvento, (int)dataAtualizado, "feriados");
                         eventosListModel.save();
                     }
                 }
             }
-        }
+        }*/
 
 
        List<EventosListModel> eventosListModel = EventosListModel.findWithQuery(EventosListModel.class, "SELECT * FROM EVENTOS_LIST_MODEL ORDER BY data*1000 ASC");

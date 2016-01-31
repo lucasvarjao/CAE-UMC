@@ -16,6 +16,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -59,7 +60,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
 
@@ -788,7 +791,11 @@ public class NavDrawerActivity extends AppCompatActivity {
                                                         public void onClick (DialogInterface dialog, int which) {
                                                             String idAgenda = finalAgendas.get(0).getIdAgenda().toString();
                                                             List<AgendasListModel> agendasListModelList = AgendasListModel.find(AgendasListModel.class, "id_agenda = ?", idAgenda);
-
+                                                            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+                                                            Set<String> stringSet = sharedPreferences.getStringSet("multi_pref_agenda", null);
+                                                            if (stringSet == null) {
+                                                                stringSet = new HashSet<String>();
+                                                            }
                                                             if (agendasListModelList != null) {
                                                                 if (agendasListModelList.size() > 0) {
                                                                     AgendasListModel agendasListModel = AgendasListModel.findById(AgendasListModel.class, agendasListModelList.get(0).getId());
@@ -814,7 +821,10 @@ public class NavDrawerActivity extends AppCompatActivity {
                                                                     AgendasListModel agendasListModel = new AgendasListModel(finalAgendas.get(0).getIdAgenda(), finalAgendas.get(0).getIdentificacao(),
                                                                             finalAgendas.get(0).getEndereco(), finalAgendas.get(0).getCompartilhado(), finalAgendas.get(0).getIdUsuario());
                                                                     agendasListModel.save();
-
+                                                                    stringSet.add(finalAgendas.get(0).getIdAgenda());
+                                                                    SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
+                                                                    editor.putStringSet("multi_pref_agenda", stringSet);
+                                                                    editor.apply();
                                                                     AtualizarCalendario();
 
 
@@ -823,6 +833,10 @@ public class NavDrawerActivity extends AppCompatActivity {
                                                                 AgendasListModel agendasListModel = new AgendasListModel(finalAgendas.get(0).getIdAgenda(), finalAgendas.get(0).getIdentificacao(),
                                                                         finalAgendas.get(0).getEndereco(), finalAgendas.get(0).getCompartilhado(), finalAgendas.get(0).getIdUsuario());
                                                                 agendasListModel.save();
+                                                                stringSet.add(finalAgendas.get(0).getIdAgenda());
+                                                                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
+                                                                editor.putStringSet("multi_pref_agenda", stringSet);
+                                                                editor.apply();
                                                                 AtualizarCalendario();
                                                             }
                                                         }

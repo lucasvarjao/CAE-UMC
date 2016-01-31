@@ -5,6 +5,7 @@ import android.accounts.AccountManager;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -88,8 +89,9 @@ public class SettingsAgendaActivity extends AppCompatPreferenceActivity {
                         preference.setSummary(name);
                     }
                 }
-
-            } else {
+            }
+            else
+             {
                 // For all other preferences, set the summary to the value's
                 // simple string representation.
                 preference.setSummary(stringValue);
@@ -280,6 +282,33 @@ public class SettingsAgendaActivity extends AppCompatPreferenceActivity {
             multiSelectPref.setEntryValues(values);
             multiSelectPref.setDefaultValue(selectionSet);
             getPreferenceScreen().addPreference(multiSelectPref);
+
+            multiSelectPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange (Preference preference, Object newValue) {
+                    MultiSelectListPreference multiSelectListPreference = (MultiSelectListPreference) preference;
+                    Set<String> stringSet = (Set<String>) newValue;
+                    SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(preference.getContext()).edit();
+                    editor.putStringSet(preference.getKey(), stringSet);
+                    editor.apply();
+                    multiSelectListPreference.setValues(stringSet);
+
+                    List<AgendasListModel> listModels = AgendasListModel.listAll(AgendasListModel.class);
+
+                    for (AgendasListModel model : listModels) {
+                        if (stringSet.contains(model.getIdAgenda())) {
+
+                        } else {
+                            List<EventosListModel> eventosListModels = EventosListModel.find(EventosListModel.class, "id_agenda = ?", model.getIdAgenda());
+                            for (EventosListModel eventosListModel : eventosListModels) {
+                                eventosListModel.delete();
+                            }
+                        }
+                    }
+
+                    return false;
+                }
+            });
 
             // Bind the summaries of EditText/List/Dialog/Ringtone preferences
             // to their values. When their values change, their summaries are
