@@ -1063,12 +1063,14 @@ public class NavDrawerActivity extends AppCompatActivity {
 
             if (i == 1) {
                 mNavigationView.getMenu().getItem(2).setChecked(true);
-                /*activityDisciplina.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run () {
-                        eventosListModels = EventosListModel.findWithQuery(EventosListModel.class, "SELECT * FROM EVENTOS_LIST_MODEL ORDER BY data*1000 ASC");
-                    }
-                });*/
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+                Boolean preferencemudou = sharedPreferences.getBoolean("preference_mudou", false);
+
+                if (preferencemudou) {
+                    AtualizarCalendario();
+                }
+
+
             }
         }
 

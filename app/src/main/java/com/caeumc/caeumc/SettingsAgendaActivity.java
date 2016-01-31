@@ -59,6 +59,9 @@ public class SettingsAgendaActivity extends AppCompatPreferenceActivity {
             if (preference instanceof ListPreference) {
                 // For list preferences, look up the correct display value in
                 // the preference's 'entries' list.
+                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(preference.getContext()).edit();
+                editor.putBoolean("preference_mudou", true);
+                editor.apply();
                 ListPreference listPreference = (ListPreference) preference;
                 int index = listPreference.findIndexOfValue(stringValue);
 
@@ -94,6 +97,9 @@ public class SettingsAgendaActivity extends AppCompatPreferenceActivity {
              {
                 // For all other preferences, set the summary to the value's
                 // simple string representation.
+                 SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(preference.getContext()).edit();
+                 editor.putBoolean("preference_mudou", true);
+                 editor.apply();
                 preference.setSummary(stringValue);
             }
             return true;
@@ -286,28 +292,34 @@ public class SettingsAgendaActivity extends AppCompatPreferenceActivity {
             multiSelectPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange (Preference preference, Object newValue) {
-                    MultiSelectListPreference multiSelectListPreference = (MultiSelectListPreference) preference;
-                    Set<String> stringSet = (Set<String>) newValue;
-                    SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(preference.getContext()).edit();
-                    editor.putStringSet(preference.getKey(), stringSet);
-                    editor.apply();
-                    multiSelectListPreference.setValues(stringSet);
+                    if (preference instanceof MultiSelectListPreference) {
+                        MultiSelectListPreference multiSelectListPreference = (MultiSelectListPreference) preference;
+                        Set<String> stringSet = (Set<String>) newValue;
+                        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(preference.getContext()).edit();
+                        editor.putStringSet(preference.getKey(), stringSet);
+                        editor.putBoolean("preference_mudou", true);
+                        editor.apply();
+                        multiSelectListPreference.setValues(stringSet);
 
-                    List<AgendasListModel> listModels = AgendasListModel.listAll(AgendasListModel.class);
+                        List<AgendasListModel> listModels = AgendasListModel.listAll(AgendasListModel.class);
 
-                    for (AgendasListModel model : listModels) {
-                        if (stringSet.contains(model.getIdAgenda())) {
+                        for (AgendasListModel model : listModels) {
+                            if (stringSet.contains(model.getIdAgenda())) {
 
-                        } else {
-                            List<EventosListModel> eventosListModels = EventosListModel.find(EventosListModel.class, "id_agenda = ?", model.getIdAgenda());
-                            for (EventosListModel eventosListModel : eventosListModels) {
-                                eventosListModel.delete();
+                            } else {
+                                List<EventosListModel> eventosListModels = EventosListModel.find(EventosListModel.class, "id_agenda = ?", model.getIdAgenda());
+                                for (EventosListModel eventosListModel : eventosListModels) {
+                                    eventosListModel.delete();
+                                }
                             }
                         }
+
+                        return true;
                     }
 
                     return false;
                 }
+
             });
 
             // Bind the summaries of EditText/List/Dialog/Ringtone preferences

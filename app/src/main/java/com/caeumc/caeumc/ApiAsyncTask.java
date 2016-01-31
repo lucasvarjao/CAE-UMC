@@ -40,6 +40,8 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
     private NavDrawerActivity mActivity;
     String mEmail;
 
+    Boolean preferencemudou;
+
     /**
      * Constructor.
      * @param activity MainActivity that spawned this task.
@@ -72,6 +74,12 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
                 NavDrawerActivity.swipeRefreshLayout.setRefreshing(false);
             }
         });
+
+        if (preferencemudou) {
+            SharedPreferences.Editor edit = PreferenceManager.getDefaultSharedPreferences(mActivity).edit();
+            edit.putBoolean("preference_mudou", false);
+            edit.apply();
+        }
 
         Toast.makeText(mActivity.getApplicationContext(), "Atualizado!", Toast.LENGTH_SHORT).show();
 
@@ -173,27 +181,88 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
                 String sDiaMinimo = String.format("%s-01-01T00:00:00", anoatual);
                 dateDiaMinimo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(sDiaMinimo);
                 diaMinimo = new DateTime(dateDiaMinimo);
+            } else {
+                preferencemudou = sharedPreferences.getBoolean("preference_mudou", false);
+                if (preferencemudou) {
+                    List<EventosListModel> eventosListModels = EventosListModel.listAll(EventosListModel.class);
+                    for (EventosListModel eventosListModel : eventosListModels) {
+                        long dataevento = eventosListModel.getData()*1000L;
+                        long datahoje = hoje.getTime();
+                        if (dataevento < datahoje) {
+                            eventosListModel.delete();
+                        }
+                    }
+                }
             }
             switch (nAlcanceAgenda) {
                 case 12:
                    sDiaMaximo = String.format("%s-01-01T00:00:00", anoatual + 1);
                     dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(sDiaMaximo);
                     diaMaximo = new DateTime(dateDiaMaximo);
+
+                    preferencemudou = sharedPreferences.getBoolean("preference_mudou", false);
+                    if (preferencemudou) {
+                        List<EventosListModel> eventosListModels = EventosListModel.listAll(EventosListModel.class);
+                        for (EventosListModel eventosListModel : eventosListModels) {
+                            long dataevento = eventosListModel.getData()*1000L;
+                            long datamaxima = diaMaximo.getValue();
+                            if (dataevento > datamaxima) {
+                                eventosListModel.delete();
+                            }
+                        }
+                    }
+
                     break;
                 case 18:
                     sDiaMaximo = String.format("%s-07-31T23:59:59", anoatual + 1);
                     dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(sDiaMaximo);
                     diaMaximo = new DateTime(dateDiaMaximo);
+
+                    preferencemudou = sharedPreferences.getBoolean("preference_mudou", false);
+                    if (preferencemudou) {
+                        List<EventosListModel> eventosListModels = EventosListModel.listAll(EventosListModel.class);
+                        for (EventosListModel eventosListModel : eventosListModels) {
+                            long dataevento = eventosListModel.getData()*1000L;
+                            long datamaxima = diaMaximo.getValue();
+                            if (dataevento > datamaxima) {
+                                eventosListModel.delete();
+                            }
+                        }
+                    }
                     break;
                 case 24:
                    sDiaMaximo = String.format("%s-01-01T00:00:00", anoatual + 2);
                     dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(sDiaMaximo);
                     diaMaximo = new DateTime(dateDiaMaximo);
+
+                    preferencemudou = sharedPreferences.getBoolean("preference_mudou", false);
+                    if (preferencemudou) {
+                        List<EventosListModel> eventosListModels = EventosListModel.listAll(EventosListModel.class);
+                        for (EventosListModel eventosListModel : eventosListModels) {
+                            long dataevento = eventosListModel.getData()*1000L;
+                            long datamaxima = diaMaximo.getValue();
+                            if (dataevento > datamaxima) {
+                                eventosListModel.delete();
+                            }
+                        }
+                    }
                     break;
                 default:
                    sDiaMaximo = String.format("%s-07-31T23:59:59", anoatual);
                     dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(sDiaMaximo);
                     diaMaximo = new DateTime(dateDiaMaximo);
+
+                    preferencemudou = sharedPreferences.getBoolean("preference_mudou", false);
+                    if (preferencemudou) {
+                        List<EventosListModel> eventosListModels = EventosListModel.listAll(EventosListModel.class);
+                        for (EventosListModel eventosListModel : eventosListModels) {
+                            long dataevento = eventosListModel.getData()*1000L;
+                            long datamaxima = diaMaximo.getValue();
+                            if (dataevento > datamaxima) {
+                                eventosListModel.delete();
+                            }
+                        }
+                    }
                     break;
             }
 
@@ -203,6 +272,18 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
                 String sDiaMinimo = String.format("%s-08-01T00:00:00", anoatual);
                 dateDiaMinimo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(sDiaMinimo);
                 diaMinimo = new DateTime(dateDiaMinimo);
+            } else {
+                Boolean preferencemudou = sharedPreferences.getBoolean("preference_mudou", false);
+                if (preferencemudou) {
+                    List<EventosListModel> eventosListModels = EventosListModel.listAll(EventosListModel.class);
+                    for (EventosListModel eventosListModel : eventosListModels) {
+                        long dataevento = eventosListModel.getData()*1000L;
+                        long datahoje = hoje.getTime();
+                        if (dataevento < datahoje) {
+                            eventosListModel.delete();
+                        }
+                    }
+                }
             }
 
             switch (nAlcanceAgenda) {
@@ -210,21 +291,69 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
                     sDiaMaximo = String.format("%s-08-01T00:00:00", anoatual + 1);
                     dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(sDiaMaximo);
                     diaMaximo = new DateTime(dateDiaMaximo);
+
+                    preferencemudou = sharedPreferences.getBoolean("preference_mudou", false);
+                    if (preferencemudou) {
+                        List<EventosListModel> eventosListModels = EventosListModel.listAll(EventosListModel.class);
+                        for (EventosListModel eventosListModel : eventosListModels) {
+                            long dataevento = eventosListModel.getData()*1000L;
+                            long datamaxima = diaMaximo.getValue();
+                            if (dataevento > datamaxima) {
+                                eventosListModel.delete();
+                            }
+                        }
+                    }
                     break;
                 case 18:
                     sDiaMaximo = String.format("%s-12-31T23:59:59", anoatual + 1);
                     dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(sDiaMaximo);
                     diaMaximo = new DateTime(dateDiaMaximo);
+
+                    preferencemudou = sharedPreferences.getBoolean("preference_mudou", false);
+                    if (preferencemudou) {
+                        List<EventosListModel> eventosListModels = EventosListModel.listAll(EventosListModel.class);
+                        for (EventosListModel eventosListModel : eventosListModels) {
+                            long dataevento = eventosListModel.getData()*1000L;
+                            long datamaxima = diaMaximo.getValue();
+                            if (dataevento > datamaxima) {
+                                eventosListModel.delete();
+                            }
+                        }
+                    }
                     break;
                 case 24:
                     sDiaMaximo = String.format("%s-08-01T00:00:00", anoatual + 2);
                     dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(sDiaMaximo);
                     diaMaximo = new DateTime(dateDiaMaximo);
+
+                    preferencemudou = sharedPreferences.getBoolean("preference_mudou", false);
+                    if (preferencemudou) {
+                        List<EventosListModel> eventosListModels = EventosListModel.listAll(EventosListModel.class);
+                        for (EventosListModel eventosListModel : eventosListModels) {
+                            long dataevento = eventosListModel.getData()*1000L;
+                            long datamaxima = diaMaximo.getValue();
+                            if (dataevento > datamaxima) {
+                                eventosListModel.delete();
+                            }
+                        }
+                    }
                     break;
                 default:
                     sDiaMaximo = String.format("%s-12-31T23:59:59", anoatual);
                     dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(sDiaMaximo);
                     diaMaximo = new DateTime(dateDiaMaximo);
+
+                    preferencemudou = sharedPreferences.getBoolean("preference_mudou", false);
+                    if (preferencemudou) {
+                        List<EventosListModel> eventosListModels = EventosListModel.listAll(EventosListModel.class);
+                        for (EventosListModel eventosListModel : eventosListModels) {
+                            long dataevento = eventosListModel.getData()*1000L;
+                            long datamaxima = diaMaximo.getValue();
+                            if (dataevento > datamaxima) {
+                                eventosListModel.delete();
+                            }
+                        }
+                    }
                     break;
             }
         }
