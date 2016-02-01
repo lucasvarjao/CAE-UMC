@@ -18,36 +18,36 @@ public class LaunchScreenActivity extends AppCompatActivity {
     boolean updateAvailable;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         Mint.initAndStartSession(LaunchScreenActivity.this, "8729e5df");
 
-       // setContentView(R.layout.activity_launch_screen);
+        // setContentView(R.layout.activity_launch_screen);
 
-       // prefs = getSharedPreferences("com.caeumc.caeumc", MODE_PRIVATE);
+        // prefs = getSharedPreferences("com.caeumc.caeumc", MODE_PRIVATE);
 
         try {
             new BackgroundTask().execute().get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
 
 
     }
 
-    private class BackgroundTask extends AsyncTask {
+    private class BackgroundTask extends AsyncTask<Void, Void, Void> {
         Intent intent;
+
         @Override
-        protected void onPreExecute() {
+        protected void onPreExecute () {
             super.onPreExecute();
             intent = new Intent(LaunchScreenActivity.this, NavDrawerActivity.class);
             //prefs.edit().putBoolean("firstrun", false).commit();
         }
+
         @Override
-        protected Object doInBackground(Object[] params) {
+        protected Void doInBackground (Void[] params) {
             /*  Use this method to load background
             * data that your app needs. */
             if (checkFirstRun()) {
@@ -55,7 +55,7 @@ public class LaunchScreenActivity extends AppCompatActivity {
 
                     runOnUiThread(new Runnable() {
                         @Override
-                        public void run() {
+                        public void run () {
                             List<InitializeDataBase> initializeDataBase = InitializeDataBase.listAll(InitializeDataBase.class);
                         }
                     });
@@ -71,11 +71,11 @@ public class LaunchScreenActivity extends AppCompatActivity {
             }
 
 
-
             return null;
         }
+
         @Override
-        protected void onPostExecute(Object o) {
+        protected void onPostExecute (Void o) {
             super.onPostExecute(o);
 //            Pass your loaded data here using Intent
 //            intent.putExtra("data_key", "");
@@ -84,7 +84,7 @@ public class LaunchScreenActivity extends AppCompatActivity {
         }
     }
 
-    private boolean checkFirstRun() {
+    private boolean checkFirstRun () {
 
         final String PREFS_NAME = "com.caeumc.caeumc";
         final String PREF_VERSION_CODE_KEY = "version_code";
@@ -123,7 +123,7 @@ public class LaunchScreenActivity extends AppCompatActivity {
             firstRun = false;
         }
         // Update the shared preferences with the current version code
-        prefs.edit().putInt(PREF_VERSION_CODE_KEY, currentVersionCode).commit();
+        prefs.edit().putInt(PREF_VERSION_CODE_KEY, currentVersionCode).apply();
         return firstRun;
     }
 

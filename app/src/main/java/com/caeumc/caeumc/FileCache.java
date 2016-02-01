@@ -1,33 +1,32 @@
 package com.caeumc.caeumc;
 
 import android.content.Context;
-import android.os.Environment;
 
 import java.io.File;
 
-/**
+/*
  * Created by EDNEI on 08/01/2016.
  */
-public class FileCache {
+class FileCache {
 
-    private File cacheDir;
+    private final File cacheDir;
 
-    public FileCache(Context context){
+    public FileCache (Context context) {
         //Find the dir to save cached images
-            cacheDir=context.getCacheDir();
-        if(!cacheDir.exists())
+        cacheDir = context.getCacheDir();
+        if (!cacheDir.exists())
+            //noinspection ResultOfMethodCallIgnored
             cacheDir.mkdirs();
     }
 
-    public File getFile(String url){
-        String filename=String.valueOf(url.hashCode());
-        File f = new File(cacheDir, filename);
-        return f;
+    public File getFile (String url) {
+        String filename = String.valueOf(url.hashCode());
+        return new File(cacheDir, filename);
 
     }
 
     public String getHash (String url) {
-        String hash="";
+        String hash;
         hash = String.valueOf(url.hashCode());
         return hash;
     }
@@ -36,11 +35,12 @@ public class FileCache {
         return cacheDir;
     }
 
-    public void clear(){
-        File[] files=cacheDir.listFiles();
-        if(files==null)
+    public void clear () {
+        File[] files = cacheDir.listFiles();
+        if (files == null)
             return;
-        for(File f:files)
+        for (File f : files)
+            //noinspection ResultOfMethodCallIgnored
             f.delete();
     }
 

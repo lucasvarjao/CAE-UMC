@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="100dp"
-    android:padding="16dp"
-    android:background="@android:color/background_light"
-    android:descendantFocusability="blocksDescendants"
-    android:gravity="center_vertical">
+                xmlns:tools="http://schemas.android.com/tools"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:padding="16dp"
+                android:background="@android:color/background_light"
+                android:descendantFocusability="blocksDescendants"
+                android:gravity="center_vertical"
+                tools:ignore="Overdraw">
 
 
     <TextView
@@ -20,7 +23,7 @@
         android:textColor="#000"
         android:alpha="0.87"
         android:textSize="16sp"
-         />
+        />
 
     <TextView
         android:layout_width="wrap_content"
@@ -34,7 +37,7 @@
         android:layout_alignParentStart="true"
         android:layout_marginTop="8dp"
         android:textSize="14sp"
-         />
+        />
 
     <TextView
         android:layout_width="wrap_content"
@@ -63,7 +66,7 @@
         android:layout_toEndOf="@+id/lblM1"
         android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
-        android:layout_alignTop="@+id/lblM1" />
+        android:layout_alignTop="@+id/lblM1"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -75,7 +78,8 @@
         android:layout_alignTop="@+id/textView5"
         android:layout_toRightOf="@+id/textView5"
         android:layout_toEndOf="@+id/textView5"
-        android:layout_marginLeft="3dp" />
+        android:layout_marginLeft="3dp"
+        android:layout_marginStart="3dp"/>
 
 
     <LinearLayout
@@ -86,75 +90,72 @@
         android:layout_toRightOf="@+id/lblPI"
         android:layout_toEndOf="@+id/lblPI"
         android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
         android:background="#DCDCDC">
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-android:layout_marginLeft="3dp"
-        android:textColor="#000"
-        android:alpha="0.54"
-        android:layout_marginBottom="3dp"
-        android:textSize="14sp"
-        android:text="@string/ndd"
-        android:id="@+id/textView7"
-        />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="14sp"
-        android:text="@string/hifen"
-        android:textColor="#000"
-android:layout_marginBottom="3dp"
-        android:layout_marginRight="3dp"
-        android:id="@+id/lblM2"
-        android:layout_alignTop="@+id/textView7"
-        android:layout_toRightOf="@+id/textView7"
-        android:layout_toEndOf="@+id/textView7"
-        android:layout_marginLeft="3dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="3dp"
+            android:layout_marginStart="3dp"
+            android:textColor="#000"
+            android:alpha="0.54"
+            android:layout_marginBottom="3dp"
+            android:textSize="14sp"
+            android:text="@string/ndd"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:text="@string/hifen"
+            android:textColor="#000"
+            android:layout_marginBottom="3dp"
+            android:layout_marginRight="3dp"
+            android:id="@+id/lblM2"
+            android:layout_marginLeft="3dp"/>
     </LinearLayout>
 
 
-<LinearLayout
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_alignBottom="@+id/layoutm2"
-    android:layout_toRightOf="@+id/layoutm2"
-    android:layout_toEndOf="@+id/layoutm2"
-android:layout_marginLeft="8dp"
-    android:layout_alignTop="@+id/layoutm2"
-    android:background="#DCDCDC"
-    android:id="@+id/layoutexame">
-    <TextView
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="14sp"
-        android:text="@string/exx"
-        android:textColor="#000"
-        android:alpha="0.54"
-android:layout_marginBottom="3dp"
-        android:id="@+id/textView9"
-        android:layout_alignBottom="@+id/lblM2"
-        android:layout_toRightOf="@+id/lblM2"
-        android:layout_toEndOf="@+id/lblM2"
-        android:layout_marginLeft="3dp"
-        android:layout_alignTop="@+id/textView7" />
+        android:layout_alignBottom="@+id/layoutm2"
+        android:layout_toRightOf="@+id/layoutm2"
+        android:layout_toEndOf="@+id/layoutm2"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_alignTop="@+id/layoutm2"
+        android:background="#DCDCDC"
+        android:id="@+id/layoutexame">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="14sp"
-        android:text="@string/hifen"
-        android:id="@+id/lblExame"
-        android:textColor="#000"
-        android:layout_alignBottom="@+id/textView9"
-        android:layout_toRightOf="@+id/textView9"
-        android:layout_toEndOf="@+id/textView9"
-        android:layout_marginLeft="3dp"
-        android:layout_marginRight="3dp"
-        android:layout_marginBottom="3dp"
-        android:layout_alignTop="@+id/textView9" />
-</LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:text="@string/exx"
+            android:textColor="#000"
+            android:alpha="0.54"
+            android:layout_marginBottom="3dp"
+
+            android:layout_marginLeft="3dp"
+            android:layout_marginStart="3dp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:text="@string/hifen"
+            android:id="@+id/lblExame"
+            android:textColor="#000"
+
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+            android:layout_marginBottom="3dp"
+            />
+    </LinearLayout>
 
 
     <TextView
@@ -169,7 +170,8 @@ android:layout_marginBottom="3dp"
         android:layout_alignBottom="@+id/layoutexame"
         android:layout_toRightOf="@+id/layoutexame"
         android:layout_toEndOf="@+id/layoutexame"
-        android:layout_marginLeft="8dp" />
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -182,10 +184,13 @@ android:layout_marginBottom="3dp"
         android:layout_alignParentEnd="false"
         android:layout_alignParentBottom="false"
         android:layout_alignParentLeft="false"
+        android:layout_alignParentStart="false"
         android:layout_alignParentTop="false"
         android:layout_alignWithParentIfMissing="false"
         android:layout_alignTop="@+id/textView11"
         android:layout_toRightOf="@+id/textView11"
-        android:layout_marginLeft="3dp" />
+        android:layout_toEndOf="@+id/textView11"
+        android:layout_marginLeft="3dp"
+        android:layout_marginStart="3dp"/>
 
 </RelativeLayout>

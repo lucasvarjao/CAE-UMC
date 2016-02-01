@@ -1,21 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu
+    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:id="@+id/addagenda"
-          android:title="Adicionar Agenda"/>
+    <item
+        android:id="@+id/addagenda"
+        android:title="Adicionar agenda"
+        tools:ignore="HardcodedText"/>
 
 
-    <item android:id="@+id/atualizar"
+    <item
+        android:id="@+id/atualizar"
         android:icon="@drawable/ic_calendar_black_24dp"
-        android:title="Atualizar"
-        app:showAsAction="withText" />
+        android:title="Atualizar agenda"
+        app:showAsAction="withText"
+        tools:ignore="HardcodedText"/>
 
-    <item android:id="@+id/opcoes_conta"
+    <item
+        android:id="@+id/opcoes_conta"
         android:icon="@drawable/common_google_signin_btn_icon_dark"
-        android:title="Opções"
-        app:showAsAction="withText" />
+        android:title="Opções da agenda"
+        app:showAsAction="withText"
+        tools:ignore="HardcodedText"/>
 </menu>
 
 

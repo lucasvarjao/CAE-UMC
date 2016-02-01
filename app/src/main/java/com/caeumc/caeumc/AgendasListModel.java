@@ -2,9 +2,10 @@ package com.caeumc.caeumc;
 
 import com.orm.SugarRecord;
 
-/**
+/*
  * Created by EDNEI on 27/01/2016.
  */
+@SuppressWarnings("DefaultFileTemplate")
 public class AgendasListModel extends SugarRecord<AgendasListModel> {
 
     private String IDAgenda;
@@ -13,7 +14,7 @@ public class AgendasListModel extends SugarRecord<AgendasListModel> {
     private String Compartilhado;
     private String IDUsuario;
 
-    public AgendasListModel() {
+    public AgendasListModel () {
 
     }
 
@@ -26,91 +27,72 @@ public class AgendasListModel extends SugarRecord<AgendasListModel> {
 
     }
 
-    public String getIdAgenda() {
+    public String getIdAgenda () {
         return IDAgenda;
     }
 
     /**
-     *
-     * @param idAgenda
-     *     The idAgenda
+     * @param idAgenda The idAgenda
      */
-    public void setIdAgenda(String idAgenda) {
+    public void setIdAgenda (String idAgenda) {
         this.IDAgenda = idAgenda;
     }
 
     /**
-     *
-     * @return
-     *     The identificacao
+     * @return The identificacao
      */
-    public String getIdentificacao() {
+    public String getIdentificacao () {
         return Identificacao;
     }
 
     /**
-     *
-     * @param identificacao
-     *     The identificacao
+     * @param identificacao The identificacao
      */
-    public void setIdentificacao(String identificacao) {
+    public void setIdentificacao (String identificacao) {
         this.Identificacao = identificacao;
     }
 
     /**
-     *
-     * @return
-     *     The endereco
+     * @return The endereco
      */
-    public String getEndereco() {
+    public String getEndereco () {
         return Endereco;
     }
 
     /**
-     *
-     * @param endereco
-     *     The endereco
+     * @param endereco The endereco
      */
-    public void setEndereco(String endereco) {
+    public void setEndereco (String endereco) {
         this.Endereco = endereco;
     }
 
     /**
-     *
-     * @return
-     *     The compartilhado
+     * @return The compartilhado
      */
-    public String getCompartilhado() {
+    public String getCompartilhado () {
         return Compartilhado;
     }
 
     /**
-     *
-     * @param compartilhado
-     *     The compartilhado
+     * @param compartilhado The compartilhado
      */
-    public void setCompartilhado(String compartilhado) {
+    public void setCompartilhado (String compartilhado) {
         this.Compartilhado = compartilhado;
     }
 
     /**
-     *
-     * @return
-     *     The idUsuario
+     * @return The idUsuario
      */
-    public String getIdUsuario() {
+    public String getIdUsuario () {
         return IDUsuario;
     }
 
     /**
-     *
-     * @param idUsuario
-     *     The idUsuario
+     * @param idUsuario The idUsuario
      */
-    public void setIdUsuario(String idUsuario) {
+    public void setIdUsuario (String idUsuario) {
         this.IDUsuario = idUsuario;
     }
-
 
 
 }

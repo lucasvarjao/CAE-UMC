@@ -24,15 +24,15 @@
 
             <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
 
-                android:background="@color/primary"
-                android:theme="@style/ThemeOverlay.AppCompat.Dark"
-                android:id="@+id/tool_bar"
-                android:elevation="8dp"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
+                                               android:background="@color/primary"
+                                               android:theme="@style/ThemeOverlay.AppCompat.Dark"
+                                               android:id="@+id/tool_bar"
+                                               android:elevation="8dp"
+                                               android:layout_width="match_parent"
+                                               android:layout_height="?attr/actionBarSize"
 
-                app:titleTextAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
-                android:minHeight="?attr/actionBarSize" />
+                                               app:titleTextAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+                                               android:minHeight="?attr/actionBarSize"/>
 
         </android.support.design.widget.AppBarLayout>
 
@@ -60,16 +60,14 @@
 
     </android.support.design.widget.CoordinatorLayout>
 
-        <android.support.design.widget.NavigationView
-            android:id="@+id/navigation"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:maxWidth="320dp"
-            android:layout_gravity="start"
-            app:menu="@menu/navigation_items"
-            app:headerLayout="@layout/header_layout" />
-
-
+    <android.support.design.widget.NavigationView
+        android:id="@+id/navigation"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:maxWidth="320dp"
+        android:layout_gravity="start"
+        app:menu="@menu/navigation_items"
+        app:headerLayout="@layout/header_layout"/>
 
 
 </android.support.v4.widget.DrawerLayout>

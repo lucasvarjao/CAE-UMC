@@ -16,19 +16,17 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.jar.JarFile;
 
-/**
+/*
  * Created by EDNEI on 10/01/2016.
  */
-public class DownloadAsyncTask extends AsyncTask<Void, Integer, File> {
-    File mPath;
-    String mNameFile;
-    Context mContext;
-    Boolean mTexto;
-    String mUrl;
-    PowerManager.WakeLock mWakeLock;
+class DownloadAsyncTask extends AsyncTask<Void, Integer, File> {
+    private final File mPath;
+    private final Context mContext;
+    private final Boolean mTexto;
+    private final String mUrl;
+    private PowerManager.WakeLock mWakeLock;
 
-    DownloadAsyncTask (File path, String nameFile, Context context, Boolean texto, String url) {
-        this.mNameFile = nameFile;
+    DownloadAsyncTask (File path, Context context, Boolean texto, String url) {
         this.mPath = path;
         this.mContext = context;
         this.mTexto = texto;
@@ -37,7 +35,7 @@ public class DownloadAsyncTask extends AsyncTask<Void, Integer, File> {
     }
 
     @Override
-    protected void onPreExecute() {
+    protected void onPreExecute () {
         super.onPreExecute();
         // take CPU lock to prevent CPU from going off if the user
         // presses the power button during download
@@ -51,7 +49,7 @@ public class DownloadAsyncTask extends AsyncTask<Void, Integer, File> {
     }
 
     @Override
-    protected void onProgressUpdate(Integer... progress) {
+    protected void onProgressUpdate (Integer... progress) {
         super.onProgressUpdate(progress);
         // if we get here, length is known, now set indeterminate to false
         if (!mTexto) {
@@ -62,52 +60,51 @@ public class DownloadAsyncTask extends AsyncTask<Void, Integer, File> {
     }
 
     @Override
-    protected File doInBackground(Void... params) {
+    protected File doInBackground (Void... params) {
         File path = mPath;
 
-            boolean statusdownload = DownloadFilesFTP(mPath, mNameFile);
-            if (statusdownload) {
-                return path;
-            } else {
-                path = null;
-                return path;
-            }
+        boolean statusdownload = DownloadFilesFTP(mPath);
+        if (statusdownload) {
+            return path;
+        } else {
+            return null;
+        }
 
     }
 
     @Override
-    protected void onPostExecute(File path) {
+    protected void onPostExecute (File path) {
         if (!mTexto) {
             mWakeLock.release();
             NavDrawerActivity.mProgressDialog.dismiss();
         }
-            if (path != null) {
-                if (!mTexto) {
-                    boolean validAPK = true;
-                    try {
-                        new JarFile(path);
-                    } catch (Exception ex) {
-                        validAPK = false;
-                        ex.printStackTrace();
-                    }
-                    if (validAPK) {
-                        Intent i = new Intent();
-                        i.setAction(Intent.ACTION_VIEW);
-                        i.setDataAndType(Uri.fromFile(path), "application/vnd.android.package-archive");
-                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        Log.d("Lofting", "About to install new .apk");
-                        mContext.startActivity(i);
-                    } else {
-                        Log.v("Validar APK", "Inválida");
-                    }
+        if (path != null) {
+            if (!mTexto) {
+                boolean validAPK = true;
+                try {
+                    new JarFile(path);
+                } catch (Exception ex) {
+                    validAPK = false;
+                    ex.printStackTrace();
                 }
-            } else {
-                Log.e("Instalar app", "deu ruim");
+                if (validAPK) {
+                    Intent i = new Intent();
+                    i.setAction(Intent.ACTION_VIEW);
+                    i.setDataAndType(Uri.fromFile(path), "application/vnd.android.package-archive");
+                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    Log.d("Lofting", "About to install new .apk");
+                    mContext.startActivity(i);
+                } else {
+                    Log.v("Validar APK", "Inválida");
+                }
             }
+        } else {
+            Log.e("Instalar app", "deu ruim");
+        }
 
     }
 
-    public boolean DownloadFilesFTP(File caminho, String fileName){
+    private boolean DownloadFilesFTP (File caminho) {
         InputStream input = null;
         OutputStream output = null;
         HttpURLConnection connection = null;
@@ -120,7 +117,7 @@ public class DownloadAsyncTask extends AsyncTask<Void, Integer, File> {
             // expect HTTP 200 OK, so we don't mistakenly save error report
             // instead of the file
             if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                Log.v("Resposta","Server returned HTTP " + connection.getResponseCode()
+                Log.v("Resposta", "Server returned HTTP " + connection.getResponseCode()
                         + " " + connection.getResponseMessage());
             }
 

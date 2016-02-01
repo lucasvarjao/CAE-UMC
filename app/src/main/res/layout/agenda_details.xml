@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginTop="0dp"
-    android:fitsSystemWindows="true">
+                                                 xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                 xmlns:tools="http://schemas.android.com/tools"
+                                                 android:orientation="vertical"
+                                                 android:layout_width="match_parent"
+                                                 android:layout_height="match_parent"
+                                                 android:layout_marginTop="0dp"
+                                                 android:fitsSystemWindows="true">
 
     <android.support.design.widget.AppBarLayout
-        android:id="@+id/app_bar_agenda_details"
         android:layout_width="match_parent"
         android:layout_height="250dp"
         android:theme="@style/ThemeOverlay.AppCompat.Dark"
@@ -25,29 +25,29 @@
             app:expandedTitleTextAppearance="@color/primary"
             android:fitsSystemWindows="true">
 
- <!--           <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent">
+            <!--           <LinearLayout
+                           android:layout_width="wrap_content"
+                           android:layout_height="match_parent">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="dp"
-                    android:id="@+id/txtDescricaoDetails"
-                    android:layout_gravity="bottom"
-                    android:layout_marginLeft="48dp"
-                    android:layout_marginTop="64dp"
-                    android:textSize="36sp"
-                    android:textStyle="bold" />
-            </LinearLayout>-->
+                           <TextView
+                               android:layout_width="wrap_content"
+                               android:layout_height="wrap_content"
+                               android:textAppearance="?android:attr/textAppearanceLarge"
+                               android:text="dp"
+                               android:id="@+id/txtDescricaoDetails"
+                               android:layout_gravity="bottom"
+                               android:layout_marginLeft="48dp"
+                               android:layout_marginTop="64dp"
+                               android:textSize="36sp"
+                               android:textStyle="bold" />
+                       </LinearLayout>-->
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar_agenda_details"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
-            app:layout_collapseMode="pin" />
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar_agenda_details"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
+                app:layout_collapseMode="pin"/>
 
         </net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout>
 
@@ -55,152 +55,175 @@
 
 
     <android.support.v4.widget.NestedScrollView
-        android:id="@+id/scroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:layout_marginTop="16dp">
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/layoutClock"
-            >
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/imgClock"
-                    android:layout_marginLeft="24dp"
-                    android:layout_marginTop="16dp"
-                    android:src="@drawable/ic_calendar_clock"/>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="false"
-                    android:layout_alignTop="@+id/imgClock"
-                    android:layout_toRightOf="@+id/imgClock"
-                    android:layout_marginLeft="24dp"
-                    android:layout_marginRight="24dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="Domingo, 30 de abril"
-                        android:textColor="#000"
-                        android:alpha="0.87"
-                        android:id="@+id/txtDiaDetails" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:text="22:00 - 23:00"
-                        android:textColor="#000"
-                        android:alpha="0.54"
-                        android:id="@+id/txtHoraDetails" />
-                </LinearLayout>
-            </RelativeLayout>
-        </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:id="@+id/layoutLocation">
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/imgLocation"
-                    android:layout_marginLeft="24dp"
-                    android:layout_marginTop="16dp"
-                    android:src="@drawable/ic_map_marker"/>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="false"
-                    android:layout_alignTop="@+id/imgLocation"
-                    android:layout_toRightOf="@+id/imgLocation"
-                    android:layout_marginLeft="24dp"
-                    android:layout_marginRight="24dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="Shopping Bourbon"
-                        android:textColor="#000"
-                        android:alpha="0.87"
-                        android:id="@+id/txtLocalDetails" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textColor="#000"
-                        android:alpha="0.54"
-                        android:text="Avenida Pompéia, 1000 - São Paulo, SP"
-                        android:id="@+id/txtEnderecoDetails" />
-                </LinearLayout>
-            </RelativeLayout>
-        </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:id="@+id/layoutObservacao">
-        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_marginTop="16dp">
 
-            <ImageView
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/imgObservacao"
-                android:layout_marginLeft="24dp"
-                android:layout_marginTop="16dp"
-                android:src="@drawable/ic_information"/>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="false"
-                android:layout_alignTop="@+id/imgObservacao"
-                android:layout_toRightOf="@+id/imgObservacao"
-                android:layout_marginLeft="24dp"
-                android:layout_marginRight="24dp"
-                android:orientation="vertical">
+                >
 
-                <TextView
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    tools:ignore="UselessParent">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/imgClock"
+                        android:layout_marginLeft="24dp"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginTop="16dp"
+                        android:src="@drawable/ic_calendar_clock"
+                        tools:ignore="ContentDescription"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="false"
+                        android:layout_alignTop="@+id/imgClock"
+                        android:layout_toRightOf="@+id/imgClock"
+                        android:layout_toEndOf="@+id/imgClock"
+                        android:layout_marginLeft="24dp"
+                        android:layout_marginRight="24dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:text="Domingo, 30 de abril"
+                            android:textColor="#000"
+                            android:alpha="0.87"
+                            android:id="@+id/txtDiaDetails"
+                            tools:ignore="HardcodedText"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+
+                            android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:text="22:00 - 23:00"
+                            android:textColor="#000"
+                            android:alpha="0.54"
+                            android:id="@+id/txtHoraDetails"
+                            tools:ignore="HardcodedText"/>
+                    </LinearLayout>
+                </RelativeLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:id="@+id/layoutLocation">
+
+                <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="Observações"
-                    android:textColor="#000"
-                    android:alpha="0.54"
-                    android:id="@+id/txtObsDetails" />
+                    tools:ignore="UselessParent">
 
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/imgLocation"
+                        android:layout_marginLeft="24dp"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginTop="16dp"
+                        android:src="@drawable/ic_map_marker"
+                        tools:ignore="ContentDescription"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="false"
+                        android:layout_alignTop="@+id/imgLocation"
+                        android:layout_toRightOf="@+id/imgLocation"
+                        android:layout_toEndOf="@+id/imgLocation"
+                        android:layout_marginLeft="24dp"
+                        android:layout_marginRight="24dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:text="Shopping Bourbon"
+                            android:textColor="#000"
+                            android:alpha="0.87"
+                            android:id="@+id/txtLocalDetails"
+                            tools:ignore="HardcodedText"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:textColor="#000"
+                            android:alpha="0.54"
+                            android:text="Avenida Pompéia, 1000 - São Paulo, SP"
+                            android:id="@+id/txtEnderecoDetails"
+                            tools:ignore="HardcodedText"/>
+                    </LinearLayout>
+                </RelativeLayout>
             </LinearLayout>
-        </RelativeLayout>
-    </LinearLayout>
 
-</LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:id="@+id/layoutObservacao">
 
-</android.support.v4.widget.NestedScrollView>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    tools:ignore="UselessParent">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/imgObservacao"
+                        android:layout_marginLeft="24dp"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginTop="16dp"
+                        android:src="@drawable/ic_information"
+                        tools:ignore="ContentDescription"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="false"
+                        android:layout_alignTop="@+id/imgObservacao"
+                        android:layout_toRightOf="@+id/imgObservacao"
+                        android:layout_toEndOf="@+id/imgObservacao"
+                        android:layout_marginLeft="24dp"
+                        android:layout_marginRight="24dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:text="Observações"
+                            android:textColor="#000"
+                            android:alpha="0.54"
+                            android:id="@+id/txtObsDetails"
+                            tools:ignore="HardcodedText"/>
+
+                    </LinearLayout>
+                </RelativeLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
 
 </android.support.design.widget.CoordinatorLayout>

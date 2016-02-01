@@ -1,7 +1,6 @@
 package com.caeumc.caeumc;
 
 
-import android.accounts.AccountManager;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
@@ -40,20 +39,13 @@ import java.util.Set;
  * API Guide</a> for more information on developing a Settings UI.
  */
 public class SettingsAgendaActivity extends AppCompatPreferenceActivity {
-    /**
-     * A preference value change listener that updates the preference's summary
-     * to reflect its new value.
-     */
+    private static Context context;
 
-    String accountName;
-    static Context context;
-
-    private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
-
+    private static final Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
 
 
         @Override
-        public boolean onPreferenceChange(Preference preference, Object value) {
+        public boolean onPreferenceChange (Preference preference, Object value) {
             String stringValue = value.toString();
 
             if (preference instanceof ListPreference) {
@@ -92,14 +84,12 @@ public class SettingsAgendaActivity extends AppCompatPreferenceActivity {
                         preference.setSummary(name);
                     }
                 }
-            }
-            else
-             {
+            } else {
                 // For all other preferences, set the summary to the value's
                 // simple string representation.
-                 SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(preference.getContext()).edit();
-                 editor.putBoolean("preference_mudou", true);
-                 editor.apply();
+                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(preference.getContext()).edit();
+                editor.putBoolean("preference_mudou", true);
+                editor.apply();
                 preference.setSummary(stringValue);
             }
             return true;
@@ -110,7 +100,7 @@ public class SettingsAgendaActivity extends AppCompatPreferenceActivity {
      * Helper method to determine if the device has an extra-large screen. For
      * example, 10" tablets are extra-large.
      */
-    private static boolean isXLargeTablet(Context context) {
+    private static boolean isXLargeTablet (Context context) {
         return (context.getResources().getConfiguration().screenLayout
                 & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_XLARGE;
     }
@@ -124,7 +114,7 @@ public class SettingsAgendaActivity extends AppCompatPreferenceActivity {
      *
      * @see #sBindPreferenceSummaryToValueListener
      */
-    private static void bindPreferenceSummaryToValue(Preference preference) {
+    private static void bindPreferenceSummaryToValue (Preference preference) {
         // Set the listener to watch for value changes.
         preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
 
@@ -137,7 +127,7 @@ public class SettingsAgendaActivity extends AppCompatPreferenceActivity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupActionBar();
 
@@ -147,7 +137,7 @@ public class SettingsAgendaActivity extends AppCompatPreferenceActivity {
     /**
      * Set up the {@link android.app.ActionBar}, if the API is available.
      */
-    private void setupActionBar() {
+    private void setupActionBar () {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             // Show the Up button in the action bar.
@@ -159,7 +149,7 @@ public class SettingsAgendaActivity extends AppCompatPreferenceActivity {
      * {@inheritDoc}
      */
     @Override
-    public boolean onIsMultiPane() {
+    public boolean onIsMultiPane () {
         return isXLargeTablet(this);
     }
 
@@ -168,7 +158,7 @@ public class SettingsAgendaActivity extends AppCompatPreferenceActivity {
      */
     @Override
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public void onBuildHeaders(List<Header> target) {
+    public void onBuildHeaders (List<Header> target) {
         loadHeadersFromResource(R.xml.pref_headers, target);
     }
 
@@ -176,7 +166,7 @@ public class SettingsAgendaActivity extends AppCompatPreferenceActivity {
      * This method stops fragment injection in malicious applications.
      * Make sure to deny any unknown fragments here.
      */
-    protected boolean isValidFragment(String fragmentName) {
+    protected boolean isValidFragment (String fragmentName) {
         return PreferenceFragment.class.getName().equals(fragmentName)
                 || GeneralPreferenceFragment.class.getName().equals(fragmentName)
                 || DataSyncPreferenceFragment.class.getName().equals(fragmentName)
@@ -190,7 +180,7 @@ public class SettingsAgendaActivity extends AppCompatPreferenceActivity {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class GeneralPreferenceFragment extends PreferenceFragment {
         @Override
-        public void onCreate(Bundle savedInstanceState) {
+        public void onCreate (Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_general);
             setHasOptionsMenu(true);
@@ -204,7 +194,7 @@ public class SettingsAgendaActivity extends AppCompatPreferenceActivity {
         }
 
         @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
+        public boolean onOptionsItemSelected (MenuItem item) {
             int id = item.getItemId();
             if (id == android.R.id.home) {
                 startActivity(new Intent(getActivity(), SettingsAgendaActivity.class));
@@ -221,7 +211,7 @@ public class SettingsAgendaActivity extends AppCompatPreferenceActivity {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class NotificationPreferenceFragment extends PreferenceFragment {
         @Override
-        public void onCreate(Bundle savedInstanceState) {
+        public void onCreate (Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_notification);
             setHasOptionsMenu(true);
@@ -234,7 +224,7 @@ public class SettingsAgendaActivity extends AppCompatPreferenceActivity {
         }
 
         @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
+        public boolean onOptionsItemSelected (MenuItem item) {
             int id = item.getItemId();
             if (id == android.R.id.home) {
                 startActivity(new Intent(getActivity(), SettingsAgendaActivity.class));
@@ -244,10 +234,13 @@ public class SettingsAgendaActivity extends AppCompatPreferenceActivity {
         }
     }
 
-    protected void onActivityResult(final int requestCode, final int resultCode,
-                                    final Intent data) {
+    protected void onActivityResult (final int requestCode, final int resultCode,
+                                     final Intent data) {
         if (requestCode == 1000 && resultCode == RESULT_OK) {
-            accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+            /*
+      A preference value change listener that updates the preference's summary
+      to reflect its new value.
+     */
 
 
         }
@@ -260,14 +253,14 @@ public class SettingsAgendaActivity extends AppCompatPreferenceActivity {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class DataSyncPreferenceFragment extends PreferenceFragment {
         @Override
-        public void onCreate(Bundle savedInstanceState) {
+        public void onCreate (Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_agenda);
             setHasOptionsMenu(true);
 
 
             List<AgendasListModel> agendasListModelList = AgendasListModel.listAll(AgendasListModel.class);
-            Set<String> selectionSet = new HashSet<String>();
+            Set<String> selectionSet = new HashSet<>();
             List<String> identificacoes = new ArrayList<>();
             List<String> idsAgendas = new ArrayList<>();
             for (AgendasListModel agendasListModel : agendasListModelList) {
@@ -276,14 +269,13 @@ public class SettingsAgendaActivity extends AppCompatPreferenceActivity {
                 idsAgendas.add(agendasListModel.getIdAgenda());
             }
 
-            String [] selections = identificacoes.toArray(new String[identificacoes.size()]);
+            String[] selections = identificacoes.toArray(new String[identificacoes.size()]);
             String[] values = idsAgendas.toArray(new String[idsAgendas.size()]);
-
 
 
             MultiSelectListPreference multiSelectPref = new MultiSelectListPreference(context);
             multiSelectPref.setKey("multi_pref_agenda");
-            multiSelectPref.setTitle("Selecionar agendas");
+            multiSelectPref.setTitle("Gerenciar agendas");
             multiSelectPref.setEntries(selections);
             multiSelectPref.setEntryValues(values);
             multiSelectPref.setDefaultValue(selectionSet);
@@ -294,6 +286,7 @@ public class SettingsAgendaActivity extends AppCompatPreferenceActivity {
                 public boolean onPreferenceChange (Preference preference, Object newValue) {
                     if (preference instanceof MultiSelectListPreference) {
                         MultiSelectListPreference multiSelectListPreference = (MultiSelectListPreference) preference;
+                        @SuppressWarnings("unchecked")
                         Set<String> stringSet = (Set<String>) newValue;
                         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(preference.getContext()).edit();
                         editor.putStringSet(preference.getKey(), stringSet);
@@ -304,6 +297,7 @@ public class SettingsAgendaActivity extends AppCompatPreferenceActivity {
                         List<AgendasListModel> listModels = AgendasListModel.listAll(AgendasListModel.class);
 
                         for (AgendasListModel model : listModels) {
+                            //noinspection StatementWithEmptyBody
                             if (stringSet.contains(model.getIdAgenda())) {
 
                             } else {
@@ -336,15 +330,14 @@ public class SettingsAgendaActivity extends AppCompatPreferenceActivity {
                 }
             });*/
             bindPreferenceSummaryToValue(findPreference("alcance_agenda"));
-           // bindPreferenceSummaryToValue(findPreference("alterar_usuario"));
+            // bindPreferenceSummaryToValue(findPreference("alterar_usuario"));
 
 
         }
 
 
-
         @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
+        public boolean onOptionsItemSelected (MenuItem item) {
             int id = item.getItemId();
             if (id == android.R.id.home) {
                 startActivity(new Intent(getActivity(), SettingsAgendaActivity.class));

@@ -3,7 +3,7 @@ package com.caeumc.caeumc;
 import com.orm.SugarRecord;
 import com.orm.dsl.Ignore;
 
-/**
+/*
  * Created by Lucas Varjao on 25/08/2015.
  */
 public class EventosListModel extends SugarRecord<EventosListModel> {
@@ -19,15 +19,19 @@ public class EventosListModel extends SugarRecord<EventosListModel> {
     private String IDAgenda;
 
     @Ignore
+    private
     String Mes;
     @Ignore
+    private
     Integer DiaEvento;
     @Ignore
+    private
     String DiaSemanaEvento;
     @Ignore
+    private
     String Semana;
 
-    public EventosListModel() {
+    public EventosListModel () {
 
     }
 
@@ -44,35 +48,116 @@ public class EventosListModel extends SugarRecord<EventosListModel> {
         this.IDAgenda = idAgenda;
     }
 
-    public void setDescricao(String descricao) {this.Descricao = descricao;}
-    public void setData (Integer data) {this.Data = data;}
-    public void setHoraInicio (Integer horaInicio) {this.HoraInicio = horaInicio;}
-    public void setHoraFinal (Integer horaFinal) {this.HoraFinal = horaFinal;}
-    public void setLocal (String local) {this.Local = Local;}
-    public void setFeriado (Boolean feriado) {this.Feriado = feriado;}
-    public void setObservacao (String observacao) {this.Observacao = observacao;}
-    public void setIDEvento (String idEvento) {this.IDEvento = idEvento;}
-    public void setDataAtualizado (Integer dataAtualizado) {this.DataAtualizado = dataAtualizado;}
-    public void setIDAgenda (String idAgenda) {this.IDAgenda = idAgenda;}
+    public void setDescricao (String descricao) {
+        this.Descricao = descricao;
+    }
 
-    public void setMes (String mes) {this.Mes = mes;}
-    public String getMes() {return  this.Mes;}
-    public void setDiaSemanaEvento (String diaSemanaEvento) {this.DiaSemanaEvento = diaSemanaEvento;}
-    public String getDiaSemanaEvento() {return  this.DiaSemanaEvento;}
-    public void setDiaEvento (Integer diaEvento) {this.DiaEvento = diaEvento;}
-    public Integer getDiaEvento() {return  this.DiaEvento;}
-    public void setSemana (String semana) {this.Semana = semana;}
-    public String getSemana() {return  this.Semana;}
+    public void setData (Integer data) {
+        this.Data = data;
+    }
+
+    public void setHoraInicio (Integer horaInicio) {
+        this.HoraInicio = horaInicio;
+    }
+
+    public void setHoraFinal (Integer horaFinal) {
+        this.HoraFinal = horaFinal;
+    }
+
+    public void setLocal (String local) {
+        this.Local = local;
+    }
+
+    public void setFeriado (@SuppressWarnings("SameParameterValue") Boolean feriado) {
+        this.Feriado = feriado;
+    }
+
+    public void setObservacao (String observacao) {
+        this.Observacao = observacao;
+    }
+
+    public void setIDEvento (String idEvento) {
+        this.IDEvento = idEvento;
+    }
+
+    public void setDataAtualizado (Integer dataAtualizado) {
+        this.DataAtualizado = dataAtualizado;
+    }
+
+    public void setIDAgenda (String idAgenda) {
+        this.IDAgenda = idAgenda;
+    }
+
+    public void setMes (String mes) {
+        this.Mes = mes;
+    }
+
+    public String getMes () {
+        return this.Mes;
+    }
+
+    public void setDiaSemanaEvento (@SuppressWarnings("SameParameterValue") String diaSemanaEvento) {
+        this.DiaSemanaEvento = diaSemanaEvento;
+    }
+
+    public String getDiaSemanaEvento () {
+        return this.DiaSemanaEvento;
+    }
+
+    public void setDiaEvento (@SuppressWarnings("SameParameterValue") Integer diaEvento) {
+        this.DiaEvento = diaEvento;
+    }
+
+    public Integer getDiaEvento () {
+        return this.DiaEvento;
+    }
+
+    public void setSemana (String semana) {
+        this.Semana = semana;
+    }
+
+    public String getSemana () {
+        return this.Semana;
+    }
 
 
-    public String getDescricao() {return this.Descricao;}
-    public Integer getData() {return  this.Data;}
-    public Integer getHoraInicio() {return  this.HoraInicio;}
-    public Integer getHoraFinal() {return  this.HoraFinal;}
-    public String getLocal() {return this.Local;}
-    public Boolean getFeriado() {return this.Feriado;}
-    public String getObservacao() {return this.Observacao;}
-    public String getIDEvento() {return this.IDEvento;}
-    public Integer getDataAtualizado() {return  this.DataAtualizado;}
-    public String getIDAgenda() {return this.IDAgenda;}
+    public String getDescricao () {
+        return this.Descricao;
+    }
+
+    public Integer getData () {
+        return this.Data;
+    }
+
+    public Integer getHoraInicio () {
+        return this.HoraInicio;
+    }
+
+    public Integer getHoraFinal () {
+        return this.HoraFinal;
+    }
+
+    public String getLocal () {
+        return this.Local;
+    }
+
+    public Boolean getFeriado () {
+        return this.Feriado;
+    }
+
+    public String getObservacao () {
+        return this.Observacao;
+    }
+
+    public String getIDEvento () {
+        return this.IDEvento;
+    }
+
+    public Integer getDataAtualizado () {
+        return this.DataAtualizado;
+    }
+
+    public String getIDAgenda () {
+        return this.IDAgenda;
+    }
 }

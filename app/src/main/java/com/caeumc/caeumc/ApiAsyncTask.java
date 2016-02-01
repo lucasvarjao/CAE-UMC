@@ -1,5 +1,6 @@
 package com.caeumc.caeumc;
 
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
@@ -36,27 +37,26 @@ import java.util.TimeZone;
  * An asynchronous task that handles the Google Calendar API call.
  * Placing the API calls in their own task ensures the UI stays responsive.
  */
-public class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
-    private NavDrawerActivity mActivity;
-    String mEmail;
+class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
+    private final NavDrawerActivity mActivity;
 
-    Boolean preferencemudou;
+    private Boolean preferencemudou;
 
     /**
      * Constructor.
+     *
      * @param activity MainActivity that spawned this task.
      */
-    ApiAsyncTask(NavDrawerActivity activity, String name) {
+    ApiAsyncTask (NavDrawerActivity activity) {
         this.mActivity = activity;
-        this.mEmail = name;
     }
 
     @Override
-    protected void onPreExecute() {
+    protected void onPreExecute () {
         super.onPreExecute();
         NavDrawerActivity.swipeRefreshLayout.post(new Runnable() {
             @Override
-            public void run() {
+            public void run () {
                 NavDrawerActivity.swipeRefreshLayout.setEnabled(false);
                 NavDrawerActivity.swipeRefreshLayout.setRefreshing(true);
             }
@@ -66,10 +66,10 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
 
 
     @Override
-    protected void onPostExecute(Boolean aBoolean) {
+    protected void onPostExecute (Boolean aBoolean) {
         NavDrawerActivity.swipeRefreshLayout.post(new Runnable() {
             @Override
-            public void run() {
+            public void run () {
                 NavDrawerActivity.swipeRefreshLayout.setEnabled(true);
                 NavDrawerActivity.swipeRefreshLayout.setRefreshing(false);
             }
@@ -87,13 +87,14 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
 
     /**
      * Background task to call Google Calendar API.
+     *
      * @param params no parameters needed for this task.
      */
     @Override
-    protected Boolean doInBackground(Void... params) {
+    protected Boolean doInBackground (Void... params) {
 
         try {
-           //NavDrawerActivity.clearResultsText();
+            //NavDrawerActivity.clearResultsText();
             NavDrawerActivity.updateResultsText(getDataFromApi());
 
         } catch (Exception e) {
@@ -104,7 +105,7 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
     }
 
 
-    private Calendario getCalendario(String mUrl) {
+    private Calendario getCalendario (String mUrl) {
         Calendario calendario = new Calendario();
         Gson gson = new Gson();
         String json = getJson(mUrl);
@@ -119,9 +120,9 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
         return calendario;
     }
 
-    private String getJson(String mUrl) {
+    private String getJson (String mUrl) {
         URL url = null;
-        String json=null;
+        String json = null;
         try {
             url = new URL(mUrl);
         } catch (MalformedURLException e) {
@@ -129,11 +130,13 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
         }
         HttpURLConnection urlConnection = null;
         try {
+            assert url != null;
             urlConnection = (HttpURLConnection) url.openConnection();
         } catch (IOException e) {
             e.printStackTrace();
         }
         try {
+            assert urlConnection != null;
             InputStream in = new BufferedInputStream(urlConnection.getInputStream());
             BufferedReader r = new BufferedReader(new InputStreamReader(in));
             StringBuilder total = new StringBuilder();
@@ -146,19 +149,20 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-                urlConnection.disconnect();
-            }
+            assert urlConnection != null;
+            urlConnection.disconnect();
+        }
         return json;
     }
 
 
-
     /**
      * Fetch a list of the next 10 events from the primary calendar.
+     *
      * @return List of Strings describing returned events.
-     * @throws IOException
      */
-    private List<EventosListModel> getDataFromApi() throws IOException, ParseException {
+    @SuppressLint("SimpleDateFormat")
+    private List<EventosListModel> getDataFromApi () throws ParseException {
 
         DateTime now = new DateTime(System.currentTimeMillis());
         Date hoje = new Date(System.currentTimeMillis());
@@ -176,7 +180,7 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
         String alcanceagenda = sharedPreferences.getString("alcance_agenda", "6");
         int nAlcanceAgenda = Integer.valueOf(alcanceagenda);
 
-        if ((mesatual+1) <=7) {
+        if ((mesatual + 1) <= 7) {
             if (eventosAnteriores) {
                 String sDiaMinimo = String.format("%s-01-01T00:00:00", anoatual);
                 dateDiaMinimo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(sDiaMinimo);
@@ -186,7 +190,7 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
                 if (preferencemudou) {
                     List<EventosListModel> eventosListModels = EventosListModel.listAll(EventosListModel.class);
                     for (EventosListModel eventosListModel : eventosListModels) {
-                        long dataevento = eventosListModel.getData()*1000L;
+                        long dataevento = eventosListModel.getData() * 1000L;
                         long datahoje = hoje.getTime();
                         if (dataevento < datahoje) {
                             eventosListModel.delete();
@@ -196,7 +200,7 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
             }
             switch (nAlcanceAgenda) {
                 case 12:
-                   sDiaMaximo = String.format("%s-01-01T00:00:00", anoatual + 1);
+                    sDiaMaximo = String.format("%s-01-01T00:00:00", anoatual + 1);
                     dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(sDiaMaximo);
                     diaMaximo = new DateTime(dateDiaMaximo);
 
@@ -204,7 +208,7 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
                     if (preferencemudou) {
                         List<EventosListModel> eventosListModels = EventosListModel.listAll(EventosListModel.class);
                         for (EventosListModel eventosListModel : eventosListModels) {
-                            long dataevento = eventosListModel.getData()*1000L;
+                            long dataevento = eventosListModel.getData() * 1000L;
                             long datamaxima = diaMaximo.getValue();
                             if (dataevento > datamaxima) {
                                 eventosListModel.delete();
@@ -222,7 +226,7 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
                     if (preferencemudou) {
                         List<EventosListModel> eventosListModels = EventosListModel.listAll(EventosListModel.class);
                         for (EventosListModel eventosListModel : eventosListModels) {
-                            long dataevento = eventosListModel.getData()*1000L;
+                            long dataevento = eventosListModel.getData() * 1000L;
                             long datamaxima = diaMaximo.getValue();
                             if (dataevento > datamaxima) {
                                 eventosListModel.delete();
@@ -231,7 +235,7 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
                     }
                     break;
                 case 24:
-                   sDiaMaximo = String.format("%s-01-01T00:00:00", anoatual + 2);
+                    sDiaMaximo = String.format("%s-01-01T00:00:00", anoatual + 2);
                     dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(sDiaMaximo);
                     diaMaximo = new DateTime(dateDiaMaximo);
 
@@ -239,7 +243,7 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
                     if (preferencemudou) {
                         List<EventosListModel> eventosListModels = EventosListModel.listAll(EventosListModel.class);
                         for (EventosListModel eventosListModel : eventosListModels) {
-                            long dataevento = eventosListModel.getData()*1000L;
+                            long dataevento = eventosListModel.getData() * 1000L;
                             long datamaxima = diaMaximo.getValue();
                             if (dataevento > datamaxima) {
                                 eventosListModel.delete();
@@ -248,7 +252,7 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
                     }
                     break;
                 default:
-                   sDiaMaximo = String.format("%s-07-31T23:59:59", anoatual);
+                    sDiaMaximo = String.format("%s-07-31T23:59:59", anoatual);
                     dateDiaMaximo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(sDiaMaximo);
                     diaMaximo = new DateTime(dateDiaMaximo);
 
@@ -256,7 +260,7 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
                     if (preferencemudou) {
                         List<EventosListModel> eventosListModels = EventosListModel.listAll(EventosListModel.class);
                         for (EventosListModel eventosListModel : eventosListModels) {
-                            long dataevento = eventosListModel.getData()*1000L;
+                            long dataevento = eventosListModel.getData() * 1000L;
                             long datamaxima = diaMaximo.getValue();
                             if (dataevento > datamaxima) {
                                 eventosListModel.delete();
@@ -277,7 +281,7 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
                 if (preferencemudou) {
                     List<EventosListModel> eventosListModels = EventosListModel.listAll(EventosListModel.class);
                     for (EventosListModel eventosListModel : eventosListModels) {
-                        long dataevento = eventosListModel.getData()*1000L;
+                        long dataevento = eventosListModel.getData() * 1000L;
                         long datahoje = hoje.getTime();
                         if (dataevento < datahoje) {
                             eventosListModel.delete();
@@ -296,7 +300,7 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
                     if (preferencemudou) {
                         List<EventosListModel> eventosListModels = EventosListModel.listAll(EventosListModel.class);
                         for (EventosListModel eventosListModel : eventosListModels) {
-                            long dataevento = eventosListModel.getData()*1000L;
+                            long dataevento = eventosListModel.getData() * 1000L;
                             long datamaxima = diaMaximo.getValue();
                             if (dataevento > datamaxima) {
                                 eventosListModel.delete();
@@ -313,7 +317,7 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
                     if (preferencemudou) {
                         List<EventosListModel> eventosListModels = EventosListModel.listAll(EventosListModel.class);
                         for (EventosListModel eventosListModel : eventosListModels) {
-                            long dataevento = eventosListModel.getData()*1000L;
+                            long dataevento = eventosListModel.getData() * 1000L;
                             long datamaxima = diaMaximo.getValue();
                             if (dataevento > datamaxima) {
                                 eventosListModel.delete();
@@ -330,7 +334,7 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
                     if (preferencemudou) {
                         List<EventosListModel> eventosListModels = EventosListModel.listAll(EventosListModel.class);
                         for (EventosListModel eventosListModel : eventosListModels) {
-                            long dataevento = eventosListModel.getData()*1000L;
+                            long dataevento = eventosListModel.getData() * 1000L;
                             long datamaxima = diaMaximo.getValue();
                             if (dataevento > datamaxima) {
                                 eventosListModel.delete();
@@ -347,7 +351,7 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
                     if (preferencemudou) {
                         List<EventosListModel> eventosListModels = EventosListModel.listAll(EventosListModel.class);
                         for (EventosListModel eventosListModel : eventosListModels) {
-                            long dataevento = eventosListModel.getData()*1000L;
+                            long dataevento = eventosListModel.getData() * 1000L;
                             long datamaxima = diaMaximo.getValue();
                             if (dataevento > datamaxima) {
                                 eventosListModel.delete();
@@ -361,9 +365,9 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
         long ts = System.currentTimeMillis();
         Date localTime = new Date(ts);
 
-        ArrayList<Agenda> agendas = new ArrayList<Agenda>();
+        ArrayList<Agenda> agendas;
         agendas = getAgendasCompartilhadas();
-        Set<String> stringSet = new HashSet<String>();
+        Set<String> stringSet = new HashSet<>();
         if (agendas != null) {
             if (agendas.size() > 0) {
                 for (Agenda agenda : agendas) {
@@ -377,6 +381,7 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
                             AgendasListModel agendasListModel = AgendasListModel.findById(AgendasListModel.class, agendasListModelList.get(0).getId());
 
 
+                            //noinspection StatementWithEmptyBody
                             if (agendasListModel.getIdAgenda().equals(agendasListModelList.get(0).getIdAgenda()) &&
                                     agendasListModel.getIdentificacao().equals(agendasListModelList.get(0).getIdentificacao()) &&
                                     agendasListModel.getEndereco().equals(agendasListModelList.get(0).getEndereco()) &&
@@ -438,9 +443,6 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
         }
 
 
-
-
-
         for (AgendasListModel listModel : agendasListModelList) {
             String idCalendario = listModel.getEndereco();
             String idAgenda = listModel.getIdAgenda();
@@ -449,7 +451,7 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
                 feriado = true;
             }
 
-            List<Item> items = null;
+            List<Item> items;
             if (eventosAnteriores) {
                 String urlCalendario = String.format("https://www.googleapis.com/calendar/v3/calendars/%s/events?key=AIzaSyCM-Vc1sw_K18OSHlXFYhxM08VE2YFIRwA&" +
                                 "orderby=starttime&" +
@@ -503,7 +505,7 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
 
                             Calendar dataCalendario = Calendar.getInstance();
                             dataCalendario.setTimeInMillis(new DateTime(item.getStart().getDatetime()).getValue());
-                            long timezonedif = -(dataCalendario.get(Calendar.ZONE_OFFSET)+dataCalendario.get(Calendar.DST_OFFSET));
+                            long timezonedif = -(dataCalendario.get(Calendar.ZONE_OFFSET) + dataCalendario.get(Calendar.DST_OFFSET));
                             data = new DateTime(item.getStart().getDatetime()).getValue() + TimeZone.getDefault().getOffset(localTime.getTime()) + timezonedif;
                             data = data / 1000;
                             horaInicio = new DateTime(item.getStart().getDatetime()).getValue() + TimeZone.getDefault().getOffset(localTime.getTime()) + timezonedif;
@@ -518,8 +520,8 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
                         } else {
                             Calendar dataCalendario = Calendar.getInstance();
                             dataCalendario.setTimeInMillis(new DateTime(item.getStart().getDate()).getValue());
-                            long timezonedif = -(dataCalendario.get(Calendar.ZONE_OFFSET)+dataCalendario.get(Calendar.DST_OFFSET));
-                            data = new DateTime(item.getStart().getDate()).getValue() + timezonedif;;
+                            long timezonedif = -(dataCalendario.get(Calendar.ZONE_OFFSET) + dataCalendario.get(Calendar.DST_OFFSET));
+                            data = new DateTime(item.getStart().getDate()).getValue() + timezonedif;
                             data = data / 1000;
                             horaInicio = 0;
                             horaFinal = 0;
@@ -542,14 +544,14 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
                                 if (bdDataAtualizado < jsDataAtualizado) {
 
                                     eventosListModelList.get(0).setDescricao(descricao);
-                                    eventosListModelList.get(0).setData((int)data);
-                                    eventosListModelList.get(0).setHoraInicio((int)horaInicio);
-                                    eventosListModelList.get(0).setHoraFinal((int)horaFinal);
+                                    eventosListModelList.get(0).setData((int) data);
+                                    eventosListModelList.get(0).setHoraInicio((int) horaInicio);
+                                    eventosListModelList.get(0).setHoraFinal((int) horaFinal);
                                     eventosListModelList.get(0).setLocal(local);
                                     eventosListModelList.get(0).setFeriado(false);
                                     eventosListModelList.get(0).setObservacao(observacao);
                                     eventosListModelList.get(0).setIDEvento(idEvento);
-                                    eventosListModelList.get(0).setDataAtualizado((int)dataAtualizado);
+                                    eventosListModelList.get(0).setDataAtualizado((int) dataAtualizado);
                                     eventosListModelList.get(0).setIDAgenda(idAgenda);
                                     eventosListModelList.get(0).save();
 
@@ -557,12 +559,12 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
                                 }
                             } else if (eventosListModelList.size() == 0) {
 
-                                EventosListModel eventosListModel = new EventosListModel(descricao, (int)data, (int)horaInicio, (int)horaFinal, local, feriado, observacao, idEvento, (int)dataAtualizado, idAgenda);
+                                EventosListModel eventosListModel = new EventosListModel(descricao, (int) data, (int) horaInicio, (int) horaFinal, local, feriado, observacao, idEvento, (int) dataAtualizado, idAgenda);
                                 eventosListModel.save();
 
                             }
                         } else {
-                            EventosListModel eventosListModel = new EventosListModel(descricao, (int)data, (int)horaInicio, (int)horaFinal, local, feriado, observacao, idEvento, (int)dataAtualizado, idAgenda);
+                            EventosListModel eventosListModel = new EventosListModel(descricao, (int) data, (int) horaInicio, (int) horaFinal, local, feriado, observacao, idEvento, (int) dataAtualizado, idAgenda);
                             eventosListModel.save();
                         }
 
@@ -696,21 +698,20 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
         }*/
 
 
-       List<EventosListModel> eventosListModel = EventosListModel.findWithQuery(EventosListModel.class, "SELECT * FROM EVENTOS_LIST_MODEL ORDER BY data*1000 ASC");
-        return eventosListModel;
+        return EventosListModel.findWithQuery(EventosListModel.class, "SELECT * FROM EVENTOS_LIST_MODEL ORDER BY data*1000 ASC");
     }
 
-    public ArrayList<Agenda> getAgendasCompartilhadas () {
+    private ArrayList<Agenda> getAgendasCompartilhadas () {
         String mUrl = "http://caeumc.com/admin/getAgendasAndroid.php?compartilhado=1";
         String json = getJson(mUrl);
 
 
-        ArrayList<Agenda> agendas = new ArrayList<Agenda>();
+        ArrayList<Agenda> agendas = new ArrayList<>();
 
         if (json != null) {
             if (!json.trim().isEmpty()) {
 
-                Agenda agenda = new Agenda();
+                Agenda agenda;
                 Gson gson = new Gson();
                 JsonParser jsonParser = new JsonParser();
                 JsonArray jsonElements = jsonParser.parse(json).getAsJsonArray();
@@ -723,7 +724,6 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Boolean> {
         }
         return agendas;
     }
-
 
 
 }

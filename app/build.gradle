@@ -19,8 +19,8 @@ android {
             applicationId "com.caeumc.caeumc"
             minSdkVersion 15
             targetSdkVersion 23
-            versionCode 4
-            versionName "0.8a"
+            versionCode 6
+            versionName "1.0"
         }
         buildTypes {
             debug {
@@ -54,14 +54,13 @@ android {
         }
         apply plugin: 'com.google.gms.google-services'
         release {
-            signingConfig signingConfigs.config
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
     defaultConfig {
-        versionCode 4
-        versionName '0.8a'
+        versionCode 6
+        versionName '1.0'
     }
     productFlavors {
     }

@@ -1,20 +1,5 @@
 <resources>
     <string name="app_name">CAE UMC</string>
-    <string name="title_activity_main">CAE UMC</string>
-
-    <string name="title_section1">Section 1</string>
-    <string name="title_section2">Section 2</string>
-    <string name="title_section3">Section 3</string>
-
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-
-    <string name="action_example">Example action</string>
-
-    <string name="action_settings">Settings</string>
-    <string name="title_activity_nav_drawer">NavDrawerActivity</string>
-
-    <string name="hello_world">Hello world!</string>
 
     <string-array name="nav_options">
         <item>Notas</item>
@@ -25,18 +10,11 @@
 
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
-    <string name="action_websearch">Web search</string>
-    <string name="app_not_available">Sorry, there\'s no web browser available</string>
     <string name="selected_count">%1$s selecionado(s)</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="notas_fragment">Fragment NOTAS</string>
-    <string name="calendario_fragment">Fragment Calendário</string>
     <string name="arquivos_fragment">Fragment ARQUIVOS</string>
-    <string name="home_fragment">Bem vindo ao aplicativo do \n Centro Acadêmico de Engenharia da \n UMC - Campus Villa Lobos/Lapa</string>
     <string name="disciplina">Disciplina</string>
-    <string name="campoobrigatorio">Campo obrigatório</string>
     <string name="title_activity_dialog">Adicionar</string>
 
     <string name="excluir">Excluir</string>
@@ -48,9 +26,8 @@
     <string name="resmat">Resistência dos Materiais III</string>
     <string name="calendarioacademico">Calendário Acadêmico</string>
     <string name="n5">5</string>
-    <string name="usuario">Lucas Varjão</string>
     <string name="arquivos">Arquivos</string>
-    <string name="diassemana">1-6 de set</string>
+    <string name="diassemana">1–6 de set</string>
     <string name="m11">M1:</string>
     <string name="pii">PI:</string>
     <string name="ndd">ND:</string>
@@ -60,25 +37,18 @@
     <string name="pi">PI</string>
     <string name="nd">ND</string>
     <string name="ex">EX</string>
-    <string name="nf">NF</string>
     <string name="dp">DP/Adaptação</string>
     <string name="semana">qua</string>
     <string name="hifen">-</string>
-    <string name="curtafacebook">Curta nossa página no facebook.</string>
-    <string name="acessosite">Acesse nosso site \n caeumc.wix.com/villa-lobos</string>
     <string name="caracteres">0/35</string>
     <string name="M1RESMAT">M1 - RESMAT</string>
-    <string name="local">19:00-22:30 em UMC</string>
-    <string name="aviso1">Insira somente a nota da M1 para obter o mínimo necessário na ND (Sem a PI).</string>
-    <string name="aviso2">Insira a nota da M1 e a nota da PI para obter o mínimo necessário na ND (Deixe o campo \'ND\' em branco).</string>
-    <string name="aviso3">Após todas as notas serem adicionadas, caso a nota final não for o suficiente para ser aprovado, o sistema mostrará a nota mínima necessária no exame.</string>
+    <string name="local">19:00–22:30 em UMC</string>
     <string name="aviso4">*Todas as notas são de 0 a 10.</string>
     <string name="title_activity_settings_agenda">Opções Agenda</string>
 
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->
-    <string name="pref_header_general">Geral</string>
 
     <string name="pref_title_agenda_switch">Mostrar eventos que já ocorreram</string>
     <string name="pref_description_agenda_switch">Mostra eventos anteriores à data atual.</string>
@@ -115,10 +85,7 @@
         <item>24</item>
     </string-array>
 
-    <string name="pref_title_trocar_usuario">Alterar usuário</string>
-
     <!-- Example settings for Notifications -->
-    <string name="pref_header_notifications">Notifications</string>
 
     <string name="pref_title_new_message_notifications">New message notifications</string>
 
@@ -126,9 +93,6 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
-    <string name="title_activity_launch_screen">LaunchScreenActivity</string>
-
-    <string name="facebook_app_id">940451332711731</string>
 
 
 </resources>

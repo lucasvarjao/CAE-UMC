@@ -6,11 +6,11 @@
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_home_grey600_24dp"
             android:checked="true"
-            android:title="@string/home" />
+            android:title="@string/home"/>
         <item
             android:id="@+id/nav_notas"
             android:icon="@drawable/ic_note_text_grey600_24dp"
-            android:title="@string/notas" />
+            android:title="@string/notas"/>
         <item
             android:id="@+id/nav_calendario"
             android:icon="@drawable/ic_calendar_grey600_24dp"

@@ -1,5 +1,6 @@
 package com.caeumc.caeumc;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -54,7 +55,6 @@ import com.splunk.mint.Logger;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -73,41 +73,39 @@ import static android.view.View.INVISIBLE;
 
 public class NavDrawerActivity extends AppCompatActivity {
 
-    static final String fileName = "CAEUMC.apk";
-    static final String url = "http://caeumc.com/download/CAEUMC.apk";
+    private static final String fileName = "CAEUMC.apk";
+    private static final String url = "http://caeumc.com/download/CAEUMC.apk";
     private static final String ACCOUNT_NAMENAV = "accountNameNav";
     private static final String ACCOUNT_EMAIL = "accountEmail";
     private static final String ACCOUNT_PHOTOURL = "accountPhotoURL";
     public static int notifyUpdate = 0;
-    public static int disciplinaPosition = -99;
-    public static int nDisciplinas = 999999999;
+    private static int disciplinaPosition = -99;
+    private static int nDisciplinas = 999999999;
     public static long idEvento;
     public static Bitmap imageProfile = null;
     public static ProgressDialog mProgressDialog;
-    public static boolean attAvailable;
-    static int actionModeStatus = 0;
-    static Context context;
-    static Context contextFragment;
-    static View snackView;
-    static View appView;
-    static Activity activityDisciplina;
-    static Activity mainActivity;
-    static Activity fragmentActivity;
-    static NavDrawerActivity drawerActivity;
-    static List<String> teste = new ArrayList<String>();
-    static List<Integer> selectedDisciplinas = new ArrayList<>();
-    static CoordinatorLayout rootLayout;
-    static ActionMode.Callback mDeleteMode;
-    static ActionMode mActionDeleteMode;
-    static List<MateriaListModel> materiaListModels;
-    static String mEmail;
-    static int fragmentatual = -1;
+    private static boolean attAvailable;
+    private static int actionModeStatus = 0;
+    private static Context context;
+    private static Context contextFragment;
+    private static View snackView;
+    private static View appView;
+    private static Activity activityDisciplina;
+    private static Activity mainActivity;
+    private static Activity fragmentActivity;
+    private static NavDrawerActivity drawerActivity;
+    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
+    private static final List<String> teste = new ArrayList<>();
+    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
+    private static final List<Integer> selectedDisciplinas = new ArrayList<>();
+    private static ActionMode.Callback mDeleteMode;
+    private static ActionMode mActionDeleteMode;
+    private static List<MateriaListModel> materiaListModels;
+    private static String mEmail;
+    private static int fragmentatual = -1;
 
-    static List<EventosListModel> eventosListModels;
-    static long idDeletar;
-    static TextView txtNomeAccount;
-    static TextView txtEmailAccount;
-    static CircleImageView imgImageProfile;
+    private static List<EventosListModel> eventosListModels;
+    private static long idDeletar;
 
 
     public static SwipeRefreshLayout swipeRefreshLayout;
@@ -116,26 +114,20 @@ public class NavDrawerActivity extends AppCompatActivity {
     private static ListView lstMaterias;
     private static ListView lstEventos;
 
-    private static String ALTERACAO2 = "0";
-    public static String accountNameNav = "";
-    public static String accountEmail = "";
-    public static String accountPhotoURL = "";
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
-    private CharSequence mDrawerTitle;
     private CharSequence mTitle;
-    private Toolbar toolbar;
 
 
     private static void refreshResults () {
-            if (isDeviceOnline()) {
-                new ApiAsyncTask(drawerActivity, mEmail).execute();
+        if (isDeviceOnline()) {
+            new ApiAsyncTask(drawerActivity).execute();
 
-            } else {
-                Toast.makeText(contextFragment, "Sem conexão com a internet.", Toast.LENGTH_LONG).show();
-                swipeRefreshLayout.setRefreshing(false);
-                swipeRefreshLayout.setEnabled(true);
-            }
+        } else {
+            Toast.makeText(contextFragment, "Sem conexão com a internet.", Toast.LENGTH_LONG).show();
+            swipeRefreshLayout.setRefreshing(false);
+            swipeRefreshLayout.setEnabled(true);
+        }
     }
 
     public static void clearResultsText () {
@@ -163,16 +155,16 @@ public class NavDrawerActivity extends AppCompatActivity {
                     swipeRefreshLayout.setEnabled(true);
                 } else {
                     // eventosList = EventosListModel.findWithQuery(EventosListModel.class, "SELECT * FROM EVENTOS_LIST_MODEL ORDER BY datetime(data*1000, 'unixepoch', 'localtime') DESC");
-                    EventosListAdapter arrayAdapter = new EventosListAdapter(drawerActivity, contextFragment);
+                    EventosListAdapter arrayAdapter = new EventosListAdapter(contextFragment);
                     String mesAnterior = "";
                     String semanaAnterior = "";
                     int diaAnterior = 0;
-                    EventosListModel model = new EventosListModel();
-                    EventosListModel diaModel = new EventosListModel();
+                    EventosListModel model;
+                    EventosListModel diaModel;
 
                     for (int i = 0; i < dataStrings.size(); i++) {
                         model = dataStrings.get(i);
-                        diaModel = dataStrings.get(i);
+                        //diaModel = dataStrings.get(i);
                         String mesEvento = getMesEvento(dataStrings.get(i).getData());
                         int diaEvento = getDiaEvento(dataStrings.get(i).getData());
                         String semana = getSemana(diaEvento);
@@ -186,7 +178,7 @@ public class NavDrawerActivity extends AppCompatActivity {
                             mesAnterior = mesEvento;
                             diaAnterior = diaEvento;
                             semanaAnterior = semana;
-                        } else if (mesAnterior == mesEvento) {
+                        } else if (mesAnterior.equals(mesEvento)) {
                             if (diaEvento == diaAnterior) {
                                 diaModel = dataStrings.get(i);
                                 diaModel.setDiaEvento(0);
@@ -237,7 +229,7 @@ public class NavDrawerActivity extends AppCompatActivity {
         });
     }
 
-    static void AtualizarCalendario () {
+    private static void AtualizarCalendario () {
 
         refreshResults();
 
@@ -296,41 +288,40 @@ public class NavDrawerActivity extends AppCompatActivity {
         Date dataEvento = new Date(data * 1000L);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(dataEvento);
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-        return day;
+        return calendar.get(Calendar.DAY_OF_MONTH);
     }
 
     private static String getSemana (int dia) {
         String semana = "";
-        TreeSet<Integer> semana1 = new TreeSet<Integer>();
+        TreeSet<Integer> semana1 = new TreeSet<>();
         semana1.add(1);
         semana1.add(2);
         semana1.add(3);
         semana1.add(4);
         semana1.add(5);
         semana1.add(6);
-        TreeSet<Integer> semana2 = new TreeSet<Integer>();
+        TreeSet<Integer> semana2 = new TreeSet<>();
         semana2.add(7);
         semana2.add(8);
         semana2.add(9);
         semana2.add(10);
         semana2.add(11);
         semana2.add(12);
-        TreeSet<Integer> semana3 = new TreeSet<Integer>();
+        TreeSet<Integer> semana3 = new TreeSet<>();
         semana3.add(13);
         semana3.add(14);
         semana3.add(15);
         semana3.add(16);
         semana3.add(17);
         semana3.add(18);
-        TreeSet<Integer> semana4 = new TreeSet<Integer>();
+        TreeSet<Integer> semana4 = new TreeSet<>();
         semana4.add(19);
         semana4.add(20);
         semana4.add(21);
         semana4.add(22);
         semana4.add(23);
         semana4.add(24);
-        TreeSet<Integer> semana5 = new TreeSet<Integer>();
+        TreeSet<Integer> semana5 = new TreeSet<>();
         semana5.add(25);
         semana5.add(26);
         semana5.add(27);
@@ -371,18 +362,16 @@ public class NavDrawerActivity extends AppCompatActivity {
         return (networkInfo != null && networkInfo.isConnected());
     }
 
-    public static String readFileAsString (String fileName) {
+    private static String readFileAsString (String fileName) {
         // Context context = App.instance.getApplicationContext();
         StringBuilder stringBuilder = new StringBuilder();
         String line;
-        BufferedReader in = null;
+        BufferedReader in;
 
         try {
             in = new BufferedReader(new FileReader(new File(context.getCacheDir(), fileName)));
             while ((line = in.readLine()) != null) stringBuilder.append(line);
 
-        } catch (FileNotFoundException e) {
-            Logger.logError(e.getMessage());
         } catch (IOException e) {
             Logger.logError(e.getMessage());
         }
@@ -403,7 +392,7 @@ public class NavDrawerActivity extends AppCompatActivity {
                             public void onClick (DialogInterface dialog, int which) {
 
                                 File path = new File(context.getCacheDir(), fileName);
-                                final DownloadAsyncTask downloadAsyncTask = new DownloadAsyncTask(path, fileName, context, false, url);
+                                final DownloadAsyncTask downloadAsyncTask = new DownloadAsyncTask(path, context, false, url);
                                 try {
                                     downloadAsyncTask.execute();
                                     mProgressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
@@ -441,7 +430,7 @@ public class NavDrawerActivity extends AppCompatActivity {
                                 //String url = "http://caeumc.com/download/CAEUMC.apk";
                                 //String url = "http://caeumc.com/download/app-debug.apk";
                                 File path = new File(context.getCacheDir(), fileName);
-                                final DownloadAsyncTask downloadAsyncTask = new DownloadAsyncTask(path, fileName, context, false, url);
+                                final DownloadAsyncTask downloadAsyncTask = new DownloadAsyncTask(path, context, false, url);
                                 try {
                                     downloadAsyncTask.execute();
                                     mProgressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
@@ -473,6 +462,7 @@ public class NavDrawerActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -483,7 +473,7 @@ public class NavDrawerActivity extends AppCompatActivity {
         // ParseAnalytics.trackAppOpenedInBackground(getIntent());
 
 
-        toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
 
         appView = this.getWindow().getDecorView().getRootView();
@@ -493,6 +483,8 @@ public class NavDrawerActivity extends AppCompatActivity {
         drawerActivity = this;
 
 
+        CharSequence mDrawerTitle;
+        //noinspection ConstantConditions,UnusedAssignment
         mTitle = mDrawerTitle = getSupportActionBar().getTitle();
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout2);
@@ -513,7 +505,7 @@ public class NavDrawerActivity extends AppCompatActivity {
             attAvailable = checkUpdate();
             SharedPreferences.Editor editor = this.getPreferences(MODE_PRIVATE).edit();
             editor.putBoolean("updatecheck", attAvailable);
-            editor.commit();
+            editor.apply();
         }
 
         mProgressDialog = new ProgressDialog(NavDrawerActivity.this);
@@ -533,7 +525,7 @@ public class NavDrawerActivity extends AppCompatActivity {
                 R.string.drawer_open,
                 R.string.drawer_close
         ) {
-            public void onDrawerClose (View view) {
+            public void onDrawerClose () {
                 //  getSupportActionBar().setTitle(mTitle);
 
                 invalidateOptionsMenu();
@@ -580,54 +572,41 @@ public class NavDrawerActivity extends AppCompatActivity {
         View headerLayout = mNavigationView.getHeaderView(0);
 
 
-        txtNomeAccount = (TextView) headerLayout.findViewById(R.id.nome_account);
-        txtEmailAccount = (TextView) headerLayout.findViewById(R.id.email_account);
-        imgImageProfile = (CircleImageView) headerLayout.findViewById(R.id.image_profile);
+        TextView txtNomeAccount = (TextView) headerLayout.findViewById(R.id.nome_account);
+        TextView txtEmailAccount = (TextView) headerLayout.findViewById(R.id.email_account);
+        CircleImageView imgImageProfile = (CircleImageView) headerLayout.findViewById(R.id.image_profile);
 
         SharedPreferences sharedPreferences = drawerActivity.getPreferences(MODE_PRIVATE);
-        accountNameNav = sharedPreferences.getString(ACCOUNT_NAMENAV, "");
-        accountEmail = sharedPreferences.getString(ACCOUNT_EMAIL, "");
-        accountPhotoURL = sharedPreferences.getString(ACCOUNT_PHOTOURL, "");
+        String accountNameNav = sharedPreferences.getString(ACCOUNT_NAMENAV, "");
+        String accountEmail = sharedPreferences.getString(ACCOUNT_EMAIL, "");
+        String accountPhotoURL = sharedPreferences.getString(ACCOUNT_PHOTOURL, "");
 
-        if (accountNameNav != null) {
-            if (accountNameNav.isEmpty() && accountEmail.isEmpty()) {
-                txtNomeAccount.setText("Centro Acadêmico de Engenharia");
-                txtNomeAccount.setVisibility(View.VISIBLE);
-            } else if (accountNameNav.isEmpty()) {
-                txtNomeAccount.setVisibility(INVISIBLE);
-            } else {
-                txtNomeAccount.setText(accountNameNav);
-                txtNomeAccount.setVisibility(View.VISIBLE);
-            }
-        } else if (accountEmail.isEmpty()) {
+        if (accountNameNav.isEmpty() && accountEmail.isEmpty()) {
             txtNomeAccount.setText("Centro Acadêmico de Engenharia");
             txtNomeAccount.setVisibility(View.VISIBLE);
-        } else {
+        } else if (accountNameNav.isEmpty()) {
             txtNomeAccount.setVisibility(INVISIBLE);
+        } else {
+            txtNomeAccount.setText(accountNameNav);
+            txtNomeAccount.setVisibility(View.VISIBLE);
         }
 
-        if (accountEmail != null) {
-            if (accountEmail.isEmpty()) {
-                txtEmailAccount.setText("UMC - Villa Lobos");
-            } else {
-                txtEmailAccount.setText(accountEmail);
-                txtEmailAccount.setVisibility(View.VISIBLE);
-            }
+        if (accountEmail.isEmpty()) {
+            txtEmailAccount.setText("UMC - Villa Lobos");
+        } else {
+            txtEmailAccount.setText(accountEmail);
+            txtEmailAccount.setVisibility(View.VISIBLE);
         }
 
-        if (accountPhotoURL != null) {
-            if (!accountPhotoURL.isEmpty()) {
-                Uri uri = Uri.parse(accountPhotoURL);
-                try {
-                    imageProfile = new ImageAsyncTask(drawerActivity, context, uri.toString(), imgImageProfile).execute(uri.toString()).get();
-                    if (imageProfile != null) {
-                        imgImageProfile.setImageBitmap(imageProfile);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
+        if (!accountPhotoURL.isEmpty()) {
+            Uri uri = Uri.parse(accountPhotoURL);
+            try {
+                imageProfile = new ImageAsyncTask(context, uri.toString()).execute(uri.toString()).get();
+                if (imageProfile != null) {
+                    imgImageProfile.setImageBitmap(imageProfile);
                 }
-            } else {
-                imgImageProfile.setImageResource(R.drawable.logoandroid);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         } else {
             imgImageProfile.setImageResource(R.drawable.logoandroid);
@@ -654,7 +633,7 @@ public class NavDrawerActivity extends AppCompatActivity {
     public boolean onPrepareOptionsMenu (Menu menu) {
         // If the nav drawer is open, hide action items related to the content view
         //  boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
-        boolean drawerOpen = mDrawerLayout.isDrawerOpen(mNavigationView);
+        @SuppressWarnings("UnusedAssignment") boolean drawerOpen = mDrawerLayout.isDrawerOpen(mNavigationView);
 //       menu.findItem(R.id.action_websearch).setVisible(!drawerOpen);
         return super.onPrepareOptionsMenu(menu);
     }
@@ -662,7 +641,7 @@ public class NavDrawerActivity extends AppCompatActivity {
     @Override
     public void onBackPressed () {
 
-        if (mDrawerLayout.isDrawerOpen(mNavigationView) == true) {
+        if (mDrawerLayout.isDrawerOpen(mNavigationView)) {
             mDrawerLayout.closeDrawers();
         } else if (getFragmentManager().getBackStackEntryCount() > 1) {
             getFragmentManager().popBackStack();
@@ -720,9 +699,9 @@ public class NavDrawerActivity extends AppCompatActivity {
                 }
                 return true;
             case R.id.addagenda:
-                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(NavDrawerActivity.this);
-                    alertDialog.setTitle("Adicionar Agenda");
-                    alertDialog.setMessage("Identificação da agenda");
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(NavDrawerActivity.this);
+                alertDialog.setTitle("Adicionar Agenda");
+                alertDialog.setMessage("Identificação da agenda");
 
 
                 final EditText input = new EditText(NavDrawerActivity.this);
@@ -732,15 +711,15 @@ public class NavDrawerActivity extends AppCompatActivity {
 
                 int paddingPixel = 8;
                 float density = context.getResources().getDisplayMetrics().density;
-                int paddingDp = (int)(paddingPixel * density);
-                lp.setMargins(paddingDp,paddingDp,paddingDp,paddingDp);
+                int paddingDp = (int) (paddingPixel * density);
+                lp.setMargins(paddingDp, paddingDp, paddingDp, paddingDp);
                 input.setLayoutParams(lp);
-                input.setPadding(paddingDp,paddingDp,paddingDp,paddingDp);
+                input.setPadding(paddingDp, paddingDp, paddingDp, paddingDp);
                 InputFilter filter = new InputFilter() {
-                    public CharSequence filter(CharSequence source, int start, int end,
-                                               Spanned dest, int dstart, int dend) {
+                    public CharSequence filter (CharSequence source, int start, int end,
+                                                Spanned dest, int dstart, int dend) {
                         for (int i = start; i < end; i++) {
-                            if ( !Character.isLetterOrDigit(source.charAt(i)) && !Character.toString(source.charAt(i)).equals("-")) {
+                            if (!Character.isLetterOrDigit(source.charAt(i)) && !Character.toString(source.charAt(i)).equals("-")) {
                                 return "";
                             }
                         }
@@ -756,80 +735,65 @@ public class NavDrawerActivity extends AppCompatActivity {
                     public void onClick (DialogInterface dialog, int which) {
 
                         String identificacao = input.getText().toString();
-                        if (identificacao != null) {
-                            if (!identificacao.trim().equals("")) {
+                        if (!identificacao.trim().equals("")) {
 
-                                if (isDeviceOnline()) {
+                            if (isDeviceOnline()) {
 
-                                    ArrayList<Agenda> agendas = new ArrayList<Agenda>();
-                                    String[] strings = new String[2];
-                                    strings[0] = "getAgendasIdentificacao";
-                                    strings[1] = identificacao;
-                                    try {
-                                        agendas = new AgendasPhp().execute(strings).get();
-                                    } catch (InterruptedException e) {
-                                        Toast.makeText(NavDrawerActivity.this, "Agenda não existe", Toast.LENGTH_LONG).show();
-                                        e.printStackTrace();
-                                    } catch (ExecutionException e) {
-                                        Toast.makeText(NavDrawerActivity.this, "Agenda não existe", Toast.LENGTH_LONG).show();
-                                        e.printStackTrace();
-                                    }
-                                    if (agendas != null) {
-                                        if (agendas.size() == 1) {
-                                            final ArrayList<Agenda> finalAgendas = agendas;
-                                            new AlertDialog.Builder(NavDrawerActivity.this)
-                                                    .setMessage("Uma agenda encontrada com essa identificação, deseja adicioná-lá?")
-                                                    .setTitle("Agenda Encontrada")
-                                                    .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                                                        @Override
-                                                        public void onClick (DialogInterface dialog, int which) {
-                                                            dialog.dismiss();
+                                ArrayList<Agenda> agendas = new ArrayList<>();
+                                String[] strings = new String[2];
+                                strings[0] = "getAgendasIdentificacao";
+                                strings[1] = identificacao;
+                                try {
+                                    agendas = new AgendasPhp().execute(strings).get();
+                                } catch (InterruptedException | ExecutionException e) {
+                                    Toast.makeText(NavDrawerActivity.this, "Agenda não existe", Toast.LENGTH_LONG).show();
+                                    e.printStackTrace();
+                                }
+                                if (agendas != null) {
+                                    if (agendas.size() == 1) {
+                                        final ArrayList<Agenda> finalAgendas = agendas;
+                                        new AlertDialog.Builder(NavDrawerActivity.this)
+                                                .setMessage("Uma agenda encontrada com essa identificação, deseja adicioná-lá?")
+                                                .setTitle("Agenda Encontrada")
+                                                .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick (DialogInterface dialog, int which) {
+                                                        dialog.dismiss();
+                                                    }
+                                                })
+                                                .setPositiveButton("Adicionar", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick (DialogInterface dialog, int which) {
+                                                        String idAgenda = finalAgendas.get(0).getIdAgenda();
+                                                        List<AgendasListModel> agendasListModelList = AgendasListModel.find(AgendasListModel.class, "id_agenda = ?", idAgenda);
+                                                        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+                                                        Set<String> stringSet = sharedPreferences.getStringSet("multi_pref_agenda", null);
+                                                        if (stringSet == null) {
+                                                            stringSet = new HashSet<>();
                                                         }
-                                                    })
-                                                    .setPositiveButton("Adicionar", new DialogInterface.OnClickListener() {
-                                                        @Override
-                                                        public void onClick (DialogInterface dialog, int which) {
-                                                            String idAgenda = finalAgendas.get(0).getIdAgenda().toString();
-                                                            List<AgendasListModel> agendasListModelList = AgendasListModel.find(AgendasListModel.class, "id_agenda = ?", idAgenda);
-                                                            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-                                                            Set<String> stringSet = sharedPreferences.getStringSet("multi_pref_agenda", null);
-                                                            if (stringSet == null) {
-                                                                stringSet = new HashSet<String>();
-                                                            }
-                                                            if (agendasListModelList != null) {
-                                                                if (agendasListModelList.size() > 0) {
-                                                                    AgendasListModel agendasListModel = AgendasListModel.findById(AgendasListModel.class, agendasListModelList.get(0).getId());
+                                                        if (agendasListModelList != null) {
+                                                            if (agendasListModelList.size() > 0) {
+                                                                AgendasListModel agendasListModel = AgendasListModel.findById(AgendasListModel.class, agendasListModelList.get(0).getId());
 
-                                                                    if (agendasListModel.getIdAgenda().equals(agendasListModelList.get(0).getIdAgenda()) &&
-                                                                            agendasListModel.getIdentificacao().equals(agendasListModelList.get(0).getIdentificacao()) &&
-                                                                            agendasListModel.getEndereco().equals(agendasListModelList.get(0).getEndereco()) &&
-                                                                            agendasListModel.getCompartilhado().equals(agendasListModelList.get(0).getCompartilhado()) &&
-                                                                            agendasListModel.getIdUsuario().equals(agendasListModelList.get(0).getIdUsuario())) {
+                                                                //noinspection StatementWithEmptyBody
+                                                                if (agendasListModel.getIdAgenda().equals(agendasListModelList.get(0).getIdAgenda()) &&
+                                                                        agendasListModel.getIdentificacao().equals(agendasListModelList.get(0).getIdentificacao()) &&
+                                                                        agendasListModel.getEndereco().equals(agendasListModelList.get(0).getEndereco()) &&
+                                                                        agendasListModel.getCompartilhado().equals(agendasListModelList.get(0).getCompartilhado()) &&
+                                                                        agendasListModel.getIdUsuario().equals(agendasListModelList.get(0).getIdUsuario())) {
 
-                                                                    } else {
-
-                                                                        agendasListModel.setIdAgenda(finalAgendas.get(0).getIdAgenda());
-                                                                        agendasListModel.setIdentificacao(finalAgendas.get(0).getIdentificacao());
-                                                                        agendasListModel.setEndereco(finalAgendas.get(0).getEndereco());
-                                                                        agendasListModel.setCompartilhado(finalAgendas.get(0).getCompartilhado());
-                                                                        agendasListModel.setIdUsuario(finalAgendas.get(0).getIdUsuario());
-                                                                        agendasListModel.save();
-                                                                        AtualizarCalendario();
-                                                                    }
                                                                 } else {
 
-                                                                    AgendasListModel agendasListModel = new AgendasListModel(finalAgendas.get(0).getIdAgenda(), finalAgendas.get(0).getIdentificacao(),
-                                                                            finalAgendas.get(0).getEndereco(), finalAgendas.get(0).getCompartilhado(), finalAgendas.get(0).getIdUsuario());
+                                                                    agendasListModel.setIdAgenda(finalAgendas.get(0).getIdAgenda());
+                                                                    agendasListModel.setIdentificacao(finalAgendas.get(0).getIdentificacao());
+                                                                    agendasListModel.setEndereco(finalAgendas.get(0).getEndereco());
+                                                                    agendasListModel.setCompartilhado(finalAgendas.get(0).getCompartilhado());
+                                                                    agendasListModel.setIdUsuario(finalAgendas.get(0).getIdUsuario());
                                                                     agendasListModel.save();
-                                                                    stringSet.add(finalAgendas.get(0).getIdAgenda());
-                                                                    SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
-                                                                    editor.putStringSet("multi_pref_agenda", stringSet);
-                                                                    editor.apply();
                                                                     AtualizarCalendario();
-
-
                                                                 }
                                                             } else {
+
                                                                 AgendasListModel agendasListModel = new AgendasListModel(finalAgendas.get(0).getIdAgenda(), finalAgendas.get(0).getIdentificacao(),
                                                                         finalAgendas.get(0).getEndereco(), finalAgendas.get(0).getCompartilhado(), finalAgendas.get(0).getIdUsuario());
                                                                 agendasListModel.save();
@@ -838,23 +802,34 @@ public class NavDrawerActivity extends AppCompatActivity {
                                                                 editor.putStringSet("multi_pref_agenda", stringSet);
                                                                 editor.apply();
                                                                 AtualizarCalendario();
-                                                            }
-                                                        }
-                                                    })
-                                                    .show();
-                                        } else {
-                                            Toast.makeText(NavDrawerActivity.this, "Agenda não existe", Toast.LENGTH_LONG).show();
-                                        }
 
+
+                                                            }
+                                                        } else {
+                                                            AgendasListModel agendasListModel = new AgendasListModel(finalAgendas.get(0).getIdAgenda(), finalAgendas.get(0).getIdentificacao(),
+                                                                    finalAgendas.get(0).getEndereco(), finalAgendas.get(0).getCompartilhado(), finalAgendas.get(0).getIdUsuario());
+                                                            agendasListModel.save();
+                                                            stringSet.add(finalAgendas.get(0).getIdAgenda());
+                                                            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
+                                                            editor.putStringSet("multi_pref_agenda", stringSet);
+                                                            editor.apply();
+                                                            AtualizarCalendario();
+                                                        }
+                                                    }
+                                                })
+                                                .show();
                                     } else {
                                         Toast.makeText(NavDrawerActivity.this, "Agenda não existe", Toast.LENGTH_LONG).show();
                                     }
-                                } else {
-                                    Toast.makeText(NavDrawerActivity.this, "Sem conexão com a internet", Toast.LENGTH_LONG).show();
-                                }
-                            }
 
+                                } else {
+                                    Toast.makeText(NavDrawerActivity.this, "Agenda não existe", Toast.LENGTH_LONG).show();
+                                }
+                            } else {
+                                Toast.makeText(NavDrawerActivity.this, "Sem conexão com a internet", Toast.LENGTH_LONG).show();
+                            }
                         }
+
                     }
                 });
 
@@ -889,6 +864,7 @@ public class NavDrawerActivity extends AppCompatActivity {
     @Override
     public void setTitle (CharSequence title) {
         mTitle = title;
+        //noinspection ConstantConditions
         getSupportActionBar().setTitle(mTitle);
     }
 
@@ -907,27 +883,20 @@ public class NavDrawerActivity extends AppCompatActivity {
     }
 
     public String getSelectedTitle () {
-        String Title = getString(R.string.selected_count, selectedDisciplinas.size());
-        return Title;
+        return getString(R.string.selected_count, selectedDisciplinas.size());
     }
-
 
 
     @Override
     public void onActivityResult (
             int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-
-        }
-
         //super.onActivityResult(requestCode, resultCode, data);
     }
 
 
     private boolean checkUpdate () {
 
-        final String PREFS_NAME = "com.caeumc.caeumc";
         final int DOESNT_EXIST = -1;
 
 
@@ -940,21 +909,17 @@ public class NavDrawerActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        int savedVersionCode = 0;
+        int savedVersionCode;
         String fileName = "VersionApplication.txt";
         File versionApplication = new File(context.getCacheDir(), fileName);
         String url = "http://caeumc.com/download/VersionApplication.txt";
         //boolean statusFTPDownload = DownloadFilesFTP(versionApplication, fileName);
-            new DownloadAsyncTask(versionApplication, fileName, context, true, url).execute();
+        new DownloadAsyncTask(versionApplication, context, true, url).execute();
 
         // if (statusFTPDownload) {
         String versionServer = readFileAsString(fileName);
-        if (versionServer != null) {
-            if (!versionServer.isEmpty()) {
-                savedVersionCode = Integer.parseInt(versionServer);
-            } else {
-                savedVersionCode = -1;
-            }
+        if (!versionServer.isEmpty()) {
+            savedVersionCode = Integer.parseInt(versionServer);
         } else {
             savedVersionCode = -1;
         }
@@ -976,13 +941,14 @@ public class NavDrawerActivity extends AppCompatActivity {
             return false;
 
 
-        } else if (currentVersionCode < savedVersionCode) {
+        } else //noinspection RedundantIfStatement
+            if (currentVersionCode < savedVersionCode) {
 
-            return true;
+                return true;
 
-        } else {
-            return false;
-        }
+            } else {
+                return false;
+            }
         // Update the shared preferences with the current version code
     }
 
@@ -999,12 +965,13 @@ public class NavDrawerActivity extends AppCompatActivity {
         public PlanetFragment () {
             // Empty constructor required for fragment subclasses
         }
+
         @Override
         public void onResume () {
             super.onResume();
 
             int i = getArguments().getInt(ARG_PLANET_NUMBER);
-            int n = Integer.parseInt(ALTERACAO2);
+            // int n = Integer.parseInt(ALTERACAO2);
 
             if (i == 3) {
                 mNavigationView.getMenu().getItem(0).setChecked(true);
@@ -1016,7 +983,7 @@ public class NavDrawerActivity extends AppCompatActivity {
 
             if (i == 0) {
                 mNavigationView.getMenu().getItem(1).setChecked(true);
-                rootLayout = (CoordinatorLayout) appView.findViewById(R.id.content);
+                CoordinatorLayout rootLayout = (CoordinatorLayout) appView.findViewById(R.id.content);
 
 
                 if (notifyUpdate == 1) {
@@ -1056,7 +1023,7 @@ public class NavDrawerActivity extends AppCompatActivity {
 
 
                 // int nDisciplinas2 = lstMaterias.getAdapter().getCount();
-                ALTERACAO2 = "0";
+                // String ALTERACAO2 = "0";
 
 
             }
@@ -1191,7 +1158,7 @@ public class NavDrawerActivity extends AppCompatActivity {
 
                     mNavigationView.getMenu().getItem(1).setChecked(true);
 
-                    final FloatingActionButton fab = (FloatingActionButton) appView.findViewById(R.id.fab);
+                    @SuppressLint("CutPasteId") final FloatingActionButton fab = (FloatingActionButton) appView.findViewById(R.id.fab);
                     //fab.setVisibility(View.VISIBLE);
                     fab.show();
                     // List<MateriaListModel> materias = MateriaListModel.listAll(MateriaListModel.class);
@@ -1203,7 +1170,7 @@ public class NavDrawerActivity extends AppCompatActivity {
                         @Override
                         public void onClick (View v) {
                             // disciplinaDialogFragment.show(getFragmentManager(), "Teste");
-                            DialogActivity dialogActivity = new DialogActivity();
+                            //  DialogActivity dialogActivity = new DialogActivity();
 
                             if (lstMaterias.getAdapter() == null)
                                 nDisciplinas = 0;
@@ -1350,16 +1317,13 @@ public class NavDrawerActivity extends AppCompatActivity {
                 case 1:
                     rootView = inflater.inflate(R.layout.fragment_calendario, container, false);
                     mNavigationView.getMenu().getItem(2).setChecked(true);
-                    FloatingActionButton fab3 = (FloatingActionButton) appView.findViewById(R.id.fab);
+                    @SuppressLint("CutPasteId") FloatingActionButton fab3 = (FloatingActionButton) appView.findViewById(R.id.fab);
                     //fab3.setVisibility(INVISIBLE);
                     fab3.hide();
                     snackView = rootView;
                     activityDisciplina = getActivity();
                     contextFragment = rootView.getContext();
                     mainActivity.invalidateOptionsMenu();
-
-
-
 
 
                     swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.activity_main_swipe_refresh_layout);
@@ -1400,7 +1364,7 @@ public class NavDrawerActivity extends AppCompatActivity {
                     Log.e("On Create Agenda", "Passou por aqui");
 
                     if (eventosListModels.size() > 0 && eventosListModels != null) {
-                            updateResultsText(eventosListModels);
+                        updateResultsText(eventosListModels);
                     } else {
                         refreshResults();
                     }
@@ -1415,7 +1379,7 @@ public class NavDrawerActivity extends AppCompatActivity {
                     mainActivity.invalidateOptionsMenu();
                     rootView = inflater.inflate(R.layout.fragment_home, container, false);
                     mNavigationView.getMenu().getItem(0).setChecked(true);
-                    FloatingActionButton fab2 = (FloatingActionButton) appView.findViewById(R.id.fab);
+                    @SuppressLint("CutPasteId") FloatingActionButton fab2 = (FloatingActionButton) appView.findViewById(R.id.fab);
                     fab2.hide();
 
                     SharedPreferences sharedPreferences = mainActivity.getPreferences(MODE_PRIVATE);

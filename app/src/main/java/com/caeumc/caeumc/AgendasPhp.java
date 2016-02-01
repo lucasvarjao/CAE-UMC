@@ -18,20 +18,20 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
-/**
+/*
  * Created by EDNEI on 22/01/2016.
  */
-public class AgendasPhp extends AsyncTask<String, Agenda, ArrayList<Agenda>> {
+class AgendasPhp extends AsyncTask<String, Agenda, ArrayList<Agenda>> {
 
     @Override
-    protected void onPreExecute() {
+    protected void onPreExecute () {
         super.onPreExecute();
         NavDrawerActivity.swipeRefreshLayout.setEnabled(false);
         NavDrawerActivity.swipeRefreshLayout.setRefreshing(true);
     }
 
     @Override
-    protected void onPostExecute(ArrayList<Agenda> agendas) {
+    protected void onPostExecute (ArrayList<Agenda> agendas) {
         NavDrawerActivity.swipeRefreshLayout.setEnabled(true);
         NavDrawerActivity.swipeRefreshLayout.setRefreshing(false);
 
@@ -39,11 +39,12 @@ public class AgendasPhp extends AsyncTask<String, Agenda, ArrayList<Agenda>> {
 
     /**
      * Background task to call Google Calendar API.
+     *
      * @param params no parameters needed for this task.
      */
     @Override
-    protected ArrayList<Agenda> doInBackground(String... params) {
-        ArrayList<Agenda> agendas = new ArrayList<Agenda>();
+    protected ArrayList<Agenda> doInBackground (String... params) {
+        ArrayList<Agenda> agendas = new ArrayList<>();
 
         if (params[0].equals("getAgendasIdentificacao")) {
             agendas = getAgendasIdentificacao(params[1]);
@@ -55,17 +56,17 @@ public class AgendasPhp extends AsyncTask<String, Agenda, ArrayList<Agenda>> {
 
     }
 
-    public static ArrayList<Agenda> getAgendas() {
+    public static ArrayList<Agenda> getAgendas () {
         String mUrl = "http://caeumc.com/admin/getAgendasAndroid.php";
 
 
         String json = getJson(mUrl);
-        ArrayList<Agenda> agendas = new ArrayList<Agenda>();
+        ArrayList<Agenda> agendas = new ArrayList<>();
 
         if (json != null) {
             if (!json.trim().isEmpty()) {
 
-                Agenda agenda = new Agenda();
+                Agenda agenda;
                 Gson gson = new Gson();
                 JsonParser jsonParser = new JsonParser();
                 JsonArray jsonElements = jsonParser.parse(json).getAsJsonArray();
@@ -79,17 +80,17 @@ public class AgendasPhp extends AsyncTask<String, Agenda, ArrayList<Agenda>> {
         return agendas;
     }
 
-    public static ArrayList<Agenda> getAgendasCompartilhadas() {
+    private static ArrayList<Agenda> getAgendasCompartilhadas () {
         String mUrl = "http://caeumc.com/admin/getAgendasAndroid.php?compartilhado=1";
         String json = getJson(mUrl);
 
 
-        ArrayList<Agenda> agendas = new ArrayList<Agenda>();
+        ArrayList<Agenda> agendas = new ArrayList<>();
 
         if (json != null) {
             if (!json.trim().isEmpty()) {
 
-                Agenda agenda = new Agenda();
+                Agenda agenda;
                 Gson gson = new Gson();
                 JsonParser jsonParser = new JsonParser();
                 JsonArray jsonElements = jsonParser.parse(json).getAsJsonArray();
@@ -103,18 +104,18 @@ public class AgendasPhp extends AsyncTask<String, Agenda, ArrayList<Agenda>> {
         return agendas;
     }
 
-    public static ArrayList<Agenda> getAgendasIdentificacao(String identificacao) {
+    private static ArrayList<Agenda> getAgendasIdentificacao (String identificacao) {
         identificacao = identificacao.toLowerCase().trim();
-        identificacao = identificacao.replace(" ","");
+        identificacao = identificacao.replace(" ", "");
         String mUrl = String.format("http://caeumc.com/admin/getAgendasAndroid.php?identificacao=%s", identificacao);
         String json = getJson(mUrl);
 
-        ArrayList<Agenda> agendas = new ArrayList<Agenda>();
+        ArrayList<Agenda> agendas = new ArrayList<>();
 
         if (json != null) {
             if (!json.trim().isEmpty()) {
 
-                Agenda agenda = new Agenda();
+                Agenda agenda;
                 Gson gson = new Gson();
                 JsonParser jsonParser = new JsonParser();
                 JsonArray jsonElements = jsonParser.parse(json).getAsJsonArray();
@@ -130,7 +131,7 @@ public class AgendasPhp extends AsyncTask<String, Agenda, ArrayList<Agenda>> {
 
     private static String getJson (String mUrl) {
         URL url = null;
-        String json=null;
+        String json = null;
         try {
             url = new URL(mUrl);
         } catch (MalformedURLException e) {
@@ -138,11 +139,13 @@ public class AgendasPhp extends AsyncTask<String, Agenda, ArrayList<Agenda>> {
         }
         HttpURLConnection urlConnection = null;
         try {
+            assert url != null;
             urlConnection = (HttpURLConnection) url.openConnection();
         } catch (IOException e) {
             e.printStackTrace();
         }
         try {
+            assert urlConnection != null;
             InputStream in = new BufferedInputStream(urlConnection.getInputStream());
             BufferedReader r = new BufferedReader(new InputStreamReader(in));
             StringBuilder total = new StringBuilder();
@@ -155,6 +158,7 @@ public class AgendasPhp extends AsyncTask<String, Agenda, ArrayList<Agenda>> {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
+            assert urlConnection != null;
             urlConnection.disconnect();
         }
         return json;

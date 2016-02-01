@@ -1,64 +1,62 @@
+<android.support.design.widget.CoordinatorLayout
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginTop="56dp"
+    android:orientation="vertical"
+    >
 
-
-    <android.support.design.widget.CoordinatorLayout
-        android:id="@+id/content"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    <ListView
+        android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_marginTop="56dp"
-        android:orientation="vertical"
-        >
+        android:overScrollMode="always"
+        android:layout_weight="1"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:choiceMode="multipleChoice"
+        android:clickable="false"/>
 
-        <ListView
-            android:id="@android:id/list"
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#50000000"
+        android:id="@+id/empty_layout_notas">
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-android:overScrollMode="always"
-            android:layout_weight="1"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            android:choiceMode="multipleChoice"
-            android:clickable="false" />
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#50000000"
-            android:id="@+id/empty_layout_notas">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="90dp"
-                    android:layout_height="90dp"
-                    android:src="@drawable/ic_note_text_black_48dp"
-                    android:alpha="0.2"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="#000"
-            android:alpha="0.54"
             android:gravity="center"
-            android:text="@string/aviso"
-            android:id="@+id/txtEmptyNotas"
-            android:textSize="20sp"
-            android:layout_marginLeft="24dp"
-            android:layout_marginRight="24dp"
-            />
+            android:orientation="vertical"
+            tools:ignore="UseCompoundDrawables,UselessParent">
 
-            </LinearLayout>
+            <ImageView
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:src="@drawable/ic_note_text_black_48dp"
+                android:alpha="0.2"
+                tools:ignore="ContentDescription"/>
 
-        </RelativeLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="#000"
+                android:alpha="0.54"
+                android:gravity="center"
+                android:text="@string/aviso"
+                android:textSize="20sp"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                />
+
+        </LinearLayout>
+
+    </RelativeLayout>
 
 
-
-    </android.support.design.widget.CoordinatorLayout>
+</android.support.design.widget.CoordinatorLayout>
 
 

@@ -1,34 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <item name="deeporangea400" type="color">#F50057</item>
-    <item name="caeumccolor800" type="color">#221b42</item>
-    <item name="caeumccolor900" type="color">#181835</item>
-
-    <color name="irregular">#F44336</color>
-    <color name="regular">#2196F3</color>
-    <color name="muitobom">#0D47A1</color>
-
-
 
     <color name="primary">#283593</color>
     <color name="primary_dark">#1A237E</color>
-    <color name="primary_light">#C5CAE9</color>
     <color name="accent">#F50057</color>
-    <color name="accent_light">#FF80AB</color>
     <color name="primary_text">#212121</color>
     <color name="secondary_text">#727272</color>
-    <color name="icons">#FFFFFF</color>
     <color name="divider">#B6B6B6</color>
 
-    <color name="errocolor">#E53935</color>
-
-    <drawable name="listitemcolor">#FF3D00</drawable>
-
-    <integer-array name="androidcolors">
-
-        <item>@color/deeporangea400</item>
-        <item>@color/caeumccolor800</item>
-        <item>@color/caeumccolor900</item>
-    </integer-array>
 </resources>
