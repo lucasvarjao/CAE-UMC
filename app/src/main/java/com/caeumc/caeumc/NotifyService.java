@@ -2,15 +2,23 @@ package com.caeumc.caeumc;/*
  * Created by EDNEI on 06/02/2016.
  */
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
 import android.app.Service;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 public class NotifyService extends Service {
@@ -43,7 +51,8 @@ public class NotifyService extends Service {
 
         // If this service was started by out AlarmTask intent then we want to show our notification
         if(intent.getBooleanExtra(INTENT_NOTIFY, false))
-            showNotification(intent.getStringExtra("idEvento"));
+            showNotification(intent.getLongExtra("idEvento", 0), intent.getStringExtra("Descricao"), intent.getLongExtra("Data", 0), intent.getLongExtra("HoraInicio", 0),
+                    intent.getLongExtra("HoraFinal",0), intent.getStringExtra("Local"));
 
         // We don't care if this service is stopped as we have already delivered our notification
         return START_NOT_STICKY;
@@ -60,33 +69,79 @@ public class NotifyService extends Service {
     /**
      * Creates a notification and shows it in the OS drag-down status bar
      */
-    private void showNotification(String idEventoString) {
-        // This is the 'title' of the notification
-        CharSequence title = "Alarm!!";
-        // This is the icon to use on the notification
-        // This is the scrolling text of the notification
-        CharSequence text = "Your notification time is upon us.";
-        // What time to show on the notification
+    private void showNotification(long idEventoString, String descricao, long data, long horainicio, long horafinal, String local) {
         long time = System.currentTimeMillis();
         Intent intent = new Intent(this, AgendaDetails.class);
-        intent.putExtra("", "");
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, 0);
+        intent.putExtra("idEvento", idEventoString);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, (int)idEventoString, intent, 0);
 
-        Notification notification = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.logocaepebmenu)
-                .setContentTitle("")
-                .setContentText("")
-                .setContentIntent(contentIntent)
-                .setWhen(time)
-                .build();
+        String datahora;
+        String localnull;
+
+        if (horainicio == 0) {
+
+            datahora = "Hoje";
+
+        } else {
+            Date horaInicioEvento = new Date(horainicio);
+            @SuppressLint("SimpleDateFormat") DateFormat dateFormat = new SimpleDateFormat("HH:mm");
+            String horaInicioFormatada = dateFormat.format(horaInicioEvento);
+
+            Date horaFinalEvento = new Date(horafinal);
+            @SuppressLint("SimpleDateFormat") DateFormat dateFormatFinal = new SimpleDateFormat("HH:mm");
+            String horaFinalFormatada = dateFormatFinal.format(horaFinalEvento);
+            datahora = String.format("%s - %s", horaInicioFormatada, horaFinalFormatada);
+        }
+
+        if (local == null) {
+            localnull = "";
+        } else {
+            localnull = local;
+        }
+
+        String contenttext = String.format("%s em %s", datahora, localnull);
+
+        NotificationCompat.InboxStyle inboxStyle = new android.support.v4.app.NotificationCompat.InboxStyle();
+
+        inboxStyle.addLine(datahora);
+        inboxStyle.addLine(localnull);
+
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_calendar_grey600_24dp);
+
+        android.support.v4.app.NotificationCompat.Builder notification;
+
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+
+            notification = new NotificationCompat.Builder(this)
+                    .setSmallIcon(R.drawable.ic_launcher)
+                    .setLargeIcon(bitmap)
+                    .setContentTitle(descricao)
+                    .setContentText(contenttext)
+                    .setContentIntent(contentIntent)
+                    .setStyle(inboxStyle)
+                    .setVisibility(Notification.VISIBILITY_PUBLIC)
+                    .setWhen(time);
+
+        } else {
+
+            notification = new NotificationCompat.Builder(this)
+                    .setSmallIcon(R.mipmap.ic_launchercae)
+                    .setLargeIcon(bitmap)
+                    .setContentTitle(descricao)
+                    .setContentText(contenttext)
+                    .setContentIntent(contentIntent)
+                    .setStyle(inboxStyle)
+                    .setWhen(time);
+
+        }
+
+        notification.setDefaults(Notification.DEFAULT_ALL);
 
 
         // Clear the notification when it is pressed
-        notification.flags |= Notification.FLAG_AUTO_CANCEL;
-        int idEvento = Integer.parseInt(idEventoString);
+        int idEvento = (int) idEventoString;
         // Send the notification to the system.
-        mNM.notify(idEvento, notification);
-
+        mNM.notify(idEvento, notification.build());
         // Stop the service when we are finished
         stopSelf();
     }

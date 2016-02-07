@@ -26,9 +26,9 @@ public class AlarmTask implements Runnable{
 
     private final String mLocal;
 
-    private final String mIdEvento;
+    private final long mIdEvento;
 
-    public AlarmTask(Context context, Calendar date, String descricao, long data, long horainicio, long horafinal, String local, String idEvento) {
+    public AlarmTask(Context context, Calendar date, String descricao, long data, long horainicio, long horafinal, String local, long idEvento) {
         this.context = context;
         this.am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         this.date = date;
@@ -52,9 +52,9 @@ public class AlarmTask implements Runnable{
         intent.putExtra("HoraFinal", mHorafinal);
         intent.putExtra("Local", mLocal);
         intent.putExtra("idEvento", mIdEvento);
-        PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getService(context, (int)mIdEvento, intent, 0);
 
         // Sets an alarm - note this alarm will be lost if the phone is turned off and on again
-        am.set(AlarmManager.RTC, date.getTimeInMillis(), pendingIntent);
+        am.set(AlarmManager.RTC_WAKEUP, date.getTimeInMillis(), pendingIntent);
     }
 }

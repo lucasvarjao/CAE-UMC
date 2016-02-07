@@ -2,8 +2,10 @@ package com.caeumc.caeumc;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -118,6 +120,8 @@ public class NavDrawerActivity extends AppCompatActivity {
     private ActionBarDrawerToggle mDrawerToggle;
     private CharSequence mTitle;
 
+    private static ScheduleClient scheduleClient;
+
 
     private static void refreshResults () {
         if (isDeviceOnline()) {
@@ -221,6 +225,37 @@ public class NavDrawerActivity extends AppCompatActivity {
                     lstEventos.setAdapter(arrayAdapter);
                     swipeRefreshLayout.setRefreshing(false);
                     swipeRefreshLayout.setEnabled(true);
+
+                    AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+                    Intent updateServiceIntent = new Intent(context, ScheduleService.class);
+                    PendingIntent pendingUpdateIntent = PendingIntent.getService(context, 0, updateServiceIntent, 0);
+
+                    // Cancel alarms
+                    try {
+                        alarmManager.cancel(pendingUpdateIntent);
+                    } catch (Exception e) {
+                        Log.e("", "AlarmManager update was not canceled. " + e.toString());
+                    }
+
+                    List<EventosListModel> eventosListModels = EventosListModel.findWithQuery(EventosListModel.class, "SELECT * FROM EVENTOS_LIST_MODEL WHERE feriado = 0 ORDER BY data*1000 ASC");
+
+
+                    for (EventosListModel eventosListModel : eventosListModels) {
+                        java.util.Calendar calendar = Calendar.getInstance();
+                        long data = eventosListModel.getData()*1000L;
+                        long horainicio = eventosListModel.getHoraInicio()*1000L;
+                        long horafinal = eventosListModel.getHoraFinal()*1000L;
+                        calendar.setTimeInMillis(System.currentTimeMillis());
+                        calendar.clear();
+                        calendar.setTimeInMillis(data);
+                        calendar.set(Calendar.HOUR_OF_DAY, 18);
+                        calendar.set(Calendar.MINUTE,   20);
+                        calendar.set(Calendar.SECOND, 0);
+                        scheduleClient.setAlarmForNotification(calendar, eventosListModel.getDescricao(), data, horainicio, horafinal, eventosListModel.getLocal(), eventosListModel.getId());
+
+                    }
+
                     /*Toast.makeText(contextFragment, "Data retrieved using" +
                             " the Google Calendar API:", Toast.LENGTH_LONG).show();*/
 
@@ -481,6 +516,10 @@ public class NavDrawerActivity extends AppCompatActivity {
 
         mainActivity = this;
         drawerActivity = this;
+
+
+        scheduleClient = new ScheduleClient(this);
+        scheduleClient.doBindService();
 
 
         CharSequence mDrawerTitle;
@@ -952,6 +991,15 @@ public class NavDrawerActivity extends AppCompatActivity {
         // Update the shared preferences with the current version code
     }
 
+    @Override
+    protected void onStop() {
+        // When our activity is stopped ensure we also stop the connection to the service
+        // this stops us leaking our activity into the system *bad*
+        if(scheduleClient != null)
+            scheduleClient.doUnbindService();
+        super.onStop();
+    }
+
     /**
      * Fragment that appears in the "content_frame", shows a planet
      */
@@ -965,6 +1013,8 @@ public class NavDrawerActivity extends AppCompatActivity {
         public PlanetFragment () {
             // Empty constructor required for fragment subclasses
         }
+
+
 
         @Override
         public void onResume () {
@@ -1326,6 +1376,8 @@ public class NavDrawerActivity extends AppCompatActivity {
                     mainActivity.invalidateOptionsMenu();
 
 
+
+
                     swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.activity_main_swipe_refresh_layout);
                     swipeRefreshLayout.setColorSchemeResources(R.color.accent, R.color.primary);
                     swipeRefreshLayout.setEnabled(false);
@@ -1347,6 +1399,7 @@ public class NavDrawerActivity extends AppCompatActivity {
 
                                 idEvento = lstEventos.getAdapter().getItemId(position);
                                 Intent intent = new Intent(contextFragment, AgendaDetails.class);
+                                intent.putExtra("idEvento", lstEventos.getAdapter().getItemId(position));
                                 contextFragment.startActivity(intent);
 
                             }
